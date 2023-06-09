@@ -25,7 +25,7 @@ struct SettingView: View {
                 Section {
                     Text("Import from drive")
                         .onTapGesture {
-                            webServerWrapper.start()
+                            webServerWrapper.startWebUploader()
                         }
                     NavigationLink {
                         

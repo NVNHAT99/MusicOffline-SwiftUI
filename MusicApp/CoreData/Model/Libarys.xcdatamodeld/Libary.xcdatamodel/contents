@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22E261" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Libary" representedClassName="Libary" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="songs" optional="YES" attributeType="Transformable"/>
+        <relationship name="list" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ListLibary" inverseName="libary" inverseEntity="ListLibary"/>
+    </entity>
+    <entity name="ListLibary" representedClassName="ListLibary" syncable="YES">
+        <relationship name="libary" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Libary" inverseName="list" inverseEntity="Libary"/>
+    </entity>
+</model>

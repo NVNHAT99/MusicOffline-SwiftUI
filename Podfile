@@ -6,17 +6,17 @@ target 'MusicApp' do
   use_frameworks!
 
   # Pods for MusicApp
-	pod "GCDWebServer", "~> 3.0"
+	pod "GCDWebServer/WebUploader", "~> 3.0"
 
   target 'MusicAppTests' do
     inherit! :search_paths
     # Pods for testing
-	pod "GCDWebServer", "~> 3.0"
+	pod "GCDWebServer/WebUploader", "~> 3.0"
   end
 
   target 'MusicAppUITests' do
     # Pods for testing
-	pod "GCDWebServer", "~> 3.0"
+	pod "GCDWebServer/WebUploader", "~> 3.0"
   end
 
 end
