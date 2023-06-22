@@ -24,9 +24,8 @@ struct SettingView: View {
                 .frame(height: 70)
                 .foregroundColor(.white)
                 .padding(.leading, 26)
+                .background(Color.backgroundColor)
                 .padding(.top, Helper.shared.safeAreaInsets?.top)
-                .background(Color.red)
-                
             
             List {
                 Section {

@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 
-extension Playlist {
+extension Playlist: Identifiable {
     
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Playlist> {
         return NSFetchRequest<Playlist>(entityName: "Playlist")
@@ -49,9 +49,5 @@ extension Playlist {
             }
         }
     }
-    
-}
-
-extension Playlist : Identifiable {
     
 }

@@ -10,4 +10,5 @@ import Foundation
 struct LibaryViewState {
     var isLoading: Bool
     var isPresnted: Bool
+    var playlist: [Playlist]
 }

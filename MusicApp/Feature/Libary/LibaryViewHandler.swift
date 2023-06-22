@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreData
 
 final class LibaryViewHandler: ObservableObject {
     // MARK: - PROPERTIES
@@ -20,16 +21,18 @@ final class LibaryViewHandler: ObservableObject {
     
     @Published private(set) var state: LibaryViewState
     
-    init(state: LibaryViewState = LibaryViewState(isLoading: false, isPresnted: false)) {
+    init(state: LibaryViewState = LibaryViewState(isLoading: false,
+                                                  isPresnted: false,
+                                                  playlist: [])) {
         self.state = state
     }
     
     func send(intent: LibaryViewIntent) {
         switch intent {
         case .loadPlaylist:
-            state.isLoading = true
-        case .addNewPlayList:
-            print("pending this feature")
+            loadPlaylists()
+        case .addNewPlayList(let name):
+            addNewPlaylist(name)
         case .deletePlaylist:
             print("pending this feature")
         case .updateIsPresented(let newValue):
@@ -37,4 +40,31 @@ final class LibaryViewHandler: ObservableObject {
         }
     }
     
+    private func addNewPlaylist(_ name: String) {
+        let context = PersistenceController.shared.viewContext
+        let newPlaylist = Playlist(context: context)
+        newPlaylist.name = name
+        newPlaylist.id = UUID()
+        PersistenceController.shared.saveContext()
+    }
+    
+    func loadPlaylists() {
+        state.isLoading = true
+        let context = PersistenceController.shared.viewContext
+        let fetchRequest: NSFetchRequest<Playlist> = Playlist.fetchRequest()
+        
+        do {
+            let playlists = try context.fetch(fetchRequest)
+            state.playlist = playlists
+            for playlist in playlists {
+                print(playlist.id)
+                print(playlist.name)
+            }
+        } catch {
+            state.playlist = []
+            state.isLoading = false
+            print("Error fetching playlists: \(error)")
+        }
+        
+    }
 }

@@ -45,7 +45,7 @@ struct LibaryView: View {
                                 .foregroundColor(.white)
                                 .sheet(isPresented: $isPresented) {
                                     AddNewPlayListView { name in
-                                        print("da vao day roi nay")
+                                        handler.send(intent: .addNewPlayList(name))
                                     }
                                 }
                                 
@@ -101,6 +101,9 @@ struct LibaryView: View {
                 } // ZStack
             }//VStack
             .ignoresSafeArea(.all)
+            .onAppear {
+                handler.send(intent: .loadPlaylist)
+            }
         }
         
     }

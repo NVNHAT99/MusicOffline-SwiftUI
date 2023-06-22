@@ -31,6 +31,7 @@ class PersistenceController {
         if viewContext.hasChanges {
             do {
                 try viewContext.save()
+                print("save the data to core data successfuly")
             } catch {
                 let nsError = error as NSError
                 fatalError(nsError.description)
