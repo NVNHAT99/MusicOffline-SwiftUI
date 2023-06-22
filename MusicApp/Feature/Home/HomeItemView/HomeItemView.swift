@@ -20,10 +20,13 @@ struct HomeItemView: View {
     @State private var isPresented = false
     var body: some View {
         if let onTap = onTap {
-            HomeItemDetailView(data: data)
-                .onTapGesture {
-                    onTap()
-                }
+            Button {
+                onTap()
+            } label: {
+                HomeItemDetailView(data: data)
+            }
+
+                
         } else {
             HomeItemDetailView(data: data)
         }

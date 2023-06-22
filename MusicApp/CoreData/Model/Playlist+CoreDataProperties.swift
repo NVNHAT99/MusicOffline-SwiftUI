@@ -1,8 +1,8 @@
 //
-//  Libary+CoreDataProperties.swift
-//  
+//  Playlist+CoreDataProperties.swift
+//  MusicApp
 //
-//  Created by Nhat on 6/8/23.
+//  Created by Nhat on 6/9/23.
 //
 //
 
@@ -10,22 +10,25 @@ import Foundation
 import CoreData
 
 
-extension Libary {
+extension Playlist {
     
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Libary> {
-        return NSFetchRequest<Libary>(entityName: "Libary")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<Playlist> {
+        return NSFetchRequest<Playlist>(entityName: "Playlist")
     }
     
     @NSManaged public var id: UUID?
-    @NSManaged public var songs: NSObject?
     @NSManaged public var name: String?
-    @NSManaged public var list: ListLibary?
+    @NSManaged public var songs: NSObject?
     
     public var wrappedId: String {
-        id?.uuidString ?? "unkown id"
+        id?.uuidString ?? "Uknow id"
     }
     
-    public var wrappedSongsArray: [String] {
+    public var wrappedName: String {
+        name ?? "Uknow name"
+    }
+    
+    public var songsArray: [String] {
         get {
             guard let data = songs as? Data else { return [] }
             do {
@@ -47,12 +50,8 @@ extension Libary {
         }
     }
     
-    public var wrappedName: String {
-        name ?? "Uknow name"
-    }
+}
+
+extension Playlist : Identifiable {
     
-     
-    public var wrappedList: ListLibary? {
-        return list
-    }
 }

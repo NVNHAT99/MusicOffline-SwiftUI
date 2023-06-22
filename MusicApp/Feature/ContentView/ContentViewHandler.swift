@@ -1,5 +1,5 @@
 //
-//  ContentViewVM.swift
+//  ContentViewHandler.swift
 //  MusicApp
 //
 //  Created by Nhat on 5/25/23.
@@ -13,7 +13,7 @@ enum Tab: Int {
     case setting = 3
 }
 
-final class ContentViewVM: ObservableObject {
+final class ContentViewHandler: ObservableObject {
     let tabItems = [TabItem(image: "house", title: ""),
                     TabItem(image: "book", title: ""),
                     TabItem(image: "gearshape", title: ""),

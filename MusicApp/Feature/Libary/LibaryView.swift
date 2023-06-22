@@ -10,18 +10,13 @@ import SwiftUI
 struct LibaryView: View {
     
     // MARK: - State and Properties
-    @State private var tabSelection = 1
-    let tabItems = [TabItem(image: "house", title: ""),
-                    TabItem(image: "book", title: ""),
-                    TabItem(image: "gearshape", title: ""),
-    ]
-    let columns: [GridItem] = [GridItem(.adaptive(minimum: 150)),
-                               GridItem(.adaptive(minimum: 150))]
-    
-    init () {
+    @ObservedObject private var handler: LibaryViewHandler
+    @State private var isPresented: Bool = false
+//    @State isPresented:
+    init (handler: LibaryViewHandler) {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        self.handler = handler
     }
-    
     var body: some View {
         
         GeometryReader { proxy in
@@ -43,31 +38,46 @@ struct LibaryView: View {
                                 Spacer()
                                 
                                 Button {
-                                    
+                                    isPresented = true
                                 } label: {
-                                    Text("Add new")
+                                    Text("Add New")
                                 } // Button Add new
                                 .foregroundColor(.white)
+                                .sheet(isPresented: $isPresented) {
+                                    AddNewPlayListView { name in
+                                        print("da vao day roi nay")
+                                    }
+                                }
+                                
                                 
                                 Spacer()
                                     .frame(width: 10)
                             }
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                LazyHStack {
-                                    ForEach(0...3, id: \.self) { _ in
-                                        NavigationLink {
-                                            
-                                        } label: {
-                                            PlayListItemView(data: PlaylistItem(imageName: "templePlaylist",
-                                                                                playlistName: "Nothing",
-                                                                                subTitle: "30 songs"),
-                                                             sizeImage: CGSize(width: 241, height: 156))
+                            if true {
+                                VStack(alignment: .center) {
+                                    Text("You don't have any play list yet")
+                                        .foregroundColor(.white)
+                                        .frame(alignment: .center)
+                                }
+                                .frame(width: proxy.size.width,height: 50)
+                            } else {
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    LazyHStack {
+                                        ForEach(0...3, id: \.self) { _ in
+                                            NavigationLink {
+                                                
+                                            } label: {
+                                                PlayListItemView(data: PlaylistItem(imageName: "templePlaylist",
+                                                                                    playlistName: "Nothing",
+                                                                                    subTitle: "30 songs"),
+                                                                 sizeImage: CGSize(width: 241, height: 156))
+                                            }
                                         }
-                                    }
-                                } // LazyHStack
-                                .frame(height: 210)
-                            } // Scroll
-                            .padding(.leading, 26)
+                                    } // LazyHStack
+                                    .frame(height: 210)
+                                } // Scroll
+                                .padding(.leading, 26)
+                            }
                             
                             Spacer()
                                 .frame(height: 15)
@@ -75,12 +85,13 @@ struct LibaryView: View {
                                 Text("Albums")
                                     .foregroundColor(.white)
                                 ScrollView {
-                                    LazyVGrid(columns: columns) {
+                                    LazyVGrid(columns: handler.columns) {
                                         ForEach(0...9, id: \.self) { _ in
                                             PlayListItemView(data: PlaylistItem(imageName: "templePlaylist", playlistName: "Nothing", subTitle: ""), sizeImage: CGSize(width: 150, height: 150))
                                         } // LazyVGridView
                                     }
                                 } // ScrollView
+                                .navigationBarHidden(true)
                             } // VStack
                             .padding([.leading, .trailing], 26)
                         } // VStack
@@ -97,6 +108,6 @@ struct LibaryView: View {
 
 struct LibaryTabView_Previews: PreviewProvider {
     static var previews: some View {
-        LibaryView()
+        LibaryView(handler: LibaryViewHandler())
     }
 }

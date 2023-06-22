@@ -19,8 +19,15 @@ struct SettingView: View {
     }
     let webServerWrapper = WebServerWrapper()
     var body: some View {
-        ZStack(alignment: .top) {
-            Color.backgroundColor
+        VStack {
+            CustomNavigtionBar(title: "Setting")
+                .frame(height: 70)
+                .foregroundColor(.white)
+                .padding(.leading, 26)
+                .padding(.top, Helper.shared.safeAreaInsets?.top)
+                .background(Color.red)
+                
+            
             List {
                 Section {
                     Text("Import from drive")
@@ -50,21 +57,13 @@ struct SettingView: View {
                 }
                 .listRowBackground(Color.headerBackground)
             }
-            .padding(.top, (Helper.shared.safeAreaInsets?.top ?? 0) + 70)
             .listStyle(.insetGrouped)
             .foregroundColor(.white)
-            
-            
-            
-            
-            CustomNavigtionBar(title: "Setting")
-                .frame(height: 70)
-                .foregroundColor(.white)
-                .padding(.top, Helper.shared.safeAreaInsets?.top)
-                .padding(.leading, 26)
+            .navigationBarHidden(true)
         }
         .ignoresSafeArea(.all)
         
+        .background(Color.backgroundColor)
     }
 }
 

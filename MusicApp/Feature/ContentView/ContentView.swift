@@ -9,9 +9,9 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var tabSelection: Tab
-    @ObservedObject private var viewModel: ContentViewVM
+    @ObservedObject private var viewModel: ContentViewHandler
     
-    init(tabSelection: Tab = .home, viewModel: ContentViewVM) {
+    init(tabSelection: Tab = .home, viewModel: ContentViewHandler) {
         self.tabSelection = tabSelection
         self.viewModel = viewModel
     }
@@ -21,7 +21,7 @@ struct ContentView: View {
             NavigationView {
                 TabView(selection: $tabSelection) {
                     //top image
-                    HomeView(selectedTab: $tabSelection, viewModel: HomeViewVM())
+                    HomeView(selectedTab: $tabSelection, viewModel: HomeViewHandler())
                     .ignoresSafeArea(.all)
                     .background(Color.backgroundColor)
                     .foregroundColor(.white)
@@ -29,12 +29,11 @@ struct ContentView: View {
                    
                     
                     //second tabview
-                    LibaryView()
+                    LibaryView(handler: LibaryViewHandler())
                         .tag(Tab.libary)
                                             
                     // Third tabview
                     SettingView()
-                        
                         .tag(Tab.setting)
 
                 }
@@ -59,7 +58,7 @@ struct ContentView: View {
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(viewModel: ContentViewVM())
+        ContentView(viewModel: ContentViewHandler())
     }
 }
 

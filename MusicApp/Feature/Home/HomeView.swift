@@ -11,11 +11,10 @@ struct HomeView: View {
     // MARK: - Properties
     
     @Binding var selectedTab: Tab
-    @ObservedObject private var viewModel: HomeViewVM
-    init(selectedTab: Binding<Tab>, viewModel: HomeViewVM) {
+    @ObservedObject private var viewModel: HomeViewHandler
+    init(selectedTab: Binding<Tab>, viewModel: HomeViewHandler) {
         self._selectedTab = selectedTab
         self.viewModel = viewModel
-        UINavigationBar.setAnimationsEnabled(false)
     }
     
     var body: some View {
@@ -73,6 +72,6 @@ struct HomeView: View {
 
 struct HomeTabView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(selectedTab: .constant(.home), viewModel: HomeViewVM())
+        HomeView(selectedTab: .constant(.home), viewModel: HomeViewHandler())
     }
 }
