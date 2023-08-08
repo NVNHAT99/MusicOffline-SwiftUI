@@ -46,6 +46,7 @@ final class LibaryViewHandler: ObservableObject {
         newPlaylist.name = name
         newPlaylist.id = UUID()
         PersistenceController.shared.saveContext()
+        loadPlaylists()
     }
     
     func loadPlaylists() {
@@ -56,10 +57,6 @@ final class LibaryViewHandler: ObservableObject {
         do {
             let playlists = try context.fetch(fetchRequest)
             state.playlist = playlists
-            for playlist in playlists {
-                print(playlist.id)
-                print(playlist.name)
-            }
         } catch {
             state.playlist = []
             state.isLoading = false

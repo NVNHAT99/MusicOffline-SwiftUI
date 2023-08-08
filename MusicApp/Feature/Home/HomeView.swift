@@ -41,7 +41,7 @@ struct HomeView: View {
                                     HomeItemView(data: viewModel.homeItems[index]) {
                                         switch index {
                                         case 0:
-                                            selectedTab = .home
+                                            selectedTab = .libary
                                         case 1:
                                             selectedTab = .setting
                                         default:
@@ -50,7 +50,7 @@ struct HomeView: View {
                                     }
                                 } else {
                                     NavigationLink {
-                                        SettingView()
+                                        
                                     } label: {
                                         HomeItemView(data: viewModel.homeItems[index], onTap: nil)
                                     }

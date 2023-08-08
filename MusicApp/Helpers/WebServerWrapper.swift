@@ -9,10 +9,11 @@ import Foundation
 import GCDWebServer
 
 class WebServerWrapper: NSObject {
+    static let shared: WebServerWrapper = WebServerWrapper()
     var ipAddress: String = ""
     private var webUploader: GCDWebUploader?
     
-    override init() {
+    private override init() {
         super.init()
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         webUploader = GCDWebUploader(uploadDirectory: documentsPath)
@@ -37,8 +38,14 @@ class WebServerWrapper: NSObject {
     }
     
     func stopWebUploader() {
-        webUploader?.stop()
-        ipAddress = ""
+        guard let webUploader = webUploader else {
+            return
+        }
+        
+        if webUploader.isRunning {
+            webUploader.stop()
+            ipAddress = ""
+        }
     }
 }
 

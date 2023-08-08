@@ -24,7 +24,7 @@ struct LibaryView: View {
                 ZStack {
                     Color.backgroundColor
                     VStack (spacing: 0) {
-                        CustomNavigtionBar(title: "My Libary")
+                        CustomNavigationBar(type: .larger("My Libary"))
                             .frame(height: 70)
                             .padding(.leading, 26)
                             .foregroundColor(.white)
@@ -48,12 +48,10 @@ struct LibaryView: View {
                                         handler.send(intent: .addNewPlayList(name))
                                     }
                                 }
-                                
-                                
                                 Spacer()
                                     .frame(width: 10)
                             }
-                            if true {
+                            if handler.state.playlist.isEmpty {
                                 VStack(alignment: .center) {
                                     Text("You don't have any play list yet")
                                         .foregroundColor(.white)
@@ -62,15 +60,16 @@ struct LibaryView: View {
                                 .frame(width: proxy.size.width,height: 50)
                             } else {
                                 ScrollView(.horizontal, showsIndicators: false) {
-                                    LazyHStack {
-                                        ForEach(0...3, id: \.self) { _ in
+                                    HStack {
+                                        ForEach(handler.state.playlist) { item in
                                             NavigationLink {
-                                                
+                                                PlaylistDetail()
                                             } label: {
-                                                PlayListItemView(data: PlaylistItem(imageName: "templePlaylist",
-                                                                                    playlistName: "Nothing",
-                                                                                    subTitle: "30 songs"),
-                                                                 sizeImage: CGSize(width: 241, height: 156))
+                                                PlayListItemView(
+                                                    data: PlaylistItem(imageName: "templePlaylist",
+                                                                       playlistName: item.wrappedName,
+                                                                       subTitle: "\(item.songsArray.count) songs"),
+                                                    sizeImage: CGSize(width: 241, height: 156))
                                             }
                                         }
                                     } // LazyHStack

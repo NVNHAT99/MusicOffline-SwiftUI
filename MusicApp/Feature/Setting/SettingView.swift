@@ -17,10 +17,9 @@ struct SettingView: View {
         let appearance = UITableView.appearance()
         appearance.backgroundColor = UIColor(cgColor: Color.backgroundColor.cgColor ?? UIColor.gray.cgColor)
     }
-    let webServerWrapper = WebServerWrapper()
     var body: some View {
         VStack {
-            CustomNavigtionBar(title: "Setting")
+            CustomNavigationBar(type: .larger("Setting"))
                 .frame(height: 70)
                 .foregroundColor(.white)
                 .padding(.leading, 26)
@@ -31,7 +30,7 @@ struct SettingView: View {
                 Section {
                     Text("Import from drive")
                         .onTapGesture {
-                            webServerWrapper.startWebUploader()
+                            WebServerWrapper.shared.startWebUploader()
                         }
                     NavigationLink {
                         
@@ -61,7 +60,6 @@ struct SettingView: View {
             .navigationBarHidden(true)
         }
         .ignoresSafeArea(.all)
-        
         .background(Color.backgroundColor)
     }
 }
