@@ -7,17 +7,13 @@
 
 import SwiftUI
 
-typealias HeaderAction = () -> Void
+typealias OnTapAction = () -> Void
 
 enum navigationBarType {
     case larger(String)
     case backButton(String)
-    case twoButtons(leftAction: HeaderAction?,
-                    leftTitle: String?,
-                    leftIcon: String?,
-                    rightAction: HeaderAction?,
-                    rightTitle: String?,
-                    rightIcon: String?,
+    case twoButtons(leftView: (() -> AnyView)?,
+                    rightView: (() -> AnyView)?,
                     title: String)
 }
 
@@ -31,20 +27,13 @@ struct CustomNavigationBar: View {
             case .backButton(_):
                 // i will hanlde this in the future
                 EmptyView()
-            case .twoButtons(let lefAction,
-                             let leftTitle,
-                             let leftIcon,
-                             let rightAction,
-                             let rightTitle,
-                             let rightIcon,
-                             let title):
-                setupForTwoButtonsNavi(leftAction: lefAction,
-                                       lefTitle: leftTitle ?? String.empty,
-                                       leftIcon: leftIcon,
-                                       rightAction: rightAction,
-                                       rightTitle: rightTitle ?? String.empty,
-                                       rightIcon: rightIcon,
+            case .twoButtons(let leftView,
+                             let rightView,
+                             let title) :
+                setupForTwoButtonsNavi(leftView: leftView,
+                                       rightView: rightView,
                                        title: title)
+                
             }
         }// VStack
     }
@@ -58,47 +47,27 @@ struct CustomNavigationBar: View {
                 }
     }
     
-    func setupForTwoButtonsNavi(leftAction: HeaderAction?,
-                                lefTitle: String,
-                                leftIcon: String? = String.empty,
-                                rightAction: HeaderAction?,
-                                rightTitle: String,
-                                rightIcon: String? = String.empty,
+    func setupForTwoButtonsNavi(leftView: (() -> AnyView)?,
+                                rightView: (() -> AnyView)?,
                                 title: String) -> some View {
         ZStack {
             VStack {
-                Spacer()
                 HStack {
-                    Button {
-                        leftAction?()
-                    } label: {
-                        HStack(spacing: 2) {
-                            if leftIcon != String.empty {
-                                Image(systemName: leftIcon ?? String.empty)
-                            }
-                            Text(lefTitle)
-                        }
-                        
-                    }
+                    leftView?() // left header view
                     .foregroundColor(.white)
                     
                     Spacer()
                     
-                    Text(title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    Button {
-                        rightAction?()
-                    } label: {
-                        Text(rightTitle)
-                    }
+                    rightView?() // right header view
                     .foregroundColor(.white)
                 }
                 .padding([.leading, .trailing], 15)
-                Spacer()
+            }
+            
+            VStack {
+                Text(title)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
             }
         }
     }
@@ -106,13 +75,7 @@ struct CustomNavigationBar: View {
 
 struct CustomNavigtionBar_Previews: PreviewProvider {
     static var previews: some View {
-        CustomNavigationBar(type: .twoButtons(leftAction: nil
-                                              ,leftTitle: "Back",
-                                              leftIcon: "chevron.left",
-                                              rightAction: nil,
-                                              rightTitle: "Add New",
-                                              rightIcon: nil,
-                                              title: "nothing"))
+        CustomNavigationBar(type: .twoButtons(leftView: nil, rightView: nil, title: ""))
             .previewLayout(.sizeThatFits)
             .background(Color.backgroundColor)
     }

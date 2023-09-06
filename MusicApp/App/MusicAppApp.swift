@@ -11,6 +11,10 @@ import SwiftUI
 struct MusicAppApp: App {
     @Environment(\.scenePhase) var scenePhase
     
+    init() {
+        PlaylistManager.provide(PlayViewModel())
+        PlaylistManager.shared.setUpSubscrip()
+    }
     var body: some Scene {
         WindowGroup {
             ContentView(viewModel: ContentViewHandler())

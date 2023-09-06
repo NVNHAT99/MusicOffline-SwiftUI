@@ -11,8 +11,7 @@ struct LibaryView: View {
     
     // MARK: - State and Properties
     @ObservedObject private var handler: LibaryViewHandler
-    @State private var isPresented: Bool = false
-//    @State isPresented:
+    @State private var isActive: Bool = false
     init (handler: LibaryViewHandler) {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         self.handler = handler
@@ -38,12 +37,12 @@ struct LibaryView: View {
                                 Spacer()
                                 
                                 Button {
-                                    isPresented = true
+                                    isActive = true
                                 } label: {
                                     Text("Add New")
                                 } // Button Add new
                                 .foregroundColor(.white)
-                                .sheet(isPresented: $isPresented) {
+                                .sheet(isPresented: $isActive) {
                                     AddNewPlayListView { name in
                                         handler.send(intent: .addNewPlayList(name))
                                     }
@@ -63,7 +62,7 @@ struct LibaryView: View {
                                     HStack {
                                         ForEach(handler.state.playlist) { item in
                                             NavigationLink {
-                                                PlaylistDetail()
+                                                PlaylistDetailView(playlist: item)
                                             } label: {
                                                 PlayListItemView(
                                                     data: PlaylistItem(imageName: "templePlaylist",

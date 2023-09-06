@@ -58,6 +58,7 @@ struct SettingView: View {
             .listStyle(.insetGrouped)
             .foregroundColor(.white)
             .navigationBarHidden(true)
+            .modifier(ListBackgroundModifier())
         }
         .ignoresSafeArea(.all)
         .background(Color.backgroundColor)

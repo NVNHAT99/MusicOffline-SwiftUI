@@ -21,19 +21,24 @@ class WebServerWrapper: NSObject {
     }
     
     func startWebUploader() {
-        webUploader?.start()
-        webUploader?.allowedFileExtensions = ["mp3", "aac", "m4a", "wav"]
-        if let serverURL = webUploader?.serverURL {
-            
-            let str = serverURL.absoluteString
-            let start = str.index(str.startIndex, offsetBy: 7)
-            let end = str.index(str.endIndex, offsetBy: -1)
-            let range = start..<end
-            let mySubstring = str[range]
-            ipAddress = String(mySubstring)
-            print("Visit \(serverURL) in your web browser")
-        } else {
-            ipAddress = "No WiFi connected"
+        guard let webUploader = webUploader else {
+            return
+        }
+        if !webUploader.isRunning {
+            webUploader.start()
+            webUploader.allowedFileExtensions = ["mp3", "aac", "m4a", "wav"]
+            if let serverURL = webUploader.serverURL {
+                
+                let str = serverURL.absoluteString
+                let start = str.index(str.startIndex, offsetBy: 7)
+                let end = str.index(str.endIndex, offsetBy: -1)
+                let range = start..<end
+                let mySubstring = str[range]
+                ipAddress = String(mySubstring)
+                print("Visit \(serverURL) in your web browser")
+            } else {
+                ipAddress = "No WiFi connected"
+            }
         }
     }
     

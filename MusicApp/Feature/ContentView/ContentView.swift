@@ -10,7 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @State private var tabSelection: Tab
     @ObservedObject private var viewModel: ContentViewHandler
-    
+    @StateObject var libaryViewHandler: LibaryViewHandler = LibaryViewHandler()
+    @StateObject var playVM = PlayViewModel()
     init(tabSelection: Tab = .home, viewModel: ContentViewHandler) {
         self.tabSelection = tabSelection
         self.viewModel = viewModel
@@ -18,7 +19,7 @@ struct ContentView: View {
     
     var body: some View {
         GeometryReader { proxy in
-            NavigationView {
+            NavigationStack {
                 TabView(selection: $tabSelection) {
                     //top image
                     HomeView(selectedTab: $tabSelection, viewModel: HomeViewHandler())
@@ -29,7 +30,7 @@ struct ContentView: View {
                    
                     
                     //second tabview
-                    LibaryView(handler: LibaryViewHandler())
+                    LibaryView(handler: libaryViewHandler)
                         .tag(Tab.libary)
                                             
                     // Third tabview
@@ -49,14 +50,14 @@ struct ContentView: View {
                 }
                 .animation(.default, value: tabSelection)
             }
-            .navigationViewStyle(.stack)
             .ignoresSafeArea(.all)
             .navigationBarHidden(true)
         }
+        .environmentObject(playVM)
     }
 }
 
-struct HomeView_Previews: PreviewProvider {
+struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView(viewModel: ContentViewHandler())
     }

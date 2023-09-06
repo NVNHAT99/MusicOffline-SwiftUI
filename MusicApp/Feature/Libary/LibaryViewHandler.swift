@@ -64,4 +64,16 @@ final class LibaryViewHandler: ObservableObject {
         }
         
     }
+    // this code cant not using for sheet modfier
+    // because that make change value for the state and that make the view rerender
+    // this could be using for binding value for the other view
+    func isPresented() -> Binding<Bool> {
+        return Binding<Bool>(
+            get: { self.state.isPresnted },
+            set: { newValue in
+                print(newValue)
+                self.send(intent: .updateIsPresented(newValue))
+            }
+        )
+    }
 }

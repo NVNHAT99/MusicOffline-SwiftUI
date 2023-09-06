@@ -20,13 +20,23 @@ struct AddNewPlayListView: View {
                 Color.gray.opacity(0.8)
                 GeometryReader { proxyVStack in
                     VStack (spacing: 0) {
-                        TextField("Enter playlist name", text: $name)
-                            .frame(alignment: .center)
-                            .padding()
-                            .cornerRadius(12)
-                            .padding()
-                            .shadow(radius: 4)
+                        ZStack(alignment: .leading) {
+                            // this view make text field change place holder color
+                            // if the new of version of swiftUI have this modifer so you could change
+                            if name.isEmpty {
+                                Text("Enter playlist name here")
+                                .foregroundColor(.black.opacity(0.4))
+                                .padding(24)
+                            }
                             
+                            TextField("", text: $name)
+                                .frame(alignment: .center)
+                                .padding(24)
+                                .cornerRadius(12)
+                                .shadow(radius: 4)
+                                .foregroundColor(.black)
+                        }
+    
                         
                         Spacer()
                             .frame(height: 10)
@@ -65,7 +75,6 @@ struct AddNewPlayListView: View {
             .ignoresSafeArea()
             .onTapGesture {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                presentationMode.wrappedValue.dismiss()
             }
         }
     }

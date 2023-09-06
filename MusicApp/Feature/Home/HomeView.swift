@@ -12,6 +12,7 @@ struct HomeView: View {
     
     @Binding var selectedTab: Tab
     @ObservedObject private var viewModel: HomeViewHandler
+    @EnvironmentObject private var playVM: PlayViewModel
     init(selectedTab: Binding<Tab>, viewModel: HomeViewHandler) {
         self._selectedTab = selectedTab
         self.viewModel = viewModel
@@ -50,7 +51,7 @@ struct HomeView: View {
                                     }
                                 } else {
                                     NavigationLink {
-                                        
+                                        PlaySongView(viewModel: PlaySongHandler(playVM: playVM))
                                     } label: {
                                         HomeItemView(data: viewModel.homeItems[index], onTap: nil)
                                     }

@@ -8,18 +8,26 @@
 import Foundation
 import MobileCoreServices
 import SwiftUI
+import AVFoundation
 
 struct MP3File: Identifiable {
     let id = UUID()
     let fileName: String
-    let fileURL: String
+    let fileURL: URL
+    var isSelected: Bool
 }
+
 final class DocumentFileManager: NSObject {
+    
+    public static let shared: DocumentFileManager =  DocumentFileManager()
+    
+    private override init() {
+        super.init()
+    }
     private var onSelection: (([URL]) -> Void)?
     
     func pickFiles(completion: @escaping ([URL]) -> Void) {
         onSelection = completion
-        
         let documentPicker = UIDocumentPickerViewController(documentTypes: [kUTTypeMP3 as String], in: .import)
         documentPicker.delegate = self
         documentPicker.allowsMultipleSelection = true
@@ -36,7 +44,7 @@ final class DocumentFileManager: NSObject {
         
         for fileURL in allFileURLs {
             if fileURL.pathExtension.lowercased() == "mp3" {
-                let mp3File = MP3File(fileName: fileURL.lastPathComponent, fileURL: fileURL.path)
+                let mp3File = MP3File(fileName: fileURL.lastPathComponent, fileURL: fileURL, isSelected: false)
                 mp3Files.append(mp3File)
             }
         }
@@ -72,6 +80,79 @@ final class DocumentFileManager: NSObject {
         
         return allFileURLs
     }
+    
+    func loadMetadata(url: URL) async throws -> SongInfo {
+        let asset = AVAsset(url: url)
+        var songName: String = String.empty
+        var albumName: String = String.empty
+        var thumbnail: UIImage?
+        var duration: Double = asset.duration.seconds
+        let arrayMetaData = try await asset.load(.metadata)
+        for metaData in arrayMetaData {
+            if let commonKey = metaData.commonKey?.rawValue, let value = try await metaData.load(.value) {
+                switch commonKey {
+                case AVMetadataKey.commonKeyTitle.rawValue:
+                    if let title = value as? String {
+                        songName = title
+                    }
+                case AVMetadataKey.commonKeyAlbumName.rawValue:
+                    if let album = value as? String {
+                        albumName = album
+                    }
+                case AVMetadataKey.commonKeyArtwork.rawValue:
+                    if let data = value as? Data, let image = UIImage(data: data) {
+                        thumbnail = image
+                    }
+                default:
+                    break
+                }
+            }
+        }
+        
+        return SongInfo(name: songName,
+                        albumName: albumName,
+                        image: String.empty,
+                        singerName: String.empty,
+                        thumbnail: thumbnail,
+                        duration: duration)
+    }
+// MARK: - NOTE this is old version of function to load metaData from mp3 file
+//    func loadMetadata2(url: URL) async -> SongInfo {
+//        let asset = AVAsset(url: url)
+//        var songName: String = String.empty
+//        var albumName: String = String.empty
+//        var thumbnail: UIImage?
+//
+//        asset.loadwithcomple
+//        for format in asset.availableMetadataFormats {
+//            for metadata in asset.metadata(forFormat: format) {
+//                if let commonKey = metadata.commonKey?.rawValue, let value = metadata.value {
+//                    switch commonKey {
+//                    case AVMetadataKey.commonKeyTitle.rawValue:
+//                        if let title = value as? String {
+//                            songName = title
+//                        }
+//                    case AVMetadataKey.commonKeyAlbumName.rawValue:
+//                        if let album = value as? String {
+//                            albumName = album
+//                        }
+//                    case AVMetadataKey.commonKeyArtwork.rawValue:
+//                        if let data = value as? Data, let image = UIImage(data: data) {
+//                            thumbnail = image
+//                        }
+//                    default:
+//                        break
+//                    }
+//                }
+//            }
+//        }
+//
+//        return SongInfo(name: songName,
+//                        albumName: albumName,
+//                        image: String.empty,
+//                        singerName: String.empty,
+//                        thumbnail: thumbnail)
+//    }
 }
 
 extension DocumentFileManager: UIDocumentPickerDelegate {
