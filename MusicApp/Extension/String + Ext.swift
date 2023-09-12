@@ -13,4 +13,8 @@ extension String {
     public static var empty: String {
         ""
     }
+    
+    public static var Unkown: String {
+        "Unkonw"
+    }
 }

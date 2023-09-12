@@ -12,12 +12,12 @@ enum PlaysongViewIntent {
     case pause
     case nextSong
     case previusSong
-    case stateRepeat(state: StateRepeat)
-    case timeTurnOff(time: Double)
+    case stateRepeat
+    case timeTurnOff(time: Int)
 }
 
 enum StateRepeat: String {
     case nomal = "nomal"
     case repeatOne = "repeatOne"
-    case repeatPlayistOne = "repeatPlayistOne"
+    case shuffle = "repeatPlayistOne"
 }

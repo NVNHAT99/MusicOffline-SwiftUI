@@ -21,7 +21,6 @@ struct CustomSliderView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
-                
                 // Track
                 Capsule()
                     .fill(trackColor)

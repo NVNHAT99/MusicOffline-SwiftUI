@@ -13,5 +13,4 @@ struct PlaySongState {
     var timeToTurnOff: Double?
     var currentTimePlaying: Double
     var song: SongInfo?
-    var duration: Double
 }

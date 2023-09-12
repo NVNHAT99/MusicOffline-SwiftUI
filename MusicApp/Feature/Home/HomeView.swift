@@ -51,7 +51,7 @@ struct HomeView: View {
                                     }
                                 } else {
                                     NavigationLink {
-                                        PlaySongView(viewModel: PlaySongHandler(playVM: playVM))
+                                        PlaySongView(viewModel: PlaySongHandler())
                                     } label: {
                                         HomeItemView(data: viewModel.homeItems[index], onTap: nil)
                                     }

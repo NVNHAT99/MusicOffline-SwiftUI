@@ -21,6 +21,7 @@
 		64464D472A3AF91B00D0FBA3 /* LibaryViewIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64464D462A3AF91B00D0FBA3 /* LibaryViewIntent.swift */; };
 		6448FE0A2A399C990072B815 /* Publisher + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6448FE092A399C990072B815 /* Publisher + Ext.swift */; };
 		6448FE0C2A39A0F30072B815 /* Modifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6448FE0B2A39A0F30072B815 /* Modifiers.swift */; };
+		64495E2E2AAA3905000A0549 /* UserDataDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64495E2D2AAA3905000A0549 /* UserDataDefault.swift */; };
 		6469EAB62A160AF500B0CA61 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6469EAB52A160AF500B0CA61 /* HomeView.swift */; };
 		6469EAB82A16144E00B0CA61 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6469EAB72A16144E00B0CA61 /* SettingView.swift */; };
 		646A71962A1DA73A00B654F6 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 646A71952A1DA73A00B654F6 /* NowPlayingView.swift */; };
@@ -48,6 +49,7 @@
 		6499C9812A08D9F800D5F1F0 /* UIColor + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6499C9802A08D9F800D5F1F0 /* UIColor + Ext.swift */; };
 		64A0351F2A950F1B00403A95 /* PlaySongView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A0351E2A950F1B00403A95 /* PlaySongView.swift */; };
 		64A035212A95108500403A95 /* PlayMP3FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A035202A95108500403A95 /* PlayMP3FileManager.swift */; };
+		64BF00382AADBD220089A6CF /* TimeOffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64BF00372AADBD220089A6CF /* TimeOffView.swift */; };
 		64E3FE062A0C93160057E643 /* CustomTabar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E3FE052A0C93160057E643 /* CustomTabar.swift */; };
 		64EA10772A32D54400FCC9FF /* AddNewPlayListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64EA10762A32D54400FCC9FF /* AddNewPlayListView.swift */; };
 		64EA10842A32D63200FCC9FF /* Playlist+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64EA10802A32D63200FCC9FF /* Playlist+CoreDataClass.swift */; };
@@ -97,6 +99,7 @@
 		64464D462A3AF91B00D0FBA3 /* LibaryViewIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibaryViewIntent.swift; sourceTree = "<group>"; };
 		6448FE092A399C990072B815 /* Publisher + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher + Ext.swift"; sourceTree = "<group>"; };
 		6448FE0B2A39A0F30072B815 /* Modifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modifiers.swift; sourceTree = "<group>"; };
+		64495E2D2AAA3905000A0549 /* UserDataDefault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataDefault.swift; sourceTree = "<group>"; };
 		6469EAB52A160AF500B0CA61 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		6469EAB72A16144E00B0CA61 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		646A71952A1DA73A00B654F6 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
@@ -128,6 +131,7 @@
 		649F90432A3039C4006FE761 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		64A0351E2A950F1B00403A95 /* PlaySongView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaySongView.swift; sourceTree = "<group>"; };
 		64A035202A95108500403A95 /* PlayMP3FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayMP3FileManager.swift; sourceTree = "<group>"; };
+		64BF00372AADBD220089A6CF /* TimeOffView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeOffView.swift; sourceTree = "<group>"; };
 		64E3FE052A0C93160057E643 /* CustomTabar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabar.swift; sourceTree = "<group>"; };
 		64EA10762A32D54400FCC9FF /* AddNewPlayListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewPlayListView.swift; sourceTree = "<group>"; };
 		64EA10802A32D63200FCC9FF /* Playlist+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Playlist+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -210,6 +214,7 @@
 				6489F72B2A5FA6DE00AB8E54 /* DocumentFileManager.swift */,
 				64A035202A95108500403A95 /* PlayMP3FileManager.swift */,
 				6426D4BB2AA6D66C00E0A8D3 /* PlaylistManager.swift */,
+				64495E2D2AAA3905000A0549 /* UserDataDefault.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -363,21 +368,30 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
-		64A0351D2A950EFE00403A95 /* PlaySong */ = {
+		64A0351D2A950EFE00403A95 /* PlaySongView */ = {
 			isa = PBXGroup;
 			children = (
+				64BF00362AADBC4D0089A6CF /* TimeOffView */,
 				64A0351E2A950F1B00403A95 /* PlaySongView.swift */,
 				6438A0322AA3AE0F005EF8AE /* PlaySongHandler.swift */,
 				6420E5042AA5FB6400971548 /* PlaysongViewIntent.swift */,
 				6420E5062AA5FB7100971548 /* PlaySongViewState.swift */,
 			);
-			path = PlaySong;
+			path = PlaySongView;
+			sourceTree = "<group>";
+		};
+		64BF00362AADBC4D0089A6CF /* TimeOffView */ = {
+			isa = PBXGroup;
+			children = (
+				64BF00372AADBD220089A6CF /* TimeOffView.swift */,
+			);
+			path = TimeOffView;
 			sourceTree = "<group>";
 		};
 		64F913272A1F35FA00733B44 /* Feature */ = {
 			isa = PBXGroup;
 			children = (
-				64A0351D2A950EFE00403A95 /* PlaySong */,
+				64A0351D2A950EFE00403A95 /* PlaySongView */,
 				6442EC962A7E9B8300D1CC05 /* AddNewSongs */,
 				6489F72D2A5FB13800AB8E54 /* PlaylistDetail */,
 				64F913322A1F5A2C00733B44 /* ContentView */,
@@ -734,6 +748,7 @@
 				64F24FE12A828C2D0081310A /* PlaylistDetailsHandler.swift in Sources */,
 				64EA10772A32D54400FCC9FF /* AddNewPlayListView.swift in Sources */,
 				641FE31C2A44A765005F6DAF /* Libarys.xcdatamodeld in Sources */,
+				64BF00382AADBD220089A6CF /* TimeOffView.swift in Sources */,
 				64EA10892A32D72400FCC9FF /* String + Ext.swift in Sources */,
 				6420E5052AA5FB6400971548 /* PlaysongViewIntent.swift in Sources */,
 				649783802A96690C00394E1D /* CustomSliderView.swift in Sources */,
@@ -759,6 +774,7 @@
 				64953EBC2A1373120028FC3D /* PlayListItemView.swift in Sources */,
 				64464D472A3AF91B00D0FBA3 /* LibaryViewIntent.swift in Sources */,
 				6482B0C42A0CC509001BA82F /* HomeItemView.swift in Sources */,
+				64495E2E2AAA3905000A0549 /* UserDataDefault.swift in Sources */,
 				6433E02F2A9DEE7A002BD1D6 /* Image + Modifier.swift in Sources */,
 				64F913342A1F5C9F00733B44 /* ContentViewHandler.swift in Sources */,
 				6499C97E2A07EF2F00D5F1F0 /* ContentView.swift in Sources */,

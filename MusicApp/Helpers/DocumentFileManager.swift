@@ -81,9 +81,9 @@ final class DocumentFileManager: NSObject {
         return allFileURLs
     }
     
-    func loadMetadata(url: URL) async throws -> SongInfo {
+    func loadMetadata(url: URL) async throws -> SongInfo? {
         let asset = AVAsset(url: url)
-        var songName: String = String.empty
+        var songName: String = url.lastPathComponent
         var albumName: String = String.empty
         var thumbnail: UIImage?
         var duration: Double = asset.duration.seconds

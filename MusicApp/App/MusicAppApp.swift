@@ -12,8 +12,10 @@ struct MusicAppApp: App {
     @Environment(\.scenePhase) var scenePhase
     
     init() {
+        // MARK: - TODO: you must implement play lastest song user play when app is close in pause state
+        // must save the play list, index of that playlist. state of repeat
         PlaylistManager.provide(PlayViewModel())
-        PlaylistManager.shared.setUpSubscrip()
+        PlaylistManager.shared.setUpSubscrib()
     }
     var body: some Scene {
         WindowGroup {

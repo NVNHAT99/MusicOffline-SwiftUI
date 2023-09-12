@@ -12,7 +12,7 @@ import Combine
 class PlayViewModel: NSObject, ObservableObject {
     // MARK: - PROPERTIES WRAPPER
     // o day can mot cai bien luu lai
-    @Published var stateRepeat: StateRepeat = .nomal
+    var stateRepeat: StateRepeat = .nomal
     // MARK: - PROPERTIES
     let currentTimePublisher = PassthroughSubject<Double, Never>()
     let isPlayingPublisher = PassthroughSubject<Bool, Never>()
@@ -20,26 +20,15 @@ class PlayViewModel: NSObject, ObservableObject {
     var timer: Timer?
     
     private var audioPlayer: AVAudioPlayer?
+    
     override init() {
         super.init()
-        if let data = UserDefaults.standard.string(forKey: "stateRepeat") {
-            switch data {
-            case StateRepeat.nomal.rawValue:
-                stateRepeat = .nomal
-            case StateRepeat.repeatOne.rawValue:
-                stateRepeat = .repeatOne
-            case StateRepeat.repeatPlayistOne.rawValue:
-                stateRepeat = .repeatPlayistOne
-            default:
-                stateRepeat = .nomal
-            }
-        }
         configureAudioSession()
     }
     
     func configureAudioSession() {
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers, .allowBluetooth, .allowBluetoothA2DP])
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             print("Error configuring audio session: \(error)")
@@ -55,7 +44,7 @@ class PlayViewModel: NSObject, ObservableObject {
                 audioPlayer?.numberOfLoops = 0
             case .repeatOne:
                 audioPlayer?.numberOfLoops = -1
-            case .repeatPlayistOne:
+            case .shuffle:
                 audioPlayer?.numberOfLoops = 0
             }
             audioPlayer?.prepareToPlay()
@@ -76,7 +65,7 @@ class PlayViewModel: NSObject, ObservableObject {
     
     func pauseAudio() {
         audioPlayer?.pause()
-        timer = nil
+        timer?.invalidate()
         isPlayingPublisher.send(false)
     }
     
@@ -94,6 +83,16 @@ class PlayViewModel: NSObject, ObservableObject {
         return audioPlayer?.currentTime ?? 0
     }
     
+    func changeStateOfRepeat(state: StateRepeat) {
+        switch state {
+        case .nomal, .shuffle:
+            audioPlayer?.numberOfLoops = 0
+        case .repeatOne:
+            audioPlayer?.numberOfLoops = -1
+        }
+        stateRepeat = state
+    }
+    
     func duration() -> Double {
 //        let formatter = DateComponentsFormatter()
 //        formatter.allowedUnits = [.minute, .second]
@@ -105,7 +104,6 @@ class PlayViewModel: NSObject, ObservableObject {
 extension PlayViewModel: AVAudioPlayerDelegate {
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         timer?.invalidate()
-        timer = nil
         didFishedPlayPublisher.send(true)
     }
     
