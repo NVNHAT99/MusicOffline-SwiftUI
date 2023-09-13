@@ -8,7 +8,7 @@
 import Foundation
 import GCDWebServer
 
-class WebServerWrapper: NSObject {
+class WebServerWrapper: NSObject, ObservableObject {
     static let shared: WebServerWrapper = WebServerWrapper()
     var ipAddress: String = ""
     private var webUploader: GCDWebUploader?

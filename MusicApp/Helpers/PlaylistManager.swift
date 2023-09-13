@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import CoreData
 
 final class PlaylistManager: ObservableObject {
     // MARK: - PROPERTIES
@@ -17,6 +18,7 @@ final class PlaylistManager: ObservableObject {
     private(set) var stateRepeat: StateRepeat = .nomal
     private var currentSongInfo: SongInfo?
     private var timerTurnOff: Timer?
+    private var playlistShuffle: Playlist?
     
     static let shared: PlaylistManager = PlaylistManager()
     
@@ -26,11 +28,7 @@ final class PlaylistManager: ObservableObject {
     let prepareNewSongPublisher = PassthroughSubject<SongInfo?, Never>()
     let stateRepeatPublisher = PassthroughSubject<StateRepeat, Never>()
     private init() {
-        // o day can phai load lai data cua user truoc khi app duoc day xuong background
-        // cac thuoc tinh can load nhu thoi gian phat cua bai hat truoc khi hat
-        // trang thai lap lai playlist
-        // co the luu tru playlistID va load lai khi mo app len
-        
+        loadLastUserData()
     }
     
     func updatePlaylist(playlist: Playlist?, currentIndex: Int) {
@@ -88,6 +86,7 @@ final class PlaylistManager: ObservableObject {
         default:
             break
         }
+        self.stateRepeat = state
         playVM?.changeStateOfRepeat(state: state)
     }
     
@@ -95,6 +94,10 @@ final class PlaylistManager: ObservableObject {
         timerTurnOff = Timer.scheduledTimer(withTimeInterval: time, repeats: false, block: { _ in
             self.pause()
         })
+    }
+    
+    func changeCurrentTimePlay(newTime: Double) {
+        playVM?.changeCurrentTimePlay(newTime: newTime)
     }
     
     func getNextSong() -> String? {
@@ -105,7 +108,8 @@ final class PlaylistManager: ObservableObject {
         } else {
             self.currentIndex = currentIndex + 1
         }
-        return playlist?.songsArray[self.currentIndex ?? 0]
+        
+        return stateRepeat == .shuffle ? playlistShuffle?.songsArray[self.currentIndex ?? 0] : playlist?.songsArray[self.currentIndex ?? 0]
     }
     
     func getPreiviousSong() -> String? {
@@ -115,13 +119,13 @@ final class PlaylistManager: ObservableObject {
         } else {
             self.currentIndex = currentIndex - 1
         }
-        return playlist?.songsArray[self.currentIndex ?? 0]
+        return stateRepeat == .shuffle ? playlistShuffle?.songsArray[self.currentIndex ?? 0] : playlist?.songsArray[self.currentIndex ?? 0]
     }
     
     func shufflePlaylist() {
         let songArray: [String] = playlist?.songsArray.shuffled() ?? []
         let newCurrentIndex = songArray.firstIndex(where: {$0 == playlist?.songsArray[currentIndex ?? 0]})
-        playlist?.songsArray = songArray
+        self.playlistShuffle?.songsArray = songArray
         self.currentIndex = newCurrentIndex
     }
     
@@ -142,7 +146,14 @@ final class PlaylistManager: ObservableObject {
     }
     
     func setUpSubscrib() {
-        // cho nay can thay doi lai gia tri cho state mac dinh cua playVM
+        let currentTimePlay = UserDefaults.standard.double(forKey: "currentTimePlay")
+        if let urlString = playlist?.songsArray[self.currentIndex ?? 0], let url = URL(string: urlString) {
+            prepearNewSong(urlString: urlString)
+            playVM?.prepareAudioToPlay(fileURL: url)
+            changeCurrentTimePlay(newTime: currentTimePlay)
+            
+        }
+        self.playVM?.changeStateOfRepeat(state: stateRepeat)
         self.playVM?.currentTimePublisher.sink(receiveValue: { [weak self] newValue in
             self?.currentTimePublisher.send(newValue)
         })
@@ -156,13 +167,70 @@ final class PlaylistManager: ObservableObject {
         self.playVM?.didFishedPlayPublisher.sink { [weak self] didFinish in
             if didFinish {
                 self?.playNextSong()
-            } else {
-                // handle logic in here
             }
         }
         .store(in: &subscribs)
     }
     
+    
+    func loadLastStateRepeat() {
+        if let data = UserDefaults.standard.string(forKey: "stateRepeat") {
+            switch data {
+            case StateRepeat.nomal.rawValue:
+                stateRepeat = .nomal
+            case StateRepeat.repeatOne.rawValue:
+                stateRepeat = .repeatOne
+            case StateRepeat.shuffle.rawValue:
+                stateRepeat = .shuffle
+            default:
+                stateRepeat = .nomal
+            }
+        }
+    }
+    
+    func loadLastInfoPlaylist() {
+        if let wrapId = UserDefaults.standard.string(forKey: "playlistId") {
+            do {
+                let fetchRequest: NSFetchRequest<Playlist> = Playlist.fetchRequest()
+                fetchRequest.predicate = NSPredicate(format: "id == %@", wrapId)
+                fetchRequest.fetchLimit = 1
+                let context = PersistenceController.shared.viewContext
+                let results = try context.fetch(fetchRequest)
+
+                if let playlist = results.first {
+                    self.playlist = playlist
+                } else {
+                  // Playlist not found
+                }
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
+    func loadLastCurrentIndex() {
+        if let currentURL = UserDefaults.standard.string(forKey: "currentURL") {
+            self.currentIndex = playlist?.songsArray.firstIndex(where: {$0 == currentURL})
+        }
+    }
+    
+    func loadLastUserData() {
+        loadLastStateRepeat()
+        loadLastInfoPlaylist()
+        loadLastCurrentIndex()
+        if stateRepeat == .shuffle {
+            shufflePlaylist()
+        }
+    }
+    
+    func saveLastdataUser() {
+        if let currentIndex = currentIndex {
+            UserDefaults.standard.set(playlist?.songsArray[currentIndex], forKey: "currentURL")
+        }
+        UserDefaults.standard.set(getCurrentTimePlay(), forKey: "currentTimePlay")
+        UserDefaults.standard.set(playlist?.wrappedId, forKey: "playlistId")
+        UserDefaults.standard.set(stateRepeat.rawValue, forKey: "stateRepeat")
+    }
 }
 
 // MARK: - EXTENSION
@@ -172,6 +240,3 @@ extension PlaylistManager {
         PlaylistManager.shared.playVM = playViewModel
     }
 }
-
-// MARK: - TODO: can phai xu ly logic khi bac lai playlist binh thuong
-// cach don gian nhat la luu tru mot mang array shuffle playlist tu sau do handle lai logic return nextsong vaf previous song

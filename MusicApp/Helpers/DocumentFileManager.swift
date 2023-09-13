@@ -35,7 +35,6 @@ final class DocumentFileManager: NSObject {
     }
     
     func loadMP3File() -> [MP3File] {
-        // MARK: - TODO: need create code logic to read all mp3 file and return an array of string mp3 file URL
         let documentURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         var mp3Files: [MP3File] = []
         

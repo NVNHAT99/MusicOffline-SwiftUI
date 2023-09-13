@@ -93,6 +93,10 @@ class PlayViewModel: NSObject, ObservableObject {
         stateRepeat = state
     }
     
+    func changeCurrentTimePlay(newTime: Double) {
+        audioPlayer?.currentTime = newTime < 0 ? 0 : min(newTime, (audioPlayer?.duration ?? 0))
+    }
+    
     func duration() -> Double {
 //        let formatter = DateComponentsFormatter()
 //        formatter.allowedUnits = [.minute, .second]
@@ -108,6 +112,3 @@ extension PlayViewModel: AVAudioPlayerDelegate {
     }
     
 }
-
-
-// MARK: - TODO: hay khoi tao mot class quan ly danh sach bai hat dang choi hien tai rieng biet so voi class playViewModel
