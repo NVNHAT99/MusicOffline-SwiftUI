@@ -10,14 +10,14 @@ import UIKit
 struct CustomSliderView: View {
     // MARK: - PROPERTIES WRAPPER
     @Binding var value: Double
-    
+    @Binding var isDragSliderView: Bool
     // MARK: - PROPERTIES
     var trackHeight: CGFloat
     var minValue: Double
     var maxValue: Double
     var trackColor: Color
     var progressColor: Color
-    
+    let onCompletedDrag: (Double) -> Void
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
@@ -34,11 +34,19 @@ struct CustomSliderView: View {
                 // Thumb
                 Circle()
                     .fill(progressColor)
-                    .frame(width: trackHeight, height: trackHeight)
+                    .frame(width: geometry.size.height, height: geometry.size.height)
                     .offset(x: thumbOffset(geometry: geometry), y: 0)
-//                    .gesture(DragGesture().onChanged { value in
-//                        self.value = transformedValue(geometry: geometry, value: value) * maxValue
-//                    })
+                    .gesture(
+                        DragGesture()
+                            .onChanged { value in
+                                self.value = transformedValue(geometry: geometry, valueGesture: value) * maxValue
+                                isDragSliderView = true
+                            }
+                            .onEnded({ _ in
+                                onCompletedDrag(value)
+                                isDragSliderView = false
+                            })
+                    )
             }
         }
     }
@@ -58,9 +66,9 @@ struct CustomSliderView: View {
     }
     
     // Transform gesture location to slider value
-    private func transformedValue(geometry: GeometryProxy, value: DragGesture.Value) -> Double {
+    private func transformedValue(geometry: GeometryProxy, valueGesture: DragGesture.Value) -> Double {
         let width = geometry.size.width
-        let percent = Double(value.location.x / width)
+        let percent = Double(valueGesture.location.x / width)
         return Double(min(max(percent, 0), 1))
     }
 }

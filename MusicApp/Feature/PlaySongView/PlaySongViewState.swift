@@ -13,4 +13,5 @@ struct PlaySongState {
     var timeToTurnOff: Double?
     var currentTimePlaying: Double
     var song: SongInfo?
+    var isDragSlideView: Bool = false
 }

@@ -58,40 +58,29 @@ struct LibaryView: View {
                                 }
                                 .frame(width: proxy.size.width,height: 50)
                             } else {
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack {
-                                        ForEach(handler.state.playlist) { item in
-                                            NavigationLink {
-                                                PlaylistDetailView(playlist: item)
-                                            } label: {
-                                                PlayListItemView(
-                                                    data: PlaylistItem(imageName: "templePlaylist",
-                                                                       playlistName: item.wrappedName,
-                                                                       subTitle: "\(item.songsArray.count) songs"),
-                                                    sizeImage: CGSize(width: 241, height: 156))
+                                LazyVStack {
+                                    ForEach(handler.state.playlist) { item in
+                                        NavigationLink {
+                                            PlaylistDetailView(handler: PlaylistDetailsHandler(state: .init(playlist: item)))
+                                        } label: {
+                                            SwiperToDeleteView {
+                                                PlayListItemView(playListName: item.name ?? String.empty)
+                                                    .frame(height: 40)
+                                                    .background(Color.backgroundColor)
+                                            } deleteAction: {
+                                                withAnimation {
+                                                    handler.send(intent: .deletePlaylist(item))
+                                                }
                                             }
+                                            .frame(height: 40)
+                                            .foregroundColor(.white)
                                         }
-                                    } // LazyHStack
-                                    .frame(height: 210)
-                                } // Scroll
-                                .padding(.leading, 26)
-                            }
-                            
-                            Spacer()
-                                .frame(height: 15)
-                            VStack (alignment: .leading) {
-                                Text("Albums")
-                                    .foregroundColor(.white)
-                                ScrollView {
-                                    LazyVGrid(columns: handler.columns) {
-                                        ForEach(0...9, id: \.self) { _ in
-                                            PlayListItemView(data: PlaylistItem(imageName: "templePlaylist", playlistName: "Nothing", subTitle: ""), sizeImage: CGSize(width: 150, height: 150))
-                                        } // LazyVGridView
+                                        .buttonStyle(NoAnimationButtonStyle())
                                     }
-                                } // ScrollView
-                                .navigationBarHidden(true)
-                            } // VStack
-                            .padding([.leading, .trailing], 26)
+                                }
+                                .padding(.leading, 16)
+                            }
+                            Spacer()
                         } // VStack
                     } // VStack
                     .padding(.top, Helper.shared.safeAreaInsets?.top)

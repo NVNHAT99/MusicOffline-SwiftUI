@@ -15,7 +15,6 @@ class PlayViewModel: NSObject, ObservableObject {
     var stateRepeat: StateRepeat = .nomal
     // MARK: - PROPERTIES
     let currentTimePublisher = PassthroughSubject<Double, Never>()
-    let isPlayingPublisher = PassthroughSubject<Bool, Never>()
     let didFishedPlayPublisher = PassthroughSubject<Bool, Never>()
     var timer: Timer?
     
@@ -66,13 +65,11 @@ class PlayViewModel: NSObject, ObservableObject {
     func pauseAudio() {
         audioPlayer?.pause()
         timer?.invalidate()
-        isPlayingPublisher.send(false)
     }
     
     func playAudio() {
         audioPlayer?.play()
         startTimer()
-        isPlayingPublisher.send(true)
     }
     
     func isPlaying() -> Bool {
@@ -95,6 +92,7 @@ class PlayViewModel: NSObject, ObservableObject {
     
     func changeCurrentTimePlay(newTime: Double) {
         audioPlayer?.currentTime = newTime < 0 ? 0 : min(newTime, (audioPlayer?.duration ?? 0))
+        currentTimePublisher.send(newTime)
     }
     
     func duration() -> Double {
@@ -102,6 +100,11 @@ class PlayViewModel: NSObject, ObservableObject {
 //        formatter.allowedUnits = [.minute, .second]
 //        formatter.unitsStyle = .positional
         return Double(audioPlayer?.duration ?? 0)
+    }
+    
+    func resetTimer() {
+        timer?.invalidate()
+        timer = nil
     }
 }
 

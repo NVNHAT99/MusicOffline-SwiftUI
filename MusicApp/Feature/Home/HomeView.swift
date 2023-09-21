@@ -12,7 +12,8 @@ struct HomeView: View {
     
     @Binding var selectedTab: Tab
     @ObservedObject private var viewModel: HomeViewHandler
-    @EnvironmentObject private var playVM: PlayViewModel
+    @State var isPresented: Bool = false
+    
     init(selectedTab: Binding<Tab>, viewModel: HomeViewHandler) {
         self._selectedTab = selectedTab
         self.viewModel = viewModel
@@ -46,15 +47,19 @@ struct HomeView: View {
                                         case 1:
                                             selectedTab = .setting
                                         default:
-                                            selectedTab = .home
+                                            break
                                         }
                                     }
                                 } else {
-                                    NavigationLink {
-                                        PlaySongView(viewModel: PlaySongHandler())
+                                    Button {
+                                        isPresented = true
                                     } label: {
                                         HomeItemView(data: viewModel.homeItems[index], onTap: nil)
                                     }
+                                    .sheet(isPresented: $isPresented) {
+                                        PlaySongView(viewModel: PlaySongHandler())
+                                    }
+
                                 }
                                 
                             }

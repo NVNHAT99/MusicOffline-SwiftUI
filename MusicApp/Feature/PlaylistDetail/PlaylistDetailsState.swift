@@ -8,5 +8,5 @@
 import Foundation
 
 struct PlaylistDetailsState {
-    var isShowAddNewSong: Bool
+    var playlist: Playlist?
 }

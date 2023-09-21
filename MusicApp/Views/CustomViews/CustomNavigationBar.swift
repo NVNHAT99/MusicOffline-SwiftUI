@@ -66,6 +66,9 @@ struct CustomNavigationBar: View {
             
             VStack {
                 Text(title)
+                    .frame(maxWidth: 250)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
             }

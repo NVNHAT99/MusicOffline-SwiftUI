@@ -14,8 +14,7 @@ struct PlaylistDetailView: View {
     // MARK: - PROPERTIES WRAPER
     @State var isPresented: Bool = false
     @Environment(\.presentationMode) private var presentationMode
-    @State var playlist: Playlist?
-    @EnvironmentObject private var playVM: PlayViewModel
+    @ObservedObject var handler: PlaylistDetailsHandler
     var body: some View {
         VStack(alignment: .leading) {
             CustomNavigationBar(type: .twoButtons(leftView: {
@@ -29,39 +28,38 @@ struct PlaylistDetailView: View {
                         }
                     }
                 )
-
+                
             }, rightView: {
                 AnyView(
                     NavigationLink(destination: {
-                        AddNewSongsView(playlist: $playlist)
+                        AddNewSongsView(playlist: handler.playlistBinding())
                     }, label: {
                         Text("Add news")
                     })
                 )
-            }, title: playlist?.name ?? String.empty)) // Custom NavigationBar
-
+            }, title: handler.state.playlist?.name ?? String.empty)) // Custom NavigationBar
             .frame(height: 50)
             .background(Color.backgroundColor)
-            List {
-                if let playlist = playlist {
-                    ForEach(Array(playlist.songsArray.enumerated()), id: \.offset) { index, item in
-                        if let url = URL(string: item) {
-                            Button {
-                                PlaylistManager.shared.updatePlaylist(playlist: playlist, currentIndex: index)
-                                PlaylistManager.shared.playSong(urlString: item)
-                            } label: {
-                                SongItemView(urlMp3File: url)
-                                    .frame(height: 32)
-                                    .foregroundColor(.white)
+            
+            LazyVStack(spacing: 0) {
+                ForEach(handler.songsForUI) {
+                    item in
+                    SwiperToDeleteView(content: {
+                        SongItemView(urlMp3File: item.songUrlStr)
+                            .foregroundColor(.white)
+                            .onTapGesture {
+                                handler.send(intent: .playSong(index: item.index))
                             }
-                            .listRowBackground(Color.gray)
-
-                        }
-                    }
+                            .background(Color.backgroundColor)
+                    }, deleteAction: {
+                        handler.send(intent: .deleteSong(index: item.index))
+                    })
+                    .frame(height: 40)
                 }
             }
-            .modifier(ListBackgroundModifier())
-
+            .background(Color.backgroundColor)
+            .padding(.horizontal, 16)
+            Spacer()
         }
         .navigationBarHidden(true)
         .background(Color.backgroundColor)
@@ -70,7 +68,7 @@ struct PlaylistDetailView: View {
 
 struct LibaryDetail_Previews: PreviewProvider {
     static var previews: some View {
-        PlaylistDetailView()
+        PlaylistDetailView(handler: PlaylistDetailsHandler())
     }
 }
 

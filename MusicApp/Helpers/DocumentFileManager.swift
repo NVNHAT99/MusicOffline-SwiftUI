@@ -80,40 +80,49 @@ final class DocumentFileManager: NSObject {
         return allFileURLs
     }
     
-    func loadMetadata(url: URL) async throws -> SongInfo? {
-        let asset = AVAsset(url: url)
-        var songName: String = url.lastPathComponent
-        var albumName: String = String.empty
-        var thumbnail: UIImage?
-        var duration: Double = asset.duration.seconds
-        let arrayMetaData = try await asset.load(.metadata)
-        for metaData in arrayMetaData {
-            if let commonKey = metaData.commonKey?.rawValue, let value = try await metaData.load(.value) {
-                switch commonKey {
-                case AVMetadataKey.commonKeyTitle.rawValue:
-                    if let title = value as? String {
-                        songName = title
+    func loadMetadata(stringURL: String) async throws -> SongInfo? {
+        if let url = URL(string: stringURL) {
+            let asset = AVAsset(url: url)
+            var songName: String = url.lastPathComponent.replacingOccurrences(of: ".mp3", with: "")
+            var albumName: String = String.Unkown
+            var thumbnail: UIImage?
+            var duration: Double = asset.duration.seconds
+            let arrayMetaData = try await asset.load(.metadata)
+            for metaData in arrayMetaData {
+                if let commonKey = metaData.commonKey?.rawValue, let value = try await metaData.load(.value) {
+                    switch commonKey {
+                    case AVMetadataKey.commonKeyTitle.rawValue:
+                        if let title = value as? String {
+                            songName = title
+                        }
+                    case AVMetadataKey.commonKeyAlbumName.rawValue:
+                        if let album = value as? String {
+                            albumName = album
+                        }
+                    case AVMetadataKey.commonKeyArtwork.rawValue:
+                        if let data = value as? Data, let image = UIImage(data: data) {
+                            thumbnail = image
+                        }
+                    default:
+                        break
                     }
-                case AVMetadataKey.commonKeyAlbumName.rawValue:
-                    if let album = value as? String {
-                        albumName = album
-                    }
-                case AVMetadataKey.commonKeyArtwork.rawValue:
-                    if let data = value as? Data, let image = UIImage(data: data) {
-                        thumbnail = image
-                    }
-                default:
-                    break
                 }
             }
+            
+            return SongInfo(name: songName,
+                            albumName: albumName,
+                            image: String.empty,
+                            singerName: String.Unkown,
+                            thumbnail: thumbnail,
+                            duration: duration)
+        } else {
+            return SongInfo(name: String.Unkown,
+                            albumName: String.Unkown,
+                            image: String.empty,
+                            singerName: String.Unkown,
+                            thumbnail: nil,
+                            duration: 0)
         }
-        
-        return SongInfo(name: songName,
-                        albumName: albumName,
-                        image: String.empty,
-                        singerName: String.empty,
-                        thumbnail: thumbnail,
-                        duration: duration)
     }
 // MARK: - NOTE this is old version of function to load metaData from mp3 file
 //    func loadMetadata2(url: URL) async -> SongInfo {

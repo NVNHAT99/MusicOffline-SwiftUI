@@ -33,8 +33,8 @@ final class LibaryViewHandler: ObservableObject {
             loadPlaylists()
         case .addNewPlayList(let name):
             addNewPlaylist(name)
-        case .deletePlaylist:
-            print("pending this feature")
+        case .deletePlaylist(let playlist):
+            deletePlaylist(playlist: playlist)
         case .updateIsPresented(let newValue):
             state.isPresnted = newValue
         }
@@ -49,7 +49,17 @@ final class LibaryViewHandler: ObservableObject {
         loadPlaylists()
     }
     
-    func loadPlaylists() {
+    private func deletePlaylist(playlist: Playlist) {
+        let context = PersistenceController.shared.viewContext
+        context.performAndWait {
+            context.delete(playlist)
+            PersistenceController.shared.saveContext()
+            loadPlaylists()
+            PlaylistManager.shared.updateAffterDeletePlaylist(playlist: playlist)
+        }
+    }
+    
+    private func loadPlaylists() {
         state.isLoading = true
         let context = PersistenceController.shared.viewContext
         let fetchRequest: NSFetchRequest<Playlist> = Playlist.fetchRequest()
@@ -70,9 +80,7 @@ final class LibaryViewHandler: ObservableObject {
     func isPresented() -> Binding<Bool> {
         return Binding<Bool>(
             get: { self.state.isPresnted },
-            set: { newValue in
-                print(newValue)
-                self.send(intent: .updateIsPresented(newValue))
+            set: { _ in
             }
         )
     }

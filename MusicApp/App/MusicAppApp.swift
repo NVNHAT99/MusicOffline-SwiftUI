@@ -29,4 +29,8 @@ struct MusicAppApp: App {
 }
 
 
-// MARK: - TODO: xoa playlist, editPlaylist, tao man hinh mini notification
+// MARK: - TODO:  lam man hinh setting, tao man hinh mini notification
+// tao constant cho may cai string
+// tao icon cho app
+// tao mot cai toask view cho viec hien thi nhu add playlist thanh cong, xoa bai hat thanh cong, hen gio thanh cong, playlist empty check lai
+// review update lai code cho dung voi MVI

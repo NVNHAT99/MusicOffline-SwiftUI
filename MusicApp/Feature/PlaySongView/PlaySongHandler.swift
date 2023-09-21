@@ -29,7 +29,9 @@ final class PlaySongHandler: ObservableObject {
         
         playlisManager.currentTimePublisher
             .sink { newValue in
-                self.state.currentTimePlaying = newValue
+                if !self.state.isDragSlideView {
+                    self.state.currentTimePlaying = newValue
+                }
             }
             .store(in: &cancelBag)
         
@@ -69,6 +71,8 @@ final class PlaySongHandler: ObservableObject {
         case .timeTurnOff(let time):
             let seconds = Double(time * 60)
             PlaylistManager.shared.setupTurnOff(time: seconds)
+        case .updateRunning(let newTime):
+            PlaylistManager.shared.changeCurrentTimePlay(newTime: newTime)
         }
     }
     
@@ -76,6 +80,17 @@ final class PlaySongHandler: ObservableObject {
         return Binding<Double>(
             get: { self.state.currentTimePlaying },
             set: { newValue in
+                self.state.currentTimePlaying = newValue
+            }
+        )
+    }
+    
+    func isDrag() -> Binding<Bool> {
+        return Binding<Bool>(
+            get: {
+                self.state.isDragSlideView
+            }, set: { newValue in
+                self.state.isDragSlideView = newValue
             }
         )
     }

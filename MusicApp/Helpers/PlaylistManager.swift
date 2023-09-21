@@ -53,6 +53,7 @@ final class PlaylistManager: ObservableObject {
     
     func pause() {
         playVM?.pauseAudio()
+        isPlayingPublisher.send(false)
     }
     
     func isPlaying() -> Bool {
@@ -70,12 +71,16 @@ final class PlaylistManager: ObservableObject {
     func playNextSong() {
         if let urlString = self.getNextSong() {
             self.playSong(urlString: urlString)
+        } else {
+            returnEmptySong()
         }
     }
     
     func playPreviousSong() {
         if let urlString = self.getPreiviousSong() {
             self.playSong(urlString: urlString)
+        } else {
+            returnEmptySong()
         }
     }
     
@@ -101,7 +106,7 @@ final class PlaylistManager: ObservableObject {
     }
     
     func getNextSong() -> String? {
-        guard let currentIndex = currentIndex else { return nil}
+        guard let currentIndex = currentIndex, (playlist?.songsArray.count ?? 0) > 0 else { return nil}
         
         if currentIndex == (playlist?.songsArray.count ?? 1) - 1 {
             self.currentIndex = 0
@@ -113,7 +118,7 @@ final class PlaylistManager: ObservableObject {
     }
     
     func getPreiviousSong() -> String? {
-        guard let currentIndex = currentIndex else { return nil }
+        guard let currentIndex = currentIndex, (playlist?.songsArray.count ?? 0) > 0 else { return nil }
         if currentIndex == 0 {
             self.currentIndex = (playlist?.songsArray.count ?? 0) - 1
         } else {
@@ -129,15 +134,9 @@ final class PlaylistManager: ObservableObject {
         self.currentIndex = newCurrentIndex
     }
     
-    func prepearNewSong(urlString: String) {
-        Task {
-            do {
-                let songInfo = try await DocumentFileManager.shared.loadMetadata(url: URL(string: urlString)!)
-                self.currentSongInfo = songInfo
-                prepareNewSongPublisher.send(songInfo)
-            } catch {
-                print(error)
-            }
+    func updateAffterDeletePlaylist(playlist: Playlist?) {
+        if playlist?.id == self.playlist?.id {
+            self.playlist = nil
         }
     }
     
@@ -159,11 +158,6 @@ final class PlaylistManager: ObservableObject {
         })
         .store(in: &subscribs)
         
-        self.playVM?.isPlayingPublisher.sink { [weak self] newValue in
-            self?.isPlayingPublisher.send(newValue)
-        }
-        .store(in: &subscribs)
-        
         self.playVM?.didFishedPlayPublisher.sink { [weak self] didFinish in
             if didFinish {
                 self?.playNextSong()
@@ -172,8 +166,26 @@ final class PlaylistManager: ObservableObject {
         .store(in: &subscribs)
     }
     
+    private func prepearNewSong(urlString: String) {
+        Task {
+            do {
+                let songInfo = try await DocumentFileManager.shared.loadMetadata(stringURL: urlString)
+                self.currentSongInfo = songInfo
+                prepareNewSongPublisher.send(songInfo)
+            } catch {
+                print(error)
+            }
+        }
+    }
     
-    func loadLastStateRepeat() {
+    private func returnEmptySong() {
+        playVM?.pauseAudio()
+        prepearNewSong(urlString: String.empty)
+        currentTimePublisher.send(0)
+        isPlayingPublisher.send(false)
+    }
+    
+    private  func loadLastStateRepeat() {
         if let data = UserDefaults.standard.string(forKey: "stateRepeat") {
             switch data {
             case StateRepeat.nomal.rawValue:
@@ -188,7 +200,7 @@ final class PlaylistManager: ObservableObject {
         }
     }
     
-    func loadLastInfoPlaylist() {
+    private func loadLastInfoPlaylist() {
         if let wrapId = UserDefaults.standard.string(forKey: "playlistId") {
             do {
                 let fetchRequest: NSFetchRequest<Playlist> = Playlist.fetchRequest()
@@ -196,11 +208,11 @@ final class PlaylistManager: ObservableObject {
                 fetchRequest.fetchLimit = 1
                 let context = PersistenceController.shared.viewContext
                 let results = try context.fetch(fetchRequest)
-
+                
                 if let playlist = results.first {
                     self.playlist = playlist
                 } else {
-                  // Playlist not found
+                    // Playlist not found
                 }
             } catch {
                 print(error)
@@ -208,13 +220,13 @@ final class PlaylistManager: ObservableObject {
         }
     }
     
-    func loadLastCurrentIndex() {
+    private func loadLastCurrentIndex() {
         if let currentURL = UserDefaults.standard.string(forKey: "currentURL") {
             self.currentIndex = playlist?.songsArray.firstIndex(where: {$0 == currentURL})
         }
     }
     
-    func loadLastUserData() {
+    private func loadLastUserData() {
         loadLastStateRepeat()
         loadLastInfoPlaylist()
         loadLastCurrentIndex()
@@ -230,6 +242,10 @@ final class PlaylistManager: ObservableObject {
         UserDefaults.standard.set(getCurrentTimePlay(), forKey: "currentTimePlay")
         UserDefaults.standard.set(playlist?.wrappedId, forKey: "playlistId")
         UserDefaults.standard.set(stateRepeat.rawValue, forKey: "stateRepeat")
+    }
+    
+    func getPlaylist() -> Playlist? {
+        return playlist
     }
 }
 

@@ -35,12 +35,16 @@ struct PlaySongView: View {
                         .frame(height: 20)
                     VStack (spacing: 0) {
                         CustomSliderView(value: viewModel.sliderValue(),
+                                         isDragSliderView: viewModel.isDrag(),
                                          trackHeight: 6,
                                          minValue: 0,
                                          maxValue: viewModel.state.song?.duration ?? 0,
                                          trackColor: .gray.opacity(0.3),
-                                         progressColor: .white)
-                        .frame(height: 6)
+                                         progressColor: .white,
+                                         onCompletedDrag: { value in
+                            viewModel.send(intent: .updateRunning(newTime: value))
+                        })
+                        .frame(height: 12)
                         HStack {
                             Text(viewModel.convertTime(input: Int(viewModel.state.currentTimePlaying)))
                             Spacer()
@@ -116,7 +120,6 @@ struct PlaySongView: View {
                         }
                     }
                     .transition(.move(edge: .bottom))
-                    
                 }
             })
             .edgesIgnoringSafeArea(.bottom)

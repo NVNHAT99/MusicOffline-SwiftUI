@@ -14,6 +14,7 @@ enum PlaysongViewIntent {
     case previusSong
     case stateRepeat
     case timeTurnOff(time: Int)
+    case updateRunning(newTime: Double)
 }
 
 enum StateRepeat: String {

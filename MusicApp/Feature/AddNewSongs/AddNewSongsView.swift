@@ -15,49 +15,45 @@ struct AddNewSongsView: View {
     @Binding var playlist: Playlist?
     var body: some View {
         VStack {
-            VStack {
-                CustomNavigationBar(type: .twoButtons(leftView: {
-                                                                    AnyView(
-                                                                        Button {
-                                                                            presentationMode.wrappedValue.dismiss()
-                                                                        } label: {
-                                                                            HStack(spacing: 2) {
-                                                                                Image(systemName: "chevron.left")
-                                                                                Text("Back")
-                                                                            }
-                                                                        }
-                                                                    )
-                                                                },
-                                                      rightView: nil,
-                                                      title: "Selection Songs")
-                ) // custom navigationbar
-                .frame(height: 50)
-                .background(Color.backgroundColor.opacity(0.8))
-                
-                Spacer()
-                
-                List {
-                    ForEach(arrayMP3File.indices, id: \.self) { index in
-                        Button {
-                            arrayMP3File[index].isSelected.toggle()
-                            if arrayMP3File[index].isSelected {
-                                selectedCount += 1
-                            } else {
-                                selectedCount -= 1
-                            }
-                        } label: {
-                            SongItemView(urlMp3File: arrayMP3File[index].fileURL)
-                                .foregroundColor(.white)
-                                .frame(height: 32)
+            CustomNavigationBar(type: .twoButtons(leftView: {
+                AnyView(
+                    Button {
+                        presentationMode.wrappedValue.dismiss()
+                    } label: {
+                        HStack(spacing: 2) {
+                            Image(systemName: "chevron.left")
+                            Text("Back")
                         }
-                        .listRowBackground(arrayMP3File[index].isSelected ? Color.red.opacity(0.5) : Color.gray )
-                        .listRowInsets(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
                     }
-                } // List
-                .listStyle(.insetGrouped)
-                
-            } // VStack
-            .background(Color.backgroundColor)
+                )
+            },
+                                                  rightView: nil,
+                                                  title: "Selection Songs")
+            ) // custom navigationbar
+            .frame(height: 50)
+            .background(Color.backgroundColor.opacity(0.8))
+            
+            LazyVStack(spacing: 0) {
+                ForEach(arrayMP3File.indices, id: \.self) { index in
+                    Button {
+                        arrayMP3File[index].isSelected.toggle()
+                        if arrayMP3File[index].isSelected {
+                            selectedCount += 1
+                        } else {
+                            selectedCount -= 1
+                        }
+                    } label: {
+                        SongItemView(urlMp3File: arrayMP3File[index].fileURL.absoluteString)
+                            .foregroundColor(.white)
+                            .frame(height: 44)
+                            .padding(.horizontal, 8)
+                            .background(arrayMP3File[index].isSelected ? Color.red.opacity(0.5) : Color.gray)
+                    }
+                }
+            }
+            .cornerRadius(8, corners: .allCorners)
+            .padding(.horizontal, 16)
+            
             
             Spacer()
             
@@ -70,27 +66,27 @@ struct AddNewSongsView: View {
                             songArray.append(item.fileURL.absoluteString)
                         }
                     }
-                    playlist?.songsArray = songArray
                     
                     do {
+                        playlist?.songsArray = songArray
                         try context.save()
-                        print("da luu bai hat thanh cong")
+                        presentationMode.wrappedValue.dismiss()
+                        print("da vao day roi nay")
                     } catch {
                         print("co loi roi khong luu bai hat duoc")
                     }
-                    
-                    presentationMode.wrappedValue.dismiss()
                 }
             } label: {
                 Text("Add To Playlist")
-                    .foregroundColor(.white)
             }
             .frame(width: 200, height: 48)
             .background(selectedCount > 0 ? Color.blue.opacity(0.8) : .gray)
             .cornerRadius(8, corners: .allCorners)
             .disabled(selectedCount > 0 ? false : true)
+            .foregroundColor(.white)
             
             Spacer()
+                .frame(height: 16)
         } // VStack
         .background(Color.backgroundColor)
         .navigationBarHidden(true)
