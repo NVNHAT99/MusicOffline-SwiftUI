@@ -10,7 +10,7 @@ import GCDWebServer
 
 class WebServerWrapper: NSObject, ObservableObject {
     static let shared: WebServerWrapper = WebServerWrapper()
-    var ipAddress: String = ""
+    @Published var ipAddress: String = ""
     private var webUploader: GCDWebUploader?
     
     private override init() {
@@ -57,11 +57,6 @@ class WebServerWrapper: NSObject, ObservableObject {
 extension WebServerWrapper: GCDWebUploaderDelegate {
     func webUploader(_ uploader: GCDWebUploader, didUploadFileAtPath path: String) {
         print("File uploaded at path: \(path)")
-        
-        // Perform any necessary processing with the uploaded file
-        // ...
-        
-        // Check if the uploaded file has an MP3 extension
         let isMP3File = (path as NSString).pathExtension.lowercased() == "mp3"
         
         if !isMP3File {

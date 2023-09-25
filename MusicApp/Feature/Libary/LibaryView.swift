@@ -10,18 +10,18 @@ import SwiftUI
 struct LibaryView: View {
     
     // MARK: - State and Properties
-    @ObservedObject private var handler: LibaryViewHandler
+    @ObservedObject private var viewModel: LibaryViewViewModel
     @State private var isActive: Bool = false
-    init (handler: LibaryViewHandler) {
+    init (handler: LibaryViewViewModel) {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        self.handler = handler
+        self.viewModel = handler
     }
     var body: some View {
         
         GeometryReader { proxy in
             VStack {
                 ZStack {
-                    Color.backgroundColor
+                    Color.black
                     VStack (spacing: 0) {
                         CustomNavigationBar(type: .larger("My Libary"))
                             .frame(height: 70)
@@ -44,13 +44,13 @@ struct LibaryView: View {
                                 .foregroundColor(.white)
                                 .sheet(isPresented: $isActive) {
                                     AddNewPlayListView { name in
-                                        handler.send(intent: .addNewPlayList(name))
+                                        viewModel.send(intent: .addNewPlayList(name))
                                     }
                                 }
                                 Spacer()
                                     .frame(width: 10)
                             }
-                            if handler.state.playlist.isEmpty {
+                            if viewModel.state.playlist.isEmpty {
                                 VStack(alignment: .center) {
                                     Text("You don't have any play list yet")
                                         .foregroundColor(.white)
@@ -58,27 +58,24 @@ struct LibaryView: View {
                                 }
                                 .frame(width: proxy.size.width,height: 50)
                             } else {
-                                LazyVStack {
-                                    ForEach(handler.state.playlist) { item in
+                                List {
+                                    ForEach(viewModel.state.playlist) { item in
                                         NavigationLink {
-                                            PlaylistDetailView(handler: PlaylistDetailsHandler(state: .init(playlist: item)))
+                                            PlaylistDetailView(viewModel: PlaylistViewModel(state: .init(playlist: item)))
                                         } label: {
-                                            SwiperToDeleteView {
-                                                PlayListItemView(playListName: item.name ?? String.empty)
-                                                    .frame(height: 40)
-                                                    .background(Color.backgroundColor)
-                                            } deleteAction: {
-                                                withAnimation {
-                                                    handler.send(intent: .deletePlaylist(item))
-                                                }
-                                            }
-                                            .frame(height: 40)
-                                            .foregroundColor(.white)
+                                            PlayListItemView(playListName: item.name ?? String.empty)
+                                                .foregroundColor(.white)
+                                                
                                         }
-                                        .buttonStyle(NoAnimationButtonStyle())
                                     }
+                                    .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
+                                    .listRowBackground(Color.backgroundColor)
+                                    .buttonStyle(AnimationPressStyle())
+                                    .foregroundColor(.white)
+                                    .listRowSeparatorTint(.gray)
+
                                 }
-                                .padding(.leading, 16)
+                                .modifier(ListBackgroundModifier())
                             }
                             Spacer()
                         } // VStack
@@ -89,7 +86,7 @@ struct LibaryView: View {
             }//VStack
             .ignoresSafeArea(.all)
             .onAppear {
-                handler.send(intent: .loadPlaylist)
+                viewModel.send(intent: .loadPlaylist)
             }
         }
         
@@ -98,6 +95,6 @@ struct LibaryView: View {
 
 struct LibaryTabView_Previews: PreviewProvider {
     static var previews: some View {
-        LibaryView(handler: LibaryViewHandler())
+        LibaryView(handler: LibaryViewViewModel())
     }
 }

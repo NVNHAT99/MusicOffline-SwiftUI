@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import CoreData
 
-final class LibaryViewHandler: ObservableObject {
+final class LibaryViewViewModel: ObservableObject {
     // MARK: - PROPERTIES
     let tabItems = [TabItem(image: "house", title: ""),
                     TabItem(image: "book", title: ""),

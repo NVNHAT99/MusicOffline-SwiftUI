@@ -1,5 +1,5 @@
 //
-//  PlaySongHandler.swift
+//  PlaySongViewModel.swift
 //  MusicApp
 //
 //  Created by Nhat on 9/3/23.
@@ -9,10 +9,9 @@ import Foundation
 import Combine
 import SwiftUI
 
-final class PlaySongHandler: ObservableObject {
+final class PlaySongViewModel: ObservableObject {
     @Published private(set) var state: PlaySongState
     private var cancelBag: Set<AnyCancellable> = []
-//    @Published currentTimePlay
     init() {
         let playlisManager = PlaylistManager.shared
         self.state = .init(isPlaying: playlisManager.isPlaying(),

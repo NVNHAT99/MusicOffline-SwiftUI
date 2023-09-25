@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 import SwiftUI
 
-final class PlaylistDetailsHandler: ObservableObject {
+final class PlaylistViewModel: ObservableObject {
     // MARK: - PROPERTIES
     
     @Published private(set) var state: PlaylistDetailsState
@@ -20,8 +20,8 @@ final class PlaylistDetailsHandler: ObservableObject {
     
     func send(intent: PlaylistDetailIntent) {
         switch intent {
-        case .playSong(let index):
-            playSong(index: index)
+        case .playSongAt(let urlStr):
+            playSong(urlStr: urlStr)
         case .deleteSong(let index):
             deleteSongAt(index: index)
         case .updatePlaylist(let playlist):
@@ -31,9 +31,11 @@ final class PlaylistDetailsHandler: ObservableObject {
         }
     }
     
-    func playSong(index: Int) {
-        PlaylistManager.shared.updatePlaylist(playlist: state.playlist, currentIndex: index)
-        PlaylistManager.shared.playSong(urlString: state.playlist?.songsArray[index] ?? String.empty)
+    func playSong(urlStr: String) {
+        if let index = state.playlist?.songsArray.firstIndex(of: urlStr) {
+            PlaylistManager.shared.updatePlaylist(playlist: state.playlist, currentIndex: index)
+            PlaylistManager.shared.playSong(urlString: urlStr)
+        }
     }
     
     func deleteSongAt(index: Int) {

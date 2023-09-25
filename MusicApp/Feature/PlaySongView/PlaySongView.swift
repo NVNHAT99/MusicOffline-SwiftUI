@@ -10,7 +10,7 @@ import Combine
 
 struct PlaySongView: View {
     // MARK: - PROPERTIES WRAPER
-    @ObservedObject var viewModel: PlaySongHandler
+    @ObservedObject var viewModel: PlaySongViewModel
     @State var isPresented: Bool = false
     var body: some View {
         GeometryReader { proxy in
@@ -106,7 +106,7 @@ struct PlaySongView: View {
                         
                 } // VStack
                 .padding(.horizontal, 16)
-                .background(Color.backgroundColor)
+                .background(Color.black)
             }
             
             .overlay(alignment: .bottom, content: {
@@ -129,6 +129,6 @@ struct PlaySongView: View {
 
 struct PlaysongView_Previews: PreviewProvider {
     static var previews: some View {
-        PlaySongView(viewModel: PlaySongHandler())
+        PlaySongView(viewModel: PlaySongViewModel())
     }
 }

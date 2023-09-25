@@ -17,7 +17,7 @@ struct MusicAppApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            ContentView(viewModel: ContentViewHandler())
+            ContentView(viewModel: ContentViewViewModel())
         }
         .onChange(of: scenePhase) { newPhase in
             switch newPhase {
@@ -29,8 +29,8 @@ struct MusicAppApp: App {
 }
 
 
-// MARK: - TODO:  lam man hinh setting, tao man hinh mini notification
+// MARK: - TODO: tao man hinh mini notification
 // tao constant cho may cai string
 // tao icon cho app
 // tao mot cai toask view cho viec hien thi nhu add playlist thanh cong, xoa bai hat thanh cong, hen gio thanh cong, playlist empty check lai
-// review update lai code cho dung voi MVI
+// lam man hinh setting

@@ -10,30 +10,29 @@ import SwiftUI
 struct PlayListItemView: View {
     var playListName: String = String.empty
     var body: some View {
-        VStack {
-            HStack() {
-                Text(playListName)
-                    .frame(maxWidth: 300, alignment: .leading)
-                    .font(.system(size: 16, weight: .semibold))
-                    .lineLimit(1)
+        GeometryReader { proxy in
+            VStack {
                 Spacer()
-                Image(systemName: "chevron.right")
-            }
-            Spacer()
-            Divider()
-                .overlay {
-                    Color.white.opacity(0.6)
+                HStack() {
+                    Text(playListName)
+                        .frame(maxWidth: 200, alignment: .leading)
+                        .font(.system(size: 16, weight: .semibold))
+                        .lineLimit(1)
                 }
+                Spacer()
+            }
+            .foregroundColor(.white)
+            .padding(.horizontal, 8)
+            .padding(.trailing, 8)
+            .frame(height: proxy.size.height)
         }
-        .foregroundColor(.white)
-        .padding(.horizontal, 8)
-        .padding(.trailing, 8)
     }
 }
 
 struct PlayListItemView_Previews: PreviewProvider {
     static var previews: some View {
-        PlayListItemView(playListName: String.empty)
+        PlayListItemView(playListName: String.Unkown)
             .background(.gray)
+            .previewLayout(.sizeThatFits)
     }
 }

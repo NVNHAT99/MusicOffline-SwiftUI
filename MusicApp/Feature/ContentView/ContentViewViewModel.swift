@@ -13,7 +13,7 @@ enum Tab: Int {
     case setting = 3
 }
 
-final class ContentViewHandler: ObservableObject {
+final class ContentViewViewModel: ObservableObject {
     let tabItems = [TabItem(image: "house", title: ""),
                     TabItem(image: "book", title: ""),
                     TabItem(image: "gearshape", title: ""),
