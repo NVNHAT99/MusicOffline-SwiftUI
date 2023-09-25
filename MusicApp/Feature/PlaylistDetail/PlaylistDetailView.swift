@@ -15,8 +15,13 @@ struct PlaylistDetailView: View {
     @State var isPresented: Bool = false
     @Environment(\.presentationMode) private var presentationMode
     @ObservedObject var viewModel: PlaylistViewModel
+    @StateObject var addNewsSongVM: AddNewSongsViewModel
+
+    init(viewModel: PlaylistViewModel) {
+        self.viewModel = viewModel
+        self._addNewsSongVM = StateObject(wrappedValue: AddNewSongsViewModel(playlist: viewModel.state.playlist))
+    }
     
-    @State var arraysThe: [String] = ["hello", "the ha"]
     var body: some View {
         GeometryReader { proxy in
             VStack(alignment: .leading) {
@@ -35,9 +40,7 @@ struct PlaylistDetailView: View {
                 }, rightView: {
                     AnyView(
                         NavigationLink(destination: {
-                            AddNewSongsView(viewModel: AddNewSongsViewModel(
-                                state: .init(arrayMP3File: DocumentFileManager.shared.loadMP3File()),
-                                playlist: viewModel.state.playlist))
+                            AddNewSongsView(viewModel: addNewsSongVM)
                         }, label: {
                             Text("Add news")
                         })

@@ -12,6 +12,7 @@ struct AddNewSongsView: View {
     @Environment(\.presentationMode) private var presentationMode
     @ObservedObject var viewModel: AddNewSongsViewModel
     
+    @State var arraysThe: [String] = []
     var body: some View {
         VStack {
             CustomNavigationBar(type: .twoButtons(
@@ -32,32 +33,22 @@ struct AddNewSongsView: View {
             ) // custom navigationbar
             .frame(height: 50)
             .background(Color.black)
-            if viewModel.state.arrayMP3File.count <= 0 {
-                VStack(alignment: .center) {
-                    Spacer()
-                    Text("Don't have any songs to add to playlist!")
-                        .foregroundColor(.white)
-                        .frame(alignment: .center)
-                    Spacer()
-                }
-            } else {
-                List {
-                    ForEach(viewModel.state.arrayMP3File.indices, id: \.self) { index in
-                        Button {
-                            viewModel.send(intent: .toggleSelectedAt(index: index))
-                            
-                        } label: {
-                            SongItemView(urlMp3File: viewModel.state.arrayMP3File[index].fileURL.absoluteString)
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 8)
-                        }
-                        .listRowBackground(viewModel.state.arrayMP3File[index].isSelected ? Color.red.opacity(0.5) : Color.backgroundColor)
-                        .listRowInsets(EdgeInsets())
+            List {
+                ForEach(viewModel.state.arrayMP3File.indices, id: \.self) { index in
+                    Button {
+                        viewModel.send(intent: .toggleSelectedAt(index: index))
+
+                    } label: {
+                        SongItemView(urlMp3File: viewModel.state.arrayMP3File[index].fileURL.absoluteString)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 8)
                     }
+                    .listRowBackground(viewModel.state.arrayMP3File[index].isSelected ? Color.red.opacity(0.5) : Color.backgroundColor)
+                    .listRowInsets(EdgeInsets())
                 }
-                .modifier(ListBackgroundModifier())
-                .cornerRadius(8, corners: .allCorners)
             }
+            .modifier(ListBackgroundModifier())
+            .cornerRadius(8, corners: .allCorners)
             
             Spacer()
             
@@ -79,6 +70,9 @@ struct AddNewSongsView: View {
         } // VStack
         .background(Color.black)
         .navigationBarHidden(true)
+        .onAppear {
+            viewModel.send(intent: .loadListSong)
+        }
     }
 }
 
