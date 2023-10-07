@@ -32,5 +32,10 @@ struct MusicAppApp: App {
 // MARK: - TODO: tao man hinh mini notification
 // tao constant cho may cai string
 // tao icon cho app
-// tao mot cai toask view cho viec hien thi nhu add playlist thanh cong, xoa bai hat thanh cong, hen gio thanh cong, playlist empty check lai
-// lam man hinh setting
+// try to refactor code by using @EnvironmentObject than using singleton
+// handle logic khi mo app khac ma app minh tat nhac chua su ly
+// co y tuong convert sang da module giong voi app zig thu research va lam theo tren mot nhanh moi
+// tao custom font cho project va su dung
+// cover the logic when add new playlist with the same name has been exist in the core data
+// need to make all the .sink of publisher is using weak self
+// replace  the change state in the viewModel to dispatchQueue.main.async, need to review code hader

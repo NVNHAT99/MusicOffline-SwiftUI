@@ -10,16 +10,15 @@ import CoreData
 
 struct PlaylistDetailView: View {
     // MARK: - PROPERTIES
-    
     // MARK: - PROPERTIES WRAPER
     @State var isPresented: Bool = false
     @Environment(\.presentationMode) private var presentationMode
-    @ObservedObject var viewModel: PlaylistViewModel
+    @ObservedObject var viewModel: PlaylistDetailViewModel
     @StateObject var addNewsSongVM: AddNewSongsViewModel
 
-    init(viewModel: PlaylistViewModel) {
+    init(viewModel: PlaylistDetailViewModel) {
         self.viewModel = viewModel
-        self._addNewsSongVM = StateObject(wrappedValue: AddNewSongsViewModel(playlist: viewModel.state.playlist))
+        self._addNewsSongVM = StateObject(wrappedValue: AddNewSongsViewModel(state: .init(playlist: viewModel.state.playlist)))
     }
     
     var body: some View {
@@ -40,7 +39,9 @@ struct PlaylistDetailView: View {
                 }, rightView: {
                     AnyView(
                         NavigationLink(destination: {
-                            AddNewSongsView(viewModel: addNewsSongVM)
+                            AddNewSongsView(viewModel: addNewsSongVM) { result in
+                                viewModel.send(intent: .handleAddNewSongs(result))
+                            }
                         }, label: {
                             Text("Add news")
                         })
@@ -87,13 +88,21 @@ struct PlaylistDetailView: View {
             }
             .navigationBarHidden(true)
             .background(Color.black)
+            .transition(.slide)
+            .overlay(alignment: .bottom) {
+                if viewModel.state.isShowToastView {
+                    ToastView(isShowView: viewModel.isShowToastView(), message: viewModel.state.toastViewMessage, timeShowView: .seconds(2))
+                        .frame(height: 40)
+                        .padding(.bottom, 16)
+                }
+            }
         }
     }
 }
 
 struct LibaryDetail_Previews: PreviewProvider {
     static var previews: some View {
-        PlaylistDetailView(viewModel: PlaylistViewModel())
+        PlaylistDetailView(viewModel: PlaylistDetailViewModel())
     }
 }
 

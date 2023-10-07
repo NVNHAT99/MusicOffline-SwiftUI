@@ -14,4 +14,6 @@ struct PlaySongState {
     var currentTimePlaying: Double
     var song: SongInfo?
     var isDragSlideView: Bool = false
+    var toastViewMessage: String = String.empty
+    var isShowToastView: Bool = false
 }

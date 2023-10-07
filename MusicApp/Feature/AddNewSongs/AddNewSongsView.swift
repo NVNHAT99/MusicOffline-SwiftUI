@@ -11,8 +11,9 @@ struct AddNewSongsView: View {
     // MARK: - PROPERTIES
     @Environment(\.presentationMode) private var presentationMode
     @ObservedObject var viewModel: AddNewSongsViewModel
-    
     @State var arraysThe: [String] = []
+    
+    let onCompleted: (Result<Bool, Error>) -> Void
     var body: some View {
         VStack {
             CustomNavigationBar(type: .twoButtons(
@@ -33,27 +34,41 @@ struct AddNewSongsView: View {
             ) // custom navigationbar
             .frame(height: 50)
             .background(Color.black)
-            List {
-                ForEach(viewModel.state.arrayMP3File.indices, id: \.self) { index in
-                    Button {
-                        viewModel.send(intent: .toggleSelectedAt(index: index))
-
-                    } label: {
-                        SongItemView(urlMp3File: viewModel.state.arrayMP3File[index].fileURL.absoluteString)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 8)
-                    }
-                    .listRowBackground(viewModel.state.arrayMP3File[index].isSelected ? Color.red.opacity(0.5) : Color.backgroundColor)
-                    .listRowInsets(EdgeInsets())
+            
+            if viewModel.state.arrayMP3File.count <= 0 {
+                VStack(alignment: .center) {
+                    Spacer()
+                    Text("You don't have any song to add")
+                        .foregroundColor(.white)
+                        .frame(alignment: .center)
+                        .transition(.opacity)
+                    Spacer()
                 }
+                .frame(width: Helper.shared.keyWindown?.bounds.width ?? 200)
+            } else {
+                List {
+                    ForEach(viewModel.state.arrayMP3File.indices, id: \.self) { index in
+                        Button {
+                            viewModel.send(intent: .toggleSelectedAt(index: index))
+
+                        } label: {
+                            SongItemView(urlMp3File: viewModel.state.arrayMP3File[index].fileURL.absoluteString)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 8)
+                        }
+                        .listRowBackground(viewModel.state.arrayMP3File[index].isSelected ? Color.red.opacity(0.5) : Color.backgroundColor)
+                        .listRowInsets(EdgeInsets())
+                    }
+                }
+                .modifier(ListBackgroundModifier())
+                .cornerRadius(8, corners: .allCorners)
             }
-            .modifier(ListBackgroundModifier())
-            .cornerRadius(8, corners: .allCorners)
             
             Spacer()
             
             Button {
-                viewModel.send(intent: .addToPlaylist(onCompleted: {
+                viewModel.send(intent: .addToPlaylist(onCompleted: { result in
+                    onCompleted(result)
                     presentationMode.wrappedValue.dismiss()
                 }))
             } label: {
@@ -78,6 +93,6 @@ struct AddNewSongsView: View {
 
 struct AddNewSongs_Previews: PreviewProvider {
     static var previews: some View {
-        AddNewSongsView(viewModel: AddNewSongsViewModel(playlist: nil))
+        AddNewSongsView(viewModel: AddNewSongsViewModel(), onCompleted: {_ in})
     }
 }

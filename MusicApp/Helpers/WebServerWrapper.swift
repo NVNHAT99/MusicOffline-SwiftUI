@@ -7,11 +7,21 @@
 
 import Foundation
 import GCDWebServer
+import Combine
 
+enum WebLoaderError: Error {
+    case startFailed
+    case stopFailed
+}
+
+enum WebLoaderResult {
+    case startSuccess(ipAddress: String)
+    case stopSucesss
+}
 class WebServerWrapper: NSObject, ObservableObject {
     static let shared: WebServerWrapper = WebServerWrapper()
-    @Published var ipAddress: String = ""
     private var webUploader: GCDWebUploader?
+    let webLoaderResult = PassthroughSubject<Result<WebLoaderResult, WebLoaderError>, Never>()
     
     private override init() {
         super.init()
@@ -25,7 +35,12 @@ class WebServerWrapper: NSObject, ObservableObject {
             return
         }
         if !webUploader.isRunning {
-            webUploader.start()
+            let options: Dictionary<String, Any> = ["Port" : 8080, "AutomaticallySuspendInBackground" : false]
+            do {
+                try webUploader.start(options: options)
+            } catch  {
+                print(error)
+            }
             webUploader.allowedFileExtensions = ["mp3", "aac", "m4a", "wav"]
             if let serverURL = webUploader.serverURL {
                 
@@ -33,23 +48,23 @@ class WebServerWrapper: NSObject, ObservableObject {
                 let start = str.index(str.startIndex, offsetBy: 7)
                 let end = str.index(str.endIndex, offsetBy: -1)
                 let range = start..<end
-                let mySubstring = str[range]
-                ipAddress = String(mySubstring)
-                print("Visit \(serverURL) in your web browser")
+                let ipAddressStr = str[range]
+                webLoaderResult.send(.success(.startSuccess(ipAddress: String(ipAddressStr))))
             } else {
-                ipAddress = "No WiFi connected"
+                webLoaderResult.send(.failure(.startFailed))
             }
         }
     }
     
     func stopWebUploader() {
         guard let webUploader = webUploader else {
+            webLoaderResult.send(.failure(.stopFailed))
             return
         }
-        
+                    
         if webUploader.isRunning {
             webUploader.stop()
-            ipAddress = ""
+            webLoaderResult.send(.success(.stopSucesss))
         }
     }
 }

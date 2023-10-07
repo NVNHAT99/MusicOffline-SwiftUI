@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 import SwiftUI
 
-final class PlaylistViewModel: ObservableObject {
+final class PlaylistDetailViewModel: ObservableObject {
     // MARK: - PROPERTIES
     
     @Published private(set) var state: PlaylistDetailsState
@@ -26,8 +26,28 @@ final class PlaylistViewModel: ObservableObject {
             deleteSongAt(index: index)
         case .updatePlaylist(let playlist):
             state.playlist = playlist
+        case .handleAddNewSongs(let result):
+            handleAddNewSongs(result: result)
         default:
             break
+        }
+    }
+    
+    private func handleAddNewSongs(result: Result<Bool, Error>) {
+        var stateCopy = self.state
+        switch result {
+        case .success:
+            stateCopy.isShowToastView = true
+            stateCopy.toastViewMessage = "Add new Songs Successfuly."
+        case .failure:
+            stateCopy.isShowToastView = true
+            stateCopy.toastViewMessage = "Add new Songs failed."
+        }
+        
+        DispatchQueue.main.async {
+            withAnimation {
+                self.state = stateCopy
+            }
         }
     }
     
@@ -48,9 +68,25 @@ final class PlaylistViewModel: ObservableObject {
         context.performAndWait {
             playlist.songsArray = updatedSongsArray
             do {
-                self.state.playlist = playlist
+                var stateCopy = self.state
+                stateCopy.playlist = playlist
+                stateCopy.isShowToastView = true
+                stateCopy.toastViewMessage = "Deleted song successfuly."
+                DispatchQueue.main.async {
+                    withAnimation {
+                        self.state = stateCopy
+                    }
+                }
                 try context.save()
             } catch let error as NSError {
+                var stateCopy = self.state
+                stateCopy.isShowToastView = true
+                stateCopy.toastViewMessage = "Deleted song failed."
+                DispatchQueue.main.async {
+                    withAnimation {
+                        self.state = stateCopy
+                    }
+                }
                 print("Could not save. \(error), \(error.userInfo)")
                 
             }
@@ -72,6 +108,15 @@ final class PlaylistViewModel: ObservableObject {
         return state.playlist?.songsArray.enumerated().map { index, song in
                 SongIdentifiable(songUrlStr: song, index: index)
         } ?? []
+    }
+    
+    func isShowToastView() -> Binding<Bool> {
+        return .init {
+            return self.state.isShowToastView
+        } set: { newValue in
+            self.state.isShowToastView = newValue
+        }
+
     }
 }
 

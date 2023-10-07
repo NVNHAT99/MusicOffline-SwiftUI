@@ -161,6 +161,16 @@ final class DocumentFileManager: NSObject {
 //                        singerName: String.empty,
 //                        thumbnail: thumbnail)
 //    }
+    
+    func removeAllFile(onCompleted: @escaping (Result<Bool, Error>) -> Void) {
+        let documentURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        do {
+            try FileManager.default.removeItem(at: documentURL)
+            onCompleted(.success(true))
+        } catch {
+            onCompleted(.failure(error))
+        }
+    }
 }
 
 extension DocumentFileManager: UIDocumentPickerDelegate {

@@ -10,5 +10,5 @@ import Foundation
 enum AddNewSongsIntent {
     case loadListSong
     case toggleSelectedAt(index: Int)
-    case addToPlaylist(onCompleted: () -> Void)
+    case addToPlaylist(onCompleted: (Result<Bool, Error>) -> Void)
 }

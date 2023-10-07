@@ -24,6 +24,7 @@ final class PlaylistManager: ObservableObject {
     
     // MARK: - Passthrought Subjec
     let isPlayingPublisher = PassthroughSubject<Bool, Never>()
+    let isPlayAudioFailed = PassthroughSubject<Bool, Never>()
     let currentTimePublisher = PassthroughSubject<Double, Never>()
     let prepareNewSongPublisher = PassthroughSubject<SongInfo?, Never>()
     let stateRepeatPublisher = PassthroughSubject<StateRepeat, Never>()
@@ -141,6 +142,10 @@ final class PlaylistManager: ObservableObject {
     }
     
     func getCurrentSongInfo() -> SongInfo? {
+        if currentSongInfo == nil {
+            returnEmptySong()
+        }
+        
         return currentSongInfo
     }
     
@@ -172,6 +177,7 @@ final class PlaylistManager: ObservableObject {
                 let songInfo = try await DocumentFileManager.shared.loadMetadata(stringURL: urlString)
                 self.currentSongInfo = songInfo
                 prepareNewSongPublisher.send(songInfo)
+                currentTimePublisher.send(0)
             } catch {
                 print(error)
             }
@@ -181,8 +187,8 @@ final class PlaylistManager: ObservableObject {
     private func returnEmptySong() {
         playVM?.pauseAudio()
         prepearNewSong(urlString: String.empty)
-        currentTimePublisher.send(0)
         isPlayingPublisher.send(false)
+        isPlayAudioFailed.send(true)
     }
     
     private  func loadLastStateRepeat() {

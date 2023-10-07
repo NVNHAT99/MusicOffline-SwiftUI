@@ -53,6 +53,9 @@ struct CustomSliderView: View {
     
     // Calculate progress width
     private func progressWidth(geometry: GeometryProxy) -> CGFloat {
+        if maxValue == 0 {
+            return 0
+        }
         let fullWidth = geometry.size.width
         return fullWidth * CGFloat(self.value / maxValue)
     }

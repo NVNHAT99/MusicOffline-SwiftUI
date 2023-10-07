@@ -10,4 +10,5 @@ enum PlaylistDetailIntent {
     case playSongAt(urlStr: String)
     case deleteSong(index: Int)
     case updatePlaylist(Playlist?)
+    case handleAddNewSongs(Result<Bool, Error>)
 }

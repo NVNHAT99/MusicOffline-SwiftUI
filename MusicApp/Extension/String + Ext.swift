@@ -15,6 +15,6 @@ extension String {
     }
     
     public static var Unkown: String {
-        "Unkonw"
+        "Unknow"
     }
 }

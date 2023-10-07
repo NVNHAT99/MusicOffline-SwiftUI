@@ -41,6 +41,32 @@ final class PlaySongViewModel: ObservableObject {
                 }
             }
             .store(in: &cancelBag)
+        
+        playlisManager.isPlayAudioFailed
+            .sink { value in
+                if value {
+                    if self.state.isShowToastView {
+                        self.state.isShowToastView = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            var stateCopy = self.state
+                            stateCopy.isShowToastView = true
+                            stateCopy.toastViewMessage = "Play new song is failed."
+                            withAnimation {
+                                self.state = stateCopy
+                            }
+                        }
+                    } else {
+                        var stateCopy = self.state
+                        stateCopy.isShowToastView = true
+                        stateCopy.toastViewMessage = "Play new song is failed."
+                        withAnimation {
+                            self.state.isShowToastView = false
+                            self.state = stateCopy
+                        }
+                    }
+                }
+            }
+            .store(in: &cancelBag)
     }
     
     func send(intent: PlaysongViewIntent) {
@@ -56,22 +82,49 @@ final class PlaySongViewModel: ObservableObject {
         case .previusSong:
             PlaylistManager.shared.playPreviousSong()
         case .stateRepeat:
-            var newStateRepeat: StateRepeat
-            switch state.stateRepeat {
-            case .nomal:
-                newStateRepeat = .repeatOne
-            case .repeatOne:
-                newStateRepeat = .shuffle
-            case .shuffle:
-                newStateRepeat = .nomal
-            }
-            PlaylistManager.shared.changeStateRepeat(state: newStateRepeat)
-            state.stateRepeat = newStateRepeat
+            changeStateRepeate()
         case .timeTurnOff(let time):
-            let seconds = Double(time * 60)
-            PlaylistManager.shared.setupTurnOff(time: seconds)
+            setupTimeTurnOff(time: time)
         case .updateRunning(let newTime):
             PlaylistManager.shared.changeCurrentTimePlay(newTime: newTime)
+        }
+    }
+    
+    private func setupTimeTurnOff(time: Int) {
+        let seconds = Double(time * 60)
+        PlaylistManager.shared.setupTurnOff(time: seconds)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            var stateCopy = self.state
+            stateCopy.isShowToastView = true
+            stateCopy.toastViewMessage = "player will turn off in \(time) minutes."
+            withAnimation {
+                self.state = stateCopy
+            }
+        }
+    }
+    private func changeStateRepeate() {
+        var newStateRepeat: StateRepeat
+        var messageStr: String = String.empty
+        switch state.stateRepeat {
+        case .nomal:
+            newStateRepeat = .repeatOne
+            messageStr = "repeat one song."
+        case .repeatOne:
+            newStateRepeat = .shuffle
+            messageStr = "shuffle playlist."
+        case .shuffle:
+            newStateRepeat = .nomal
+            messageStr = "repeat normal."
+        }
+        PlaylistManager.shared.changeStateRepeat(state: newStateRepeat)
+        DispatchQueue.main.async {
+            var stateCopy = self.state
+            stateCopy.isShowToastView = true
+            stateCopy.toastViewMessage = "\(messageStr)"
+            stateCopy.stateRepeat = newStateRepeat
+            withAnimation {
+                self.state = stateCopy
+            }
         }
     }
     
@@ -89,11 +142,14 @@ final class PlaySongViewModel: ObservableObject {
             get: {
                 self.state.isDragSlideView
             }, set: { newValue in
-                self.state.isDragSlideView = newValue
+                DispatchQueue.main.async {
+                    self.state.isDragSlideView = newValue
+                }
             }
         )
     }
     
+    // MARK: - TODO: need convert this function move to extension of the string
     func convertTime(input: Int) -> String {
         let hours = input / 3600
         let minutes = (input % 3600) / 60
@@ -125,5 +181,18 @@ final class PlaySongViewModel: ObservableObject {
         case .shuffle:
             return "shuffle"
         }
+    }
+    
+    func isShowToastView() -> Binding<Bool> {
+        return .init {
+            return self.state.isShowToastView
+        } set: { newValue in
+            DispatchQueue.main.async {
+                withAnimation {
+                    self.state.isShowToastView = newValue
+                }
+            }
+        }
+
     }
 }

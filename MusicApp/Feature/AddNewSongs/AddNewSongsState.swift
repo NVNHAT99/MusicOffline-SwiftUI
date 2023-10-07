@@ -11,4 +11,5 @@ struct AddNewSongState {
     var arrayMP3File: [MP3File] = []
     var selectedCount: Int = 0
     var isLoaded: Bool = false
+    var playlist: Playlist?
 }

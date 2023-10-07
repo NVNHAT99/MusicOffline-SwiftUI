@@ -11,13 +11,6 @@ import CoreData
 
 final class LibaryViewViewModel: ObservableObject {
     // MARK: - PROPERTIES
-    let tabItems = [TabItem(image: "house", title: ""),
-                    TabItem(image: "book", title: ""),
-                    TabItem(image: "gearshape", title: ""),
-    ]
-    
-    let columns: [GridItem] = [GridItem(.adaptive(minimum: 150)),
-                               GridItem(.adaptive(minimum: 150))]
     
     @Published private(set) var state: LibaryViewState
     
@@ -54,34 +47,58 @@ final class LibaryViewViewModel: ObservableObject {
         context.performAndWait {
             context.delete(playlist)
             PersistenceController.shared.saveContext()
-            loadPlaylists()
+            loadPlaylists(isFromDeleted: true)
             PlaylistManager.shared.updateAffterDeletePlaylist(playlist: playlist)
         }
     }
     
-    private func loadPlaylists() {
+    private func loadPlaylists(isFromDeleted: Bool = false) {
         state.isLoading = true
         let context = PersistenceController.shared.viewContext
         let fetchRequest: NSFetchRequest<Playlist> = Playlist.fetchRequest()
         
         do {
             let playlists = try context.fetch(fetchRequest)
-            state.playlist = playlists
+            DispatchQueue.main.async {
+                withAnimation {
+                    var stateCopy = self.state
+                    stateCopy.playlist = playlists
+                    if isFromDeleted {
+                        stateCopy.isShowToastView = true
+                        stateCopy.toastViewMessage = "Delete playlist successfully"
+                    }
+                    self.state = stateCopy
+                }
+            }
         } catch {
-            state.playlist = []
-            state.isLoading = false
+            DispatchQueue.main.async {
+                withAnimation {
+                    var stateCopy = self.state
+                    stateCopy.playlist = []
+                    self.state = stateCopy
+                }
+            }
             print("Error fetching playlists: \(error)")
         }
         
     }
     // this code cant not using for sheet modfier
     // because that make change value for the state and that make the view rerender
-    // this could be using for binding value for the other view
+    // this could be using for binding value for the other view no presented
     func isPresented() -> Binding<Bool> {
         return Binding<Bool>(
             get: { self.state.isPresnted },
             set: { _ in
             }
         )
+    }
+    
+    func isShowToastView() -> Binding<Bool> {
+        return .init {
+            return self.state.isShowToastView
+        } set: { newValue in
+            self.state.isShowToastView = newValue
+        }
+
     }
 }

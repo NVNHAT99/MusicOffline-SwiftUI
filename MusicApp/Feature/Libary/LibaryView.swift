@@ -55,25 +55,30 @@ struct LibaryView: View {
                                     Text("You don't have any play list yet")
                                         .foregroundColor(.white)
                                         .frame(alignment: .center)
+                                        .transition(.opacity)
                                 }
-                                .frame(width: proxy.size.width,height: 50)
+                                .frame(width: proxy.size.width)
                             } else {
                                 List {
                                     ForEach(viewModel.state.playlist) { item in
                                         NavigationLink {
-                                            PlaylistDetailView(viewModel: PlaylistViewModel(state: .init(playlist: item)))
+                                            PlaylistDetailView(viewModel: PlaylistDetailViewModel(state: .init(playlist: item)))
                                         } label: {
                                             PlayListItemView(playListName: item.name ?? String.empty)
                                                 .foregroundColor(.white)
                                                 
                                         }
                                     }
+                                    .onDelete(perform: { indexSet in
+                                        indexSet.forEach { index in
+                                            viewModel.send(intent: .deletePlaylist(viewModel.state.playlist[index]))
+                                        }
+                                    })
                                     .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
                                     .listRowBackground(Color.backgroundColor)
                                     .buttonStyle(AnimationPressStyle())
                                     .foregroundColor(.white)
                                     .listRowSeparatorTint(.gray)
-
                                 }
                                 .modifier(ListBackgroundModifier())
                             }
@@ -85,8 +90,15 @@ struct LibaryView: View {
                 } // ZStack
             }//VStack
             .ignoresSafeArea(.all)
-            .onAppear {
+            .task {
                 viewModel.send(intent: .loadPlaylist)
+            }
+            .overlay(alignment: .bottom) {
+                if viewModel.state.isShowToastView {
+                    ToastView(isShowView: viewModel.isShowToastView(), message: viewModel.state.toastViewMessage, timeShowView: .seconds(2))
+                        .frame(height: 40)
+                        .padding(.bottom, 16)
+                }
             }
         }
         

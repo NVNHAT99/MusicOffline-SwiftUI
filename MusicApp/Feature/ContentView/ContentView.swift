@@ -12,6 +12,7 @@ struct ContentView: View {
     @ObservedObject private var viewModel: ContentViewViewModel
     @StateObject var libaryViewHandler: LibaryViewViewModel = LibaryViewViewModel()
     @StateObject var playVM = PlayViewModel()
+    @StateObject var settingViewVM = SettingViewViewModel()
     init(tabSelection: Tab = .home, viewModel: ContentViewViewModel) {
         self.tabSelection = tabSelection
         self.viewModel = viewModel
@@ -27,15 +28,18 @@ struct ContentView: View {
                     .background(Color.black)
                     .foregroundColor(.white)
                     .tag(Tab.home)
+                    .transition(.slide)
                    
                     
                     //second tabview
                     LibaryView(handler: libaryViewHandler)
                         .tag(Tab.libary)
+                        .transition(.slide)
                                             
                     // Third tabview
-                    SettingView()
+                    SettingView(viewModel: settingViewVM)
                         .tag(Tab.setting)
+                        .transition(.slide)
 
                 }
                 .overlay(alignment: .bottom) {
@@ -48,7 +52,7 @@ struct ContentView: View {
                     }
                     .ignoresSafeArea(.all)
                 }
-                .animation(.default, value: tabSelection)
+                
             }
             .ignoresSafeArea(.all)
             .navigationBarHidden(true)

@@ -120,6 +120,10 @@ struct PlaySongView: View {
                         }
                     }
                     .transition(.move(edge: .bottom))
+                } else if viewModel.state.isShowToastView {
+                    ToastView(isShowView: viewModel.isShowToastView(), message: viewModel.state.toastViewMessage, timeShowView: .seconds(2))
+                        .frame(height: 40)
+                        .padding(.bottom, 24)
                 }
             })
             .edgesIgnoringSafeArea(.bottom)

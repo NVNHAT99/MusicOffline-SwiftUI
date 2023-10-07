@@ -9,13 +9,9 @@ import SwiftUI
 
 struct SettingView: View {
     // MARK: - properties
-    @State private var isOnTimer: Bool = false
-    // MARK: - display file name as song title
-    @State private var isOnDisPlayFileName: Bool = false
-    @State private var isOnAllowDupicate: Bool = false
-    init() {
-        let appearance = UITableView.appearance()
-        appearance.backgroundColor = UIColor(cgColor: Color.backgroundColor.cgColor ?? UIColor.gray.cgColor)
+    @ObservedObject var viewModel: SettingViewViewModel
+    init(viewModel: SettingViewViewModel) {
+        self.viewModel = viewModel
     }
     var body: some View {
         VStack {
@@ -26,47 +22,100 @@ struct SettingView: View {
                 .background(Color.backgroundColor)
                 .padding(.top, Helper.shared.safeAreaInsets?.top)
             
-            List {
-                Section {
-                    Text("Import from drive")
-                        .onTapGesture {
-                            WebServerWrapper.shared.startWebUploader()
+            GeometryReader { proxy in
+                List {
+                    Section {
+                        VStack(alignment: .leading) {
+                            Text("Transfer Mp3 files")
+                                .fontWeight(.bold)
+                            HStack {
+                                Spacer()
+                                Button {
+                                    viewModel.send(intent: .toggleServer)
+                                } label: {
+                                    VStack {
+                                        VStack {
+                                            Text(viewModel.state.isServerOn ? "Disconnected Server" : "Connect Server")
+                                        }
+                                        .frame(width: 160)
+                                        .padding(16)
+                                        .foregroundColor(.white)
+                                        .background(.red.opacity(0.8))
+                                        .cornerRadius(8, corners: .allCorners)
+                                    }
+                                    
+                                }
+                                Spacer()
+                            }
                         }
-                    NavigationLink {
                         
-                    } label: {
-                        Text("Remove Ads. buy now")
+                        if viewModel.state.isServerOn {
+                            VStack(alignment: .leading, spacing: 20) {
+                                Text("Open your browser with this URL: ")
+                                
+                                HStack {
+                                    Text("Http://\(viewModel.state.ipAdress ?? String.empty)/")
+                                        .foregroundColor(.blue)
+                                        
+                                    Spacer()
+                                    Button {
+                                        UIPasteboard.general.string = "http://\(viewModel.state.ipAdress ?? String.empty)/"
+                                        print("da copy roi day")
+                                    } label: {
+                                        Text("Copy URL")
+                                    }
+                                    .buttonStyle(.bordered)
+                                }
+                                
+                                    
+                                Text("Then upload files from your computer.\nplease don't switch to another app or lock your phone while transfering")
+                            }
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(4)
+                            .transition(.move(edge: .bottom))
+                            .frame(width: 300)
+                            
+                        }
+                        NavigationLink {
+                            
+                        } label: {
+                            Text("Remove Ads. buy now")
+                        }
+                        
                     }
+                    .listRowBackground(Color.headerBackground)
                     
-                }
-                .listRowBackground(Color.headerBackground)
-                
-                Section {
                     
-                    Toggle("Turn on timer to stop playing\nmusic", isOn: $isOnTimer)
-                    Toggle("Display file names as song titles", isOn: $isOnDisPlayFileName)
-                    Toggle("Allow upload dupicate files", isOn: $isOnAllowDupicate)
-                    
+                    Section {
+                        Button {
+                            viewModel.send(intent: .deleteAllSongs)
+                        } label: {
+                            Text("Delete all songs")
+                        }
+
+                    }
+                    .listRowBackground(Color.headerBackground)
                 }
-                .listRowBackground(Color.headerBackground)
-                
-                Section {
-                    Text("Delete all songs")
-                }
-                .listRowBackground(Color.headerBackground)
+                .listStyle(.insetGrouped)
+                .foregroundColor(.white)
+                .modifier(ListBackgroundModifier())
             }
-            .listStyle(.insetGrouped)
-            .foregroundColor(.white)
-            .navigationBarHidden(true)
-            .modifier(ListBackgroundModifier())
+            
         }
         .ignoresSafeArea(.all)
-        .background(Color.backgroundColor)
+        .background(Color.black)
+        .overlay(alignment: .bottom) {
+            if viewModel.state.isShowToastView {
+                ToastView(isShowView: viewModel.isShowToastView(), message: viewModel.state.messageToastView, timeShowView: .seconds(2))
+                    .padding(.bottom, 16)
+            }
+        }
     }
 }
 
 struct SettingTabView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingView()
+        SettingView(viewModel: SettingViewViewModel())
     }
 }

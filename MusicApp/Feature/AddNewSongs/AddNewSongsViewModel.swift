@@ -11,11 +11,8 @@ final class AddNewSongsViewModel: ObservableObject {
     // MARK: - PROPERTIES WRAPER
     @Published private(set) var state: AddNewSongState
     
-    let playlist: Playlist?
-    
-    init(state: AddNewSongState = .init(), playlist: Playlist?) {
+    init(state: AddNewSongState = .init()) {
         self.state = state
-        self.playlist = playlist
     }
     
     func send(intent: AddNewSongsIntent) {
@@ -35,10 +32,10 @@ final class AddNewSongsViewModel: ObservableObject {
         state.arrayMP3File = DocumentFileManager.shared.loadMP3File()
     }
     
-    func addToPlaylist(onCompleted: () -> Void) {
+    func addToPlaylist(onCompleted: (Result<Bool, Error>) -> Void) {
         let context = PersistenceController.shared.viewContext
         context.performAndWait {
-            var songArray: [String] = playlist?.songsArray ?? []
+            var songArray: [String] =  self.state.playlist?.songsArray ?? []
             for item in state.arrayMP3File {
                 if item.isSelected, !(songArray.contains(item.fileURL.absoluteString)) {
                     songArray.append(item.fileURL.absoluteString)
@@ -46,21 +43,25 @@ final class AddNewSongsViewModel: ObservableObject {
             }
 
             do {
-                playlist?.songsArray = songArray
+                DispatchQueue.main.async {
+                    self.state.playlist?.songsArray = songArray
+                }
                 try context.save()
-                onCompleted()
+                onCompleted(.success(true))
             } catch {
-                print(error)
+                onCompleted(.failure(error))
             }
         }
     }
     
     func toggleSelected(at indext: Int) {
-        state.arrayMP3File[indext].isSelected.toggle()
-        if state.arrayMP3File[indext].isSelected {
-            state.selectedCount += 1
-        } else {
-            state.selectedCount -= 1
+        DispatchQueue.main.async {
+            self.state.arrayMP3File[indext].isSelected.toggle()
+            if self.state.arrayMP3File[indext].isSelected {
+                self.state.selectedCount += 1
+            } else {
+                self.state.selectedCount -= 1
+            }
         }
     }
 }
