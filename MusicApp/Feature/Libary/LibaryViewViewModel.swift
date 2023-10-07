@@ -59,7 +59,10 @@ final class LibaryViewViewModel: ObservableObject {
         
         do {
             let playlists = try context.fetch(fetchRequest)
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else {
+                    return
+                }
                 withAnimation {
                     var stateCopy = self.state
                     stateCopy.playlist = playlists
@@ -71,7 +74,10 @@ final class LibaryViewViewModel: ObservableObject {
                 }
             }
         } catch {
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else {
+                    return
+                }
                 withAnimation {
                     var stateCopy = self.state
                     stateCopy.playlist = []

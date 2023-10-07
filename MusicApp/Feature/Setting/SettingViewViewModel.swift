@@ -14,46 +14,40 @@ final class SettingViewViewModel: ObservableObject {
     init(state: SettingViewState = .init()) {
         self.state = state
         
-        WebServerWrapper.shared.webLoaderResult.sink { result in
+        WebServerWrapper.shared.webLoaderResult.sink { [weak self] result in
+            guard let self = self else {
+                return
+            }
+            
             switch result {
             case .success(let newResult):
                 switch newResult {
                 case .startSuccess(ipAddress: let ipAddress):
-                    DispatchQueue.main.async {
-                        withAnimation {
-                            var coppyState = self.state
-                            coppyState.ipAdress = ipAddress
-                            coppyState.isServerOn = true
-                            self.state = coppyState
-                        }
-                        
+                    withAnimation {
+                        var coppyState = self.state
+                        coppyState.ipAdress = ipAddress
+                        coppyState.isServerOn = true
+                        self.state = coppyState
                     }
                 case .stopSucesss:
-                    DispatchQueue.main.async {
-                        withAnimation {
-                            self.state.isServerOn = false
-                        }
+                    withAnimation {
+                        self.state.isServerOn = false
                     }
                 }
             case .failure(let error):
                 switch error {
                 case .startFailed:
-                    DispatchQueue.main.async {
-                        withAnimation {
-                            var coppyState = self.state
-                            coppyState.isShowToastView = true
-                            coppyState.messageToastView = "Start server is failed!"
-                            self.state = coppyState
-                        }
-                        
-                    }
-                case .stopFailed:
                     withAnimation {
                         var coppyState = self.state
                         coppyState.isShowToastView = true
-                        coppyState.messageToastView = "Disconnect server is failed!"
+                        coppyState.messageToastView = "Start server is failed!"
                         self.state = coppyState
                     }
+                case .stopFailed:
+                    var coppyState = self.state
+                    coppyState.isShowToastView = true
+                    coppyState.messageToastView = "Disconnect server is failed!"
+                    self.state = coppyState
                 }
             }
         }.store(in: &cancelBag)
@@ -78,7 +72,10 @@ final class SettingViewViewModel: ObservableObject {
     }
     
     private func deleteAllSongs() {
-        DocumentFileManager.shared.removeAllFile { result in
+        DocumentFileManager.shared.removeAllFile { [weak self] result in
+            guard let self = self else {
+                return
+            }
             var copyState = self.state
             switch result {
             case .success:

@@ -44,21 +44,25 @@ final class PlaylistDetailViewModel: ObservableObject {
             stateCopy.toastViewMessage = "Add new Songs failed."
         }
         
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else {
+                return
+            }
+            
             withAnimation {
                 self.state = stateCopy
             }
         }
     }
     
-    func playSong(urlStr: String) {
+    private func playSong(urlStr: String) {
         if let index = state.playlist?.songsArray.firstIndex(of: urlStr) {
             PlaylistManager.shared.updatePlaylist(playlist: state.playlist, currentIndex: index)
             PlaylistManager.shared.playSong(urlString: urlStr)
         }
     }
     
-    func deleteSongAt(index: Int) {
+    private func deleteSongAt(index: Int) {
         guard let playlist = state.playlist, index < playlist.songsArray.count else {
             return
         }
@@ -73,7 +77,11 @@ final class PlaylistDetailViewModel: ObservableObject {
                 stateCopy.isShowToastView = true
                 stateCopy.toastViewMessage = "Deleted song successfuly."
                 DispatchQueue.main.async {
-                    withAnimation {
+                    withAnimation { [weak self] in
+                        guard let self = self else {
+                            return
+                        }
+                        
                         self.state = stateCopy
                     }
                 }
@@ -82,7 +90,11 @@ final class PlaylistDetailViewModel: ObservableObject {
                 var stateCopy = self.state
                 stateCopy.isShowToastView = true
                 stateCopy.toastViewMessage = "Deleted song failed."
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else {
+                        return
+                    }
+                    
                     withAnimation {
                         self.state = stateCopy
                     }

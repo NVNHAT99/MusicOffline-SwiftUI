@@ -28,11 +28,11 @@ final class AddNewSongsViewModel: ObservableObject {
         }
     }
     
-    func loadListSong() {
+    private func loadListSong() {
         state.arrayMP3File = DocumentFileManager.shared.loadMP3File()
     }
     
-    func addToPlaylist(onCompleted: (Result<Bool, Error>) -> Void) {
+    private func addToPlaylist(onCompleted: (Result<Bool, Error>) -> Void) {
         let context = PersistenceController.shared.viewContext
         context.performAndWait {
             var songArray: [String] =  self.state.playlist?.songsArray ?? []
@@ -43,7 +43,11 @@ final class AddNewSongsViewModel: ObservableObject {
             }
 
             do {
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else {
+                        return
+                    }
+                    
                     self.state.playlist?.songsArray = songArray
                 }
                 try context.save()
@@ -54,8 +58,12 @@ final class AddNewSongsViewModel: ObservableObject {
         }
     }
     
-    func toggleSelected(at indext: Int) {
-        DispatchQueue.main.async {
+    private func toggleSelected(at indext: Int) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else {
+                return
+            }
+            
             self.state.arrayMP3File[indext].isSelected.toggle()
             if self.state.arrayMP3File[indext].isSelected {
                 self.state.selectedCount += 1

@@ -22,12 +22,18 @@ final class PlaySongViewModel: ObservableObject {
         playlisManager.prepareNewSongPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] songInfo in
-                self?.state.song = songInfo
+                guard let self = self else {
+                    return
+                }
+                self.state.song = songInfo
             }
             .store(in: &cancelBag)
         
         playlisManager.currentTimePublisher
-            .sink { newValue in
+            .sink { [weak self] newValue in
+                guard let self = self else {
+                    return
+                }
                 if !self.state.isDragSlideView {
                     self.state.currentTimePlaying = newValue
                 }
@@ -36,14 +42,20 @@ final class PlaySongViewModel: ObservableObject {
         
         playlisManager.isPlayingPublisher
             .sink { [weak self] newValue in
-                if newValue != self?.state.isPlaying {
-                    self?.state.isPlaying = newValue
+                guard let self = self else {
+                    return
+                }
+                if newValue != self.state.isPlaying {
+                    self.state.isPlaying = newValue
                 }
             }
             .store(in: &cancelBag)
         
         playlisManager.isPlayAudioFailed
-            .sink { value in
+            .sink { [weak self] value in
+                guard let self = self else {
+                    return
+                }
                 if value {
                     if self.state.isShowToastView {
                         self.state.isShowToastView = false
@@ -93,7 +105,10 @@ final class PlaySongViewModel: ObservableObject {
     private func setupTimeTurnOff(time: Int) {
         let seconds = Double(time * 60)
         PlaylistManager.shared.setupTurnOff(time: seconds)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else {
+                return
+            }
             var stateCopy = self.state
             stateCopy.isShowToastView = true
             stateCopy.toastViewMessage = "player will turn off in \(time) minutes."
@@ -117,7 +132,10 @@ final class PlaySongViewModel: ObservableObject {
             messageStr = "repeat normal."
         }
         PlaylistManager.shared.changeStateRepeat(state: newStateRepeat)
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else {
+                return
+            }
             var stateCopy = self.state
             stateCopy.isShowToastView = true
             stateCopy.toastViewMessage = "\(messageStr)"

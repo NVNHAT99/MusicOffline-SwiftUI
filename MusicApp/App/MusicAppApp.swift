@@ -37,5 +37,3 @@ struct MusicAppApp: App {
 // co y tuong convert sang da module giong voi app zig thu research va lam theo tren mot nhanh moi
 // tao custom font cho project va su dung
 // cover the logic when add new playlist with the same name has been exist in the core data
-// need to make all the .sink of publisher is using weak self
-// replace  the change state in the viewModel to dispatchQueue.main.async, need to review code hader
