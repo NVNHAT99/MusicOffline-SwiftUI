@@ -37,16 +37,11 @@ struct LibaryView: View {
                                 Spacer()
                                 
                                 Button {
-                                    isActive = true
+                                    viewModel.send(intent: .showAddNewPlaylist(value: true))
                                 } label: {
                                     Text("Add New")
                                 } // Button Add new
                                 .foregroundColor(.white)
-                                .sheet(isPresented: $isActive) {
-                                    AddNewPlayListView { name in
-                                        viewModel.send(intent: .addNewPlayList(name))
-                                    }
-                                }
                                 Spacer()
                                     .frame(width: 10)
                             }
@@ -98,6 +93,14 @@ struct LibaryView: View {
                     ToastView(isShowView: viewModel.isShowToastView(), message: viewModel.state.toastViewMessage, timeShowView: .seconds(2))
                         .frame(height: 40)
                         .padding(.bottom, 16)
+                } else if viewModel.state.isShowAddPlaylist {
+                    AddNewPlayListView(viewmodel: AddNewPlaylistViewmodel(), onCreatePlaylist: {
+                        viewModel.send(intent: .showAddNewPlaylist(value: false))
+                        viewModel.send(intent: .loadPlaylist)
+                    }, onDismiss: {
+                        viewModel.send(intent: .showAddNewPlaylist(value: false))
+                    })
+                    .transition(.move(edge: .bottom))
                 }
             }
         }

@@ -19,7 +19,7 @@ struct SettingView: View {
                 .frame(height: 70)
                 .foregroundColor(.white)
                 .padding(.leading, 26)
-                .background(Color.backgroundColor)
+                .background(Color.black)
                 .padding(.top, Helper.shared.safeAreaInsets?.top)
             
             GeometryReader { proxy in
@@ -108,6 +108,7 @@ struct SettingView: View {
         .overlay(alignment: .bottom) {
             if viewModel.state.isShowToastView {
                 ToastView(isShowView: viewModel.isShowToastView(), message: viewModel.state.messageToastView, timeShowView: .seconds(2))
+                    .frame(height: 40)
                     .padding(.bottom, 16)
             }
         }

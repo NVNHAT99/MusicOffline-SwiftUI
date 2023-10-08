@@ -43,13 +43,7 @@ final class AddNewSongsViewModel: ObservableObject {
             }
 
             do {
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else {
-                        return
-                    }
-                    
-                    self.state.playlist?.songsArray = songArray
-                }
+                self.state.playlist?.songsArray = songArray
                 try context.save()
                 onCompleted(.success(true))
             } catch {

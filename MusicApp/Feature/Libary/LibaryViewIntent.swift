@@ -12,4 +12,5 @@ enum LibaryViewIntent {
     case addNewPlayList(String)
     case deletePlaylist(Playlist)
     case updateIsPresented(Bool)
+    case showAddNewPlaylist(value: Bool)
 }

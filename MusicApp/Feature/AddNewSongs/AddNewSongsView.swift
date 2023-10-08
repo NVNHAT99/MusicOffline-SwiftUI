@@ -11,7 +11,6 @@ struct AddNewSongsView: View {
     // MARK: - PROPERTIES
     @Environment(\.presentationMode) private var presentationMode
     @ObservedObject var viewModel: AddNewSongsViewModel
-    @State var arraysThe: [String] = []
     
     let onCompleted: (Result<Bool, Error>) -> Void
     var body: some View {

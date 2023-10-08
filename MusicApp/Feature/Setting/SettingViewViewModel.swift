@@ -19,35 +19,37 @@ final class SettingViewViewModel: ObservableObject {
                 return
             }
             
-            switch result {
-            case .success(let newResult):
-                switch newResult {
-                case .startSuccess(ipAddress: let ipAddress):
-                    withAnimation {
-                        var coppyState = self.state
-                        coppyState.ipAdress = ipAddress
-                        coppyState.isServerOn = true
-                        self.state = coppyState
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let newResult):
+                    switch newResult {
+                    case .startSuccess(ipAddress: let ipAddress):
+                        withAnimation {
+                            var coppyState = self.state
+                            coppyState.ipAdress = ipAddress
+                            coppyState.isServerOn = true
+                            self.state = coppyState
+                        }
+                    case .stopSucesss:
+                        withAnimation {
+                            self.state.isServerOn = false
+                        }
                     }
-                case .stopSucesss:
-                    withAnimation {
-                        self.state.isServerOn = false
-                    }
-                }
-            case .failure(let error):
-                switch error {
-                case .startFailed:
-                    withAnimation {
+                case .failure(let error):
+                    switch error {
+                    case .startFailed:
+                        withAnimation {
+                            var coppyState = self.state
+                            coppyState.isShowToastView = true
+                            coppyState.messageToastView = "Start server is failed!"
+                            self.state = coppyState
+                        }
+                    case .stopFailed:
                         var coppyState = self.state
                         coppyState.isShowToastView = true
-                        coppyState.messageToastView = "Start server is failed!"
+                        coppyState.messageToastView = "Disconnect server is failed!"
                         self.state = coppyState
                     }
-                case .stopFailed:
-                    var coppyState = self.state
-                    coppyState.isShowToastView = true
-                    coppyState.messageToastView = "Disconnect server is failed!"
-                    self.state = coppyState
                 }
             }
         }.store(in: &cancelBag)
@@ -101,7 +103,9 @@ final class SettingViewViewModel: ObservableObject {
         return .init {
             return self.state.isShowToastView
         } set: { newValue in
-            self.state.isShowToastView = false
+            DispatchQueue.main.async {
+                self.state.isShowToastView = false
+            }
         }
 
     }

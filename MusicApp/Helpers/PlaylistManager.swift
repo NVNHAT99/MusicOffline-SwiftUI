@@ -131,6 +131,7 @@ final class PlaylistManager: ObservableObject {
     func shufflePlaylist() {
         let songArray: [String] = playlist?.songsArray.shuffled() ?? []
         let newCurrentIndex = songArray.firstIndex(where: {$0 == playlist?.songsArray[currentIndex ?? 0]})
+        self.playlistShuffle = playlist
         self.playlistShuffle?.songsArray = songArray
         self.currentIndex = newCurrentIndex
     }
@@ -163,6 +164,7 @@ final class PlaylistManager: ObservableObject {
         })
         .store(in: &subscribs)
         
+        // MARK: - TODO: can handle logic neu nhu chi lap lai het mot playlist thi dung
         self.playVM?.didFishedPlayPublisher.sink { [weak self] didFinish in
             if didFinish {
                 self?.playNextSong()
@@ -252,6 +254,10 @@ final class PlaylistManager: ObservableObject {
     
     func getPlaylist() -> Playlist? {
         return playlist
+    }
+    
+    func sendCurrentStatePlay() {
+        isPlayingPublisher.send(playVM?.isPlaying() ?? false)
     }
 }
 

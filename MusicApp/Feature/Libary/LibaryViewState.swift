@@ -13,4 +13,5 @@ struct LibaryViewState {
     var playlist: [Playlist]
     var isShowToastView: Bool = false
     var toastViewMessage: String = String.empty
+    var isShowAddPlaylist: Bool = false
 }

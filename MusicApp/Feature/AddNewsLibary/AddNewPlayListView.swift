@@ -9,41 +9,43 @@ import SwiftUI
 
 struct AddNewPlayListView: View {
     // MARK: - PROPERTIES
-    @State private var name: String = String.empty
-    @State private var heightOfKeyboard: CGFloat = 0.0
     @Environment(\.presentationMode) var presentationMode
-    var onCreatePlaylist: ((String) -> Void)?
+    @ObservedObject var viewmodel: AddNewPlaylistViewmodel
+    var onCreatePlaylist: (() -> Void)?
+    var onDismiss: () -> Void
     
     var body: some View {
         GeometryReader { proxy in
             ZStack {
-                Color.gray.opacity(0.8)
+                Color.black.opacity(0.8)
                 GeometryReader { proxyVStack in
                     VStack (spacing: 0) {
                         ZStack(alignment: .leading) {
                             // this view make text field change place holder color
                             // if the new of version of swiftUI have this modifer so you could change
-                            if name.isEmpty {
+                            if viewmodel.state.name.isEmpty {
                                 Text("Enter playlist name here")
-                                .foregroundColor(.black.opacity(0.4))
+                                    .foregroundColor(.white.opacity(0.6))
                                 .padding(24)
                             }
                             
-                            TextField("", text: $name)
+                            TextField("", text: viewmodel.bindingName())
                                 .frame(alignment: .center)
                                 .padding(24)
                                 .cornerRadius(12)
                                 .shadow(radius: 4)
-                                .foregroundColor(.black)
+                                .foregroundColor(.white)
                         }
     
                         
                         Spacer()
                             .frame(height: 10)
                         Button {
-                            if name != String.empty {
-                                presentationMode.wrappedValue.dismiss()
-                                onCreatePlaylist?(name)
+                            if viewmodel.state.name != String.empty {
+                                viewmodel.send(intent: .addNewLibary(onDismiss: {
+                                    onCreatePlaylist?()
+                                }))
+                                
                             }
                         } label: {
                             Text("Create")
@@ -52,21 +54,21 @@ struct AddNewPlayListView: View {
                                 .frame(width: 200, height: 40)
                                 .overlay {
                                     RoundedRectangle(cornerRadius: 24)
-                                    .stroke(Color.white, lineWidth: 2)
+                                    .stroke(Color.gray, lineWidth: 2)
                                 }
                                 
                         }
-                        .background(Color.init(hexString: "#24a0ed"))
+                        .background(Color.gray)
                         .cornerRadius(24)
                         .shadow(radius: 2)
                         Spacer()
                             .frame(height: 20)
                     }
-                    .background(.white)
+                    .background(Color.backgroundColor)
                     .cornerRadius(12)
                     .shadow(radius: 4)
                     .onTapGesture {}
-                    .modifier(CustomModifiers.PushContentKeyboardModifier(heightOfKeyboard: $heightOfKeyboard,
+                    .modifier(CustomModifiers.PushContentKeyboardModifier(heightOfKeyboard: viewmodel.bindingHeightOfKeyBoard(),
                                                                           offsetYOfView: proxyVStack.frame(in: .global).maxY,
                                                                           isPresented: true))
                 }
@@ -75,6 +77,7 @@ struct AddNewPlayListView: View {
             .ignoresSafeArea()
             .onTapGesture {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                onDismiss()
             }
         }
     }
@@ -82,6 +85,6 @@ struct AddNewPlayListView: View {
 
 struct AddNewPlayListView_Previews: PreviewProvider {
     static var previews: some View {
-        AddNewPlayListView()
+        AddNewPlayListView(viewmodel: AddNewPlaylistViewmodel(), onDismiss: {})
     }
 }

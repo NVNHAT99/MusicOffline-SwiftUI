@@ -25,7 +25,9 @@ final class PlaySongViewModel: ObservableObject {
                 guard let self = self else {
                     return
                 }
-                self.state.song = songInfo
+                DispatchQueue.main.async {
+                    self.state.song = songInfo
+                }
             }
             .store(in: &cancelBag)
         
@@ -34,8 +36,10 @@ final class PlaySongViewModel: ObservableObject {
                 guard let self = self else {
                     return
                 }
-                if !self.state.isDragSlideView {
-                    self.state.currentTimePlaying = newValue
+                DispatchQueue.main.async {
+                    if !self.state.isDragSlideView {
+                        self.state.currentTimePlaying = newValue
+                    }
                 }
             }
             .store(in: &cancelBag)
@@ -45,8 +49,10 @@ final class PlaySongViewModel: ObservableObject {
                 guard let self = self else {
                     return
                 }
-                if newValue != self.state.isPlaying {
-                    self.state.isPlaying = newValue
+                DispatchQueue.main.async {
+                    if newValue != self.state.isPlaying {
+                        self.state.isPlaying = newValue
+                    }
                 }
             }
             .store(in: &cancelBag)
@@ -71,9 +77,11 @@ final class PlaySongViewModel: ObservableObject {
                         var stateCopy = self.state
                         stateCopy.isShowToastView = true
                         stateCopy.toastViewMessage = "Play new song is failed."
-                        withAnimation {
-                            self.state.isShowToastView = false
-                            self.state = stateCopy
+                        DispatchQueue.main.async {
+                            withAnimation {
+                                self.state.isShowToastView = false
+                                self.state = stateCopy
+                            }
                         }
                     }
                 }

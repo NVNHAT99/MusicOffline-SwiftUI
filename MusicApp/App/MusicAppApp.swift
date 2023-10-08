@@ -21,6 +21,8 @@ struct MusicAppApp: App {
         }
         .onChange(of: scenePhase) { newPhase in
             switch newPhase {
+            case .active:
+                PlaylistManager.shared.sendCurrentStatePlay()
             default:
                 break
             }
@@ -36,4 +38,3 @@ struct MusicAppApp: App {
 // handle logic khi mo app khac ma app minh tat nhac chua su ly
 // co y tuong convert sang da module giong voi app zig thu research va lam theo tren mot nhanh moi
 // tao custom font cho project va su dung
-// cover the logic when add new playlist with the same name has been exist in the core data

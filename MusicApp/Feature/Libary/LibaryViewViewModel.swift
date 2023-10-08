@@ -30,11 +30,34 @@ final class LibaryViewViewModel: ObservableObject {
             deletePlaylist(playlist: playlist)
         case .updateIsPresented(let newValue):
             state.isPresnted = newValue
+        case .showAddNewPlaylist(let value):
+            showAddNewPlaylistView(isShow: value)
+        }
+    }
+    
+    private func showAddNewPlaylistView(isShow: Bool) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            withAnimation {
+                self.state.isShowAddPlaylist = isShow
+            }
         }
     }
     
     private func addNewPlaylist(_ name: String) {
+        // MARK: - TODO move this code to add new libary view, make that view with full MVI partern
         let context = PersistenceController.shared.viewContext
+        let fetchRequest: NSFetchRequest<Playlist> = Playlist.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "name == %@", name)
+        do {
+            let count = try context.count(for: fetchRequest)
+            if count > 0 {
+              print("Playlist with name \(name) already exists")
+              return
+            }
+          } catch {
+            print(error)
+          }
         let newPlaylist = Playlist(context: context)
         newPlaylist.name = name
         newPlaylist.id = UUID()
