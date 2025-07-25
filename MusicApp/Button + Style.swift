@@ -11,6 +11,13 @@ import SwiftUI
 struct NoAnimationButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(1.0, anchor: .center)
+    }
+}
+
+
+struct AnimationPressStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(configuration.isPressed ? Color.red : Color.backgroundColor)
     }
 }

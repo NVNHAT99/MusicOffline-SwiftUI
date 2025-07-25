@@ -11,8 +11,10 @@ struct HomeView: View {
     // MARK: - Properties
     
     @Binding var selectedTab: Tab
-    @ObservedObject private var viewModel: HomeViewHandler
-    init(selectedTab: Binding<Tab>, viewModel: HomeViewHandler) {
+    @ObservedObject private var viewModel: HomeViewViewModel
+    @State var isPresented: Bool = false
+    
+    init(selectedTab: Binding<Tab>, viewModel: HomeViewViewModel) {
         self._selectedTab = selectedTab
         self.viewModel = viewModel
     }
@@ -41,19 +43,23 @@ struct HomeView: View {
                                     HomeItemView(data: viewModel.homeItems[index]) {
                                         switch index {
                                         case 0:
-                                            selectedTab = .home
+                                            selectedTab = .libary
                                         case 1:
                                             selectedTab = .setting
                                         default:
-                                            selectedTab = .home
+                                            break
                                         }
                                     }
                                 } else {
-                                    NavigationLink {
-                                        SettingView()
+                                    Button {
+                                        isPresented = true
                                     } label: {
                                         HomeItemView(data: viewModel.homeItems[index], onTap: nil)
                                     }
+                                    .sheet(isPresented: $isPresented) {
+                                        PlaySongView(viewModel: PlaySongViewModel())
+                                    }
+
                                 }
                                 
                             }
@@ -72,6 +78,6 @@ struct HomeView: View {
 
 struct HomeTabView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(selectedTab: .constant(.home), viewModel: HomeViewHandler())
+        HomeView(selectedTab: .constant(.home), viewModel: HomeViewViewModel())
     }
 }

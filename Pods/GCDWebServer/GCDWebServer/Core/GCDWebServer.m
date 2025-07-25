@@ -675,7 +675,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
 
   dispatch_source_cancel(_source6);
   dispatch_source_cancel(_source4);
-  dispatch_group_wait(_sourceGroup, DISPATCH_TIME_FOREVER);  // Wait until the cancellation handlers have been called which guarantees the listening sockets are closed
+  dispatch_group_wait(_sourceGroup, DISPATCH_TIME_FOREVER);// Wait until the cancellation handlers have been called which guarantees the listening sockets are closed
 #if !OS_OBJECT_USE_OBJC_RETAIN_RELEASE
   dispatch_release(_source6);
 #endif

@@ -84,7 +84,7 @@ public extension Color {
 //MARK: - Extenstion Color
 
 extension Color {
-    static let backgroundColor: Color = Color(hexString: "#101526", alpha: 1.0)
+    static let backgroundColor: Color = Color(hexString: "#1C1C1E", alpha: 1.0)
     static let whiteAlpha30: Color = Color(hexString: "#FFFFFF", alpha: 0.3)
     static let headerBackground: Color = Color(hexString: "#26292D", alpha: 1.0)
     static let bottomBackground: Color = Color(hexString: "#41464B", alpha: 1.0)

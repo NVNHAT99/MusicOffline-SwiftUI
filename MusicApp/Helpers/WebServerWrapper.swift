@@ -7,12 +7,23 @@
 
 import Foundation
 import GCDWebServer
+import Combine
 
-class WebServerWrapper: NSObject {
-    var ipAddress: String = ""
+enum WebLoaderError: Error {
+    case startFailed
+    case stopFailed
+}
+
+enum WebLoaderResult {
+    case startSuccess(ipAddress: String)
+    case stopSucesss
+}
+class WebServerWrapper: NSObject, ObservableObject {
+    static let shared: WebServerWrapper = WebServerWrapper()
     private var webUploader: GCDWebUploader?
+    let webLoaderResult = PassthroughSubject<Result<WebLoaderResult, WebLoaderError>, Never>()
     
-    override init() {
+    private override init() {
         super.init()
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         webUploader = GCDWebUploader(uploadDirectory: documentsPath)
@@ -20,36 +31,47 @@ class WebServerWrapper: NSObject {
     }
     
     func startWebUploader() {
-        webUploader?.start()
-        webUploader?.allowedFileExtensions = ["mp3", "aac", "m4a", "wav"]
-        if let serverURL = webUploader?.serverURL {
-            
-            let str = serverURL.absoluteString
-            let start = str.index(str.startIndex, offsetBy: 7)
-            let end = str.index(str.endIndex, offsetBy: -1)
-            let range = start..<end
-            let mySubstring = str[range]
-            ipAddress = String(mySubstring)
-            print("Visit \(serverURL) in your web browser")
-        } else {
-            ipAddress = "No WiFi connected"
+        guard let webUploader = webUploader else {
+            return
+        }
+        if !webUploader.isRunning {
+            let options: Dictionary<String, Any> = ["Port" : 8080, "AutomaticallySuspendInBackground" : false]
+            do {
+                try webUploader.start(options: options)
+            } catch  {
+                print(error)
+            }
+            webUploader.allowedFileExtensions = ["mp3", "aac", "m4a", "wav"]
+            if let serverURL = webUploader.serverURL {
+                
+                let str = serverURL.absoluteString
+                let start = str.index(str.startIndex, offsetBy: 7)
+                let end = str.index(str.endIndex, offsetBy: -1)
+                let range = start..<end
+                let ipAddressStr = str[range]
+                webLoaderResult.send(.success(.startSuccess(ipAddress: String(ipAddressStr))))
+            } else {
+                webLoaderResult.send(.failure(.startFailed))
+            }
         }
     }
     
     func stopWebUploader() {
-        webUploader?.stop()
-        ipAddress = ""
+        guard let webUploader = webUploader else {
+            webLoaderResult.send(.failure(.stopFailed))
+            return
+        }
+                    
+        if webUploader.isRunning {
+            webUploader.stop()
+            webLoaderResult.send(.success(.stopSucesss))
+        }
     }
 }
 
 extension WebServerWrapper: GCDWebUploaderDelegate {
     func webUploader(_ uploader: GCDWebUploader, didUploadFileAtPath path: String) {
         print("File uploaded at path: \(path)")
-        
-        // Perform any necessary processing with the uploaded file
-        // ...
-        
-        // Check if the uploaded file has an MP3 extension
         let isMP3File = (path as NSString).pathExtension.lowercased() == "mp3"
         
         if !isMP3File {

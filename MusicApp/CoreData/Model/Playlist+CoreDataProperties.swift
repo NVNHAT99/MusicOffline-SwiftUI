@@ -18,7 +18,7 @@ extension Playlist: Identifiable {
     
     @NSManaged public var id: UUID?
     @NSManaged public var name: String?
-    @NSManaged public var songs: NSObject?
+    @NSManaged public var songs: Data?
     
     public var wrappedId: String {
         id?.uuidString ?? "Uknow id"
@@ -30,7 +30,7 @@ extension Playlist: Identifiable {
     
     public var songsArray: [String] {
         get {
-            guard let data = songs as? Data else { return [] }
+            guard let data = songs else { return [] }
             do {
                 let decoder = JSONDecoder()
                 return try decoder.decode([String].self, from: data)
@@ -43,7 +43,7 @@ extension Playlist: Identifiable {
             do {
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(newValue)
-                songs = data as NSObject
+                songs = data
             } catch {
                 print("Error encoding songs: \(error)")
             }

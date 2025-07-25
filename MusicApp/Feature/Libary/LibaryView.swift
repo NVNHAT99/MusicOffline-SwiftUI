@@ -10,21 +10,20 @@ import SwiftUI
 struct LibaryView: View {
     
     // MARK: - State and Properties
-    @ObservedObject private var handler: LibaryViewHandler
-    @State private var isPresented: Bool = false
-//    @State isPresented:
-    init (handler: LibaryViewHandler) {
+    @ObservedObject private var viewModel: LibaryViewViewModel
+    @State private var isActive: Bool = false
+    init (handler: LibaryViewViewModel) {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        self.handler = handler
+        self.viewModel = handler
     }
     var body: some View {
         
         GeometryReader { proxy in
             VStack {
                 ZStack {
-                    Color.backgroundColor
+                    Color.black
                     VStack (spacing: 0) {
-                        CustomNavigtionBar(title: "My Libary")
+                        CustomNavigationBar(type: .larger("My Libary"))
                             .frame(height: 70)
                             .padding(.leading, 26)
                             .foregroundColor(.white)
@@ -38,62 +37,47 @@ struct LibaryView: View {
                                 Spacer()
                                 
                                 Button {
-                                    isPresented = true
+                                    viewModel.send(intent: .showAddNewPlaylist(value: true))
                                 } label: {
                                     Text("Add New")
                                 } // Button Add new
                                 .foregroundColor(.white)
-                                .sheet(isPresented: $isPresented) {
-                                    AddNewPlayListView { name in
-                                        handler.send(intent: .addNewPlayList(name))
-                                    }
-                                }
-                                
-                                
                                 Spacer()
                                     .frame(width: 10)
                             }
-                            if true {
+                            if viewModel.state.playlist.isEmpty {
                                 VStack(alignment: .center) {
                                     Text("You don't have any play list yet")
                                         .foregroundColor(.white)
                                         .frame(alignment: .center)
+                                        .transition(.opacity)
                                 }
-                                .frame(width: proxy.size.width,height: 50)
+                                .frame(width: proxy.size.width)
                             } else {
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    LazyHStack {
-                                        ForEach(0...3, id: \.self) { _ in
-                                            NavigationLink {
+                                List {
+                                    ForEach(viewModel.state.playlist) { item in
+                                        NavigationLink {
+                                            PlaylistDetailView(viewModel: PlaylistDetailViewModel(state: .init(playlist: item)))
+                                        } label: {
+                                            PlayListItemView(playListName: item.name ?? String.empty)
+                                                .foregroundColor(.white)
                                                 
-                                            } label: {
-                                                PlayListItemView(data: PlaylistItem(imageName: "templePlaylist",
-                                                                                    playlistName: "Nothing",
-                                                                                    subTitle: "30 songs"),
-                                                                 sizeImage: CGSize(width: 241, height: 156))
-                                            }
                                         }
-                                    } // LazyHStack
-                                    .frame(height: 210)
-                                } // Scroll
-                                .padding(.leading, 26)
-                            }
-                            
-                            Spacer()
-                                .frame(height: 15)
-                            VStack (alignment: .leading) {
-                                Text("Albums")
-                                    .foregroundColor(.white)
-                                ScrollView {
-                                    LazyVGrid(columns: handler.columns) {
-                                        ForEach(0...9, id: \.self) { _ in
-                                            PlayListItemView(data: PlaylistItem(imageName: "templePlaylist", playlistName: "Nothing", subTitle: ""), sizeImage: CGSize(width: 150, height: 150))
-                                        } // LazyVGridView
                                     }
-                                } // ScrollView
-                                .navigationBarHidden(true)
-                            } // VStack
-                            .padding([.leading, .trailing], 26)
+                                    .onDelete(perform: { indexSet in
+                                        indexSet.forEach { index in
+                                            viewModel.send(intent: .deletePlaylist(viewModel.state.playlist[index]))
+                                        }
+                                    })
+                                    .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
+                                    .listRowBackground(Color.backgroundColor)
+                                    .buttonStyle(AnimationPressStyle())
+                                    .foregroundColor(.white)
+                                    .listRowSeparatorTint(.gray)
+                                }
+                                .modifier(ListBackgroundModifier())
+                            }
+                            Spacer()
                         } // VStack
                     } // VStack
                     .padding(.top, Helper.shared.safeAreaInsets?.top)
@@ -101,8 +85,23 @@ struct LibaryView: View {
                 } // ZStack
             }//VStack
             .ignoresSafeArea(.all)
-            .onAppear {
-                handler.send(intent: .loadPlaylist)
+            .task {
+                viewModel.send(intent: .loadPlaylist)
+            }
+            .overlay(alignment: .bottom) {
+                if viewModel.state.isShowToastView {
+                    ToastView(isShowView: viewModel.isShowToastView(), message: viewModel.state.toastViewMessage, timeShowView: .seconds(2))
+                        .frame(height: 40)
+                        .padding(.bottom, 16)
+                } else if viewModel.state.isShowAddPlaylist {
+                    AddNewPlayListView(viewmodel: AddNewPlaylistViewmodel(), onCreatePlaylist: {
+                        viewModel.send(intent: .showAddNewPlaylist(value: false))
+                        viewModel.send(intent: .loadPlaylist)
+                    }, onDismiss: {
+                        viewModel.send(intent: .showAddNewPlaylist(value: false))
+                    })
+                    .transition(.move(edge: .bottom))
+                }
             }
         }
         
@@ -111,6 +110,6 @@ struct LibaryView: View {
 
 struct LibaryTabView_Previews: PreviewProvider {
     static var previews: some View {
-        LibaryView(handler: LibaryViewHandler())
+        LibaryView(handler: LibaryViewViewModel())
     }
 }
