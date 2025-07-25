@@ -51,7 +51,7 @@ struct AddNewSongsView: View {
                             viewModel.send(intent: .toggleSelectedAt(index: index))
 
                         } label: {
-                            SongItemView(urlMp3File: viewModel.state.arrayMP3File[index].fileURL.absoluteString)
+                            SongItemView()
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 8)
                         }
@@ -78,7 +78,7 @@ struct AddNewSongsView: View {
             .cornerRadius(8, corners: .allCorners)
             .disabled(viewModel.state.selectedCount > 0 ? false : true)
             .foregroundColor(.white)
-            
+            Spacer()
             Spacer()
                 .frame(height: 16)
         } // VStack

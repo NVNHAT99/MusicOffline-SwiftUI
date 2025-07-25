@@ -64,7 +64,7 @@ struct PlaylistDetailView: View {
                         if let playlist = viewModel.state.playlist {
                             ForEach(playlist.songsArray, id: \.self) {
                                 item in
-                                SongItemView(urlMp3File: item)
+                                SongItemView()
                                     .foregroundColor(.white)
                                     .onTapGesture {
                                         viewModel.send(intent: .playSongAt(urlStr: item))

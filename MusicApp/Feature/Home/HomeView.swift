@@ -9,75 +9,75 @@ import SwiftUI
 
 struct HomeView: View {
     // MARK: - Properties
-    
-    @Binding var selectedTab: Tab
-    @ObservedObject private var viewModel: HomeViewViewModel
     @State var isPresented: Bool = false
     
-    init(selectedTab: Binding<Tab>, viewModel: HomeViewViewModel) {
-        self._selectedTab = selectedTab
-        self.viewModel = viewModel
-    }
-    
     var body: some View {
-        GeometryReader { proxy in
-            VStack  {
-                Image("topImage")
-                    .resizable()
-                    .frame(maxHeight: proxy.size.height * 0.58)
-                    .scaledToFill()
-                
-                Spacer()
-                    .frame(height: 20)
-                VStack (alignment: .leading) {
-                    Text("Menu")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity ,alignment: .leading)
-                        .padding(.leading, 10)
-                        
-                        .font(.system(size: 30))
-                    VStack {
-                        ScrollView {
-                            ForEach(0..<viewModel.homeItems.count, id: \.self) { index in
-                                if index == 0 || index == 1 {
-                                    HomeItemView(data: viewModel.homeItems[index]) {
-                                        switch index {
-                                        case 0:
-                                            selectedTab = .libary
-                                        case 1:
-                                            selectedTab = .setting
-                                        default:
-                                            break
-                                        }
-                                    }
-                                } else {
-                                    Button {
-                                        isPresented = true
-                                    } label: {
-                                        HomeItemView(data: viewModel.homeItems[index], onTap: nil)
-                                    }
-                                    .sheet(isPresented: $isPresented) {
-                                        PlaySongView(viewModel: PlaySongViewModel())
-                                    }
-
-                                }
-                                
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    }
+        VStack {
+            VStack {
+                 Text("Albums")
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                } // : VStack
-                Spacer()
-                    .frame(height: proxy.size.height * 0.12)
-            }
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: 16) {
+                        ForEach(0..<10, id: \.self) { _ in
+                            HomeCardView()
+                                .frame(width: 160)
+                        }
+                    }
+                   
+                }
+                .scrollIndicators(.hidden)
+            } // VStack - album section
+            
+            VStack {
+                 Text("My Playlist")
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: 16) {
+                        ForEach(0..<10, id: \.self) { _ in
+                            HomeCardView()
+                                .frame(width: 160)
+                        }
+                    }
+                }
+                .scrollIndicators(.hidden)
+                
+            } // VStack - playlist section
+            
+            // recent play
+            
+            VStack {
+                 Text("Recently Played")
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                ScrollView(.vertical) {
+                    LazyVStack {
+                        ForEach(0..<10, id: \.self) { _ in
+                            SongItemView()
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 80)
+                        }
+                    }
+
+                }
+                
+            } // VStack - playlist section
+            .padding(.trailing, 16)
+            
+            // recent play
+            Spacer()
         }
+        .padding(.leading, 16)
     }
 }
 
 struct HomeTabView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(selectedTab: .constant(.home), viewModel: HomeViewViewModel())
+        HomeView()
+            .background(Color.backgroundColor)
     }
 }
