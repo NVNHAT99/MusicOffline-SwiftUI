@@ -23,7 +23,7 @@ final class SongRepository: SongRepositoryProtocol {
         
         let context = coreData.newBackgroundContext()
         return try await context.perform {
-            let songEntity = SongMappers.mapToEntity(song: song, context: context)
+            let songEntity = SongMapper.mapToEntity(song: song, context: context)
             do {
                 try context.save()
                 print("✓ Saved song: \(songEntity.title ?? "") with ID: \(songEntity.id ?? "")")
@@ -38,7 +38,7 @@ final class SongRepository: SongRepositoryProtocol {
         let context = coreData.newBackgroundContext()
         return try await context.perform {
             for song in songs {
-                let _ = SongMappers.mapToEntity(song: song, context: context)
+                let _ = SongMapper.mapToEntity(song: song, context: context)
             }
             do {
                 try context.save()
@@ -50,14 +50,15 @@ final class SongRepository: SongRepositoryProtocol {
         }
     }
     
-    func fetchAllSongs() async throws -> [SongEntity] {
+    func fetchAllSongs() async throws -> [Song] {
         let context = coreData.newBackgroundContext()
         return try await context.perform {
             let fetchRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)] // Sắp xếp theo title tăng dần
             
             do {
-                let results = try context.fetch(fetchRequest)
+                let listSongEntity = try context.fetch(fetchRequest)
+                let results = listSongEntity.map { SongEntityMapper.mapToSong( $0 ) }
                 return results
             } catch {
                 throw CoreDataError.fetchFailed(error)

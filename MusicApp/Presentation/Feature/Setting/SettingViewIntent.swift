@@ -10,4 +10,5 @@ import Foundation
 enum SettingViewIntent {
     case deleteAllSongs
     case toggleServer
+    case completedUploadSongs
 }

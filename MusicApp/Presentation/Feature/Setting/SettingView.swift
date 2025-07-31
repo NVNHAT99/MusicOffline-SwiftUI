@@ -70,6 +70,14 @@ struct SettingView: View {
                                 
                                     
                                 Text("Then upload files from your computer.\nplease don't switch to another app or lock your phone while transfering")
+                                
+                                Button {
+                                    viewModel.send(intent: .completedUploadSongs)
+                                } label: {
+                                    Text("Tap here to completed upload songs")
+                                }
+                                .buttonStyle(.bordered)
+
                             }
                             .foregroundColor(.white)
                             .multilineTextAlignment(.leading)

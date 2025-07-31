@@ -10,7 +10,7 @@ import Foundation
 protocol SongRepositoryProtocol {
     func addSong(_ song: Song) async throws
     func addSongs(_ songs: [Song]) async throws
-    func fetchAllSongs() async throws -> [SongEntity]
+    func fetchAllSongs() async throws -> [Song]
 //    func updateSong(id: UUID, newTitle: String) async throws -> SongEntity
     func deleteSong(withId id: String) async throws
     func deleteAllSongs() async throws

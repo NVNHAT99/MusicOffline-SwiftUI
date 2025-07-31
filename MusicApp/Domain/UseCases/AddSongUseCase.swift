@@ -9,6 +9,7 @@ import Foundation
 
 protocol AddSongUseCaseProtocol {
     func execute(from url: String) async throws
+    func excuteList(from list: [String]) async throws
 }
 
 struct AddSongUseCase: AddSongUseCaseProtocol {
@@ -20,7 +21,12 @@ struct AddSongUseCase: AddSongUseCaseProtocol {
     }
     
     func execute(from url: String) async throws {
-        let song = try SongMappers.makeSong(from: url)
+        let song = try await SongMapper.makeSong(from: url)
         try await repository.addSong(song)
+    }
+    
+    func excuteList(from list: [String]) async throws {
+        let songs = try await SongMapper.loadSongs(from: list)
+        try await repository.addSongs(songs)
     }
 }

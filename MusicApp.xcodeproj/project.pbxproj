@@ -100,7 +100,7 @@
 		64BF00382AADBD220089A6CF /* TimeOffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64BF00372AADBD220089A6CF /* TimeOffView.swift */; };
 		64C6C2922E3725EE003D9193 /* UploadServerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C6C2912E3725EE003D9193 /* UploadServerError.swift */; };
 		64C6C29D2E3A0811003D9193 /* ManageWebUploaderUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C6C29C2E3A0811003D9193 /* ManageWebUploaderUseCase.swift */; };
-		64C6C2A32E3B1B27003D9193 /* SongMappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C6C2A22E3B1B27003D9193 /* SongMappers.swift */; };
+		64C6C2A32E3B1B27003D9193 /* SongMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C6C2A22E3B1B27003D9193 /* SongMapper.swift */; };
 		64C6C2A62E3B5A6D003D9193 /* UploadSongUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C6C2A52E3B5A6D003D9193 /* UploadSongUseCase.swift */; };
 		64C6C2AB2E3B70C6003D9193 /* SongEntityMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C6C2AA2E3B70C6003D9193 /* SongEntityMapper.swift */; };
 		64D4FBDE2E274E6B00B88085 /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64D4FBDD2E274E6B00B88085 /* CustomTabBar.swift */; };
@@ -236,7 +236,7 @@
 		64BF00372AADBD220089A6CF /* TimeOffView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeOffView.swift; sourceTree = "<group>"; };
 		64C6C2912E3725EE003D9193 /* UploadServerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadServerError.swift; sourceTree = "<group>"; };
 		64C6C29C2E3A0811003D9193 /* ManageWebUploaderUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageWebUploaderUseCase.swift; sourceTree = "<group>"; };
-		64C6C2A22E3B1B27003D9193 /* SongMappers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongMappers.swift; sourceTree = "<group>"; };
+		64C6C2A22E3B1B27003D9193 /* SongMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongMapper.swift; sourceTree = "<group>"; };
 		64C6C2A52E3B5A6D003D9193 /* UploadSongUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadSongUseCase.swift; sourceTree = "<group>"; };
 		64C6C2AA2E3B70C6003D9193 /* SongEntityMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongEntityMapper.swift; sourceTree = "<group>"; };
 		64D4FBDD2E274E6B00B88085 /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
@@ -707,7 +707,7 @@
 		64C6C2A42E3B2210003D9193 /* Mappers */ = {
 			isa = PBXGroup;
 			children = (
-				64C6C2A22E3B1B27003D9193 /* SongMappers.swift */,
+				64C6C2A22E3B1B27003D9193 /* SongMapper.swift */,
 			);
 			path = Mappers;
 			sourceTree = "<group>";
@@ -1096,7 +1096,7 @@
 				6482B0C82A0E17E5001BA82F /* LibaryView.swift in Sources */,
 				64C6C2922E3725EE003D9193 /* UploadServerError.swift in Sources */,
 				6491C6292A8A74D4007D74CD /* List + Modifier.swift in Sources */,
-				64C6C2A32E3B1B27003D9193 /* SongMappers.swift in Sources */,
+				64C6C2A32E3B1B27003D9193 /* SongMapper.swift in Sources */,
 				64953EBF2A1383FA0028FC3D /* CustomNavigationBar.swift in Sources */,
 				6448FE0C2A39A0F30072B815 /* Modifiers.swift in Sources */,
 				64F24FE12A828C2D0081310A /* PlaylistDetailViewModel.swift in Sources */,

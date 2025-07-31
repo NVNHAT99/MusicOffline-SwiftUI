@@ -79,6 +79,17 @@ final class SettingViewViewModel: ObservableObject {
             } else {
                 startServer()
             }
+        case .completedUploadSongs:
+            if self.pendingUploads.count > 0 {
+                Task {
+                    do {
+                        try await self.addSongUseCase.excuteList(from: self.pendingUploads)
+                        self.pendingUploads = []
+                    } catch {
+                        print("add tat ca bai hat that bai: \(error)")
+                    }
+                }
+            }
         }
     }
     

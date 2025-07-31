@@ -18,8 +18,7 @@ final class GetAllSongUseCase : GetAllSongUseCaseProtocol {
         self.repository = repository
     }
     func excute() async throws -> [Song] {
-        let dataEntity = try await repository.fetchAllSongs()
-        let result = dataEntity.map({ SongEntityMapper.mapToSong($0) })
+        let result = try await repository.fetchAllSongs()
         return result
     }
 }
