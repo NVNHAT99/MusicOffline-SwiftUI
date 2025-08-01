@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import SwiftUI
+
 final class SettingViewViewModel: ObservableObject {
     @Published private(set) var state: SettingViewState
     private var cancelBag: Set<AnyCancellable> = []

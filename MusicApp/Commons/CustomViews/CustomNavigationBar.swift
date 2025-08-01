@@ -1,85 +1,151 @@
-//
-//  CustomNavigtionBar.swift
-//  MusicApp
-//
-//  Created by Nhat on 5/16/23.
-//
-
 import SwiftUI
 
+// MARK: - Typealias
 typealias OnTapAction = () -> Void
 
-enum navigationBarType {
-    case larger(String)
-    case backButton(String)
-    case twoButtons(leftView: (() -> AnyView)?,
-                    rightView: (() -> AnyView)?,
-                    title: String)
+// MARK: - NavigationBarButton Struct
+struct NavigationBarButton {
+    let title: String?
+    let icon: String? // SF Symbol name
+    let tintColor: Color
+    let action: OnTapAction
+
+    init(title: String? = nil,
+         icon: String? = nil,
+         tintColor: Color = .blue,
+         action: @escaping OnTapAction) {
+        self.title = title
+        self.icon = icon
+        self.tintColor = tintColor
+        self.action = action
+    }
 }
 
+// MARK: - NavigationBarType Enum
+enum NavigationBarType {
+    case large(title: String)
+    case backButton(title: String?, tintColor: Color = .blue, action: OnTapAction? = nil)
+    case custom(title: String, left: NavigationBarButton?, right: NavigationBarButton?)
+}
+
+// MARK: - CustomNavigationBar View
 struct CustomNavigationBar: View {
-    var type: navigationBarType
+    var type: NavigationBarType
+
     var body: some View {
         VStack {
             switch type {
-            case .larger(let title):
-                setupForLagreNavi(title: title)
-            case .backButton(_):
-                // i will hanlde this in the future
-                EmptyView()
-            case .twoButtons(let leftView,
-                             let rightView,
-                             let title) :
-                setupForTwoButtonsNavi(leftView: leftView,
-                                       rightView: rightView,
-                                       title: title)
-                
+            case .large(let title):
+                largeTitleView(title)
+            case .backButton(let title, let tintColor, let action):
+                backButtonView(title: title, tintColor: tintColor, action: action)
+            case .custom(let title, let left, let right):
+                twoButtonsView(left: left, right: right, title: title)
             }
-        }// VStack
+        }
+        .padding(.vertical, 8)
+        .background(Color.clear)
     }
-    
-    func setupForLagreNavi(title: String) -> some View {
-        return ZStack {
-                    Color.clear
-                    Text(title)
-                        .font(.largeTitle.weight(.bold))
-                        .frame(maxWidth: .infinity, alignment: .leading)
+
+    // MARK: - Large Title
+    private func largeTitleView(_ title: String) -> some View {
+        Text(title)
+            .font(.largeTitle.weight(.bold))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal)
+    }
+
+    // MARK: - Back Button View
+    private func backButtonView(title: String?, tintColor: Color, action: OnTapAction?) -> some View {
+        HStack(spacing: 4) {
+            Button(action: {
+                action?()
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "chevron.left")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 16, height: 16)
+                        .foregroundStyle(tintColor)
+
+                    if let title = title, !title.isEmpty {
+                        Text(title)
+                            .foregroundColor(tintColor)
+                            .font(.body)
+                    }
                 }
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 16)
     }
-    
-    func setupForTwoButtonsNavi(leftView: (() -> AnyView)?,
-                                rightView: (() -> AnyView)?,
+
+    // MARK: - Two Button View
+    private func twoButtonsView(left: NavigationBarButton?,
+                                right: NavigationBarButton?,
                                 title: String) -> some View {
         ZStack {
-            VStack {
-                HStack {
-                    leftView?() // left header view
-                    .foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    rightView?() // right header view
-                    .foregroundColor(.white)
-                }
-                .padding([.leading, .trailing], 15)
+            HStack {
+                renderButton(left)
+                Spacer()
+                renderButton(right)
             }
-            
-            VStack {
-                Text(title)
-                    .frame(maxWidth: 250)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.center)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
+            .padding(.horizontal, 16)
+
+            Text(title)
+                .lineLimit(1)
+                .font(.system(size: 18, weight: .semibold))
+                .multilineTextAlignment(.center)
+        }
+    }
+
+    // MARK: - Render Single Button
+    private func renderButton(_ button: NavigationBarButton?) -> some View {
+        Group {
+            if let button = button {
+                Button(action: button.action) {
+                    HStack(spacing: 4) {
+                        if let icon = button.icon {
+                            Image(systemName: icon)
+                        }
+                        if let title = button.title {
+                            Text(title)
+                                .font(.system(size: 18, weight: .semibold))
+                        }
+                    }
+                    .foregroundColor(button.tintColor)
+                }
+            } else {
+                Spacer().frame(width: 44, height: 44)
             }
         }
     }
 }
 
-struct CustomNavigtionBar_Previews: PreviewProvider {
+// MARK: - Preview
+struct CustomNavigationBar_Previews: PreviewProvider {
     static var previews: some View {
-        CustomNavigationBar(type: .twoButtons(leftView: nil, rightView: nil, title: ""))
-            .previewLayout(.sizeThatFits)
-            .background(Color.backgroundColor)
+        VStack(spacing: 20) {
+            CustomNavigationBar(type: .large(title: "Library"))
+
+            CustomNavigationBar(type: .backButton(title: "Back", tintColor: .blue, action: {
+                print("Back tapped")
+            }))
+
+            CustomNavigationBar(type: .backButton(title: "Cancel", tintColor: .red))
+
+            CustomNavigationBar(type: .custom(
+                title: "Settings",
+                left: NavigationBarButton(title: "Cancel", tintColor: .red) {
+                    print("Cancel tapped")
+                },
+                right: NavigationBarButton(icon: "gearshape", tintColor: .blue) {
+                    print("Settings tapped")
+                }
+            ))
+            .background(.green)
+        }
+        .padding()
+        .background(Color(.systemGroupedBackground))
     }
 }

@@ -79,8 +79,8 @@ final class WebServerGCDService: NSObject, WebServerGCDServiceProtocol {
             let str = serverURL.absoluteString
             let start = str.index(str.startIndex, offsetBy: 7)
             let end = str.index(str.endIndex, offsetBy: -1)
-            let ipAddressStr = str[start..<end]
-            loaderStateResultSubject.send(.startSuccess(ipAddress: String(ipAddressStr)))
+            let ipAddressStr =  "Http://\(String(str[start..<end]))/"
+            loaderStateResultSubject.send(.startSuccess(ipAddress: ipAddressStr))
         } else {
             loaderStateResultSubject.send(.startFailed)
         }

@@ -24,29 +24,13 @@ struct PlaylistDetailView: View {
     var body: some View {
         GeometryReader { proxy in
             VStack(alignment: .leading) {
-                CustomNavigationBar(type: .twoButtons(leftView: {
-                    AnyView(
-                        Button {
-                            presentationMode.wrappedValue.dismiss()
-                        } label: {
-                            HStack(spacing: 2) {
-                                Image(systemName: "chevron.left")
-                                Text("Back")
-                            }
-                        }
-                    )
-                    
-                }, rightView: {
-                    AnyView(
-                        NavigationLink(destination: {
-                            AddNewSongsView(viewModel: addNewsSongVM) { result in
-                                viewModel.send(intent: .handleAddNewSongs(result))
-                            }
-                        }, label: {
-                            Text("Add news")
-                        })
-                    )
-                }, title: viewModel.state.playlist?.name ?? String.empty)) // Custom NavigationBar
+                CustomNavigationBar(type: .custom(title: viewModel.state.playlist?.name ?? String.empty,
+                                                  left: .init(action: {
+                    // left action
+                }),
+                                                  right: .init(title: "Add news", action: {
+                    // right action
+                }))) // Custom NavigationBar
                 .frame(height: 50)
                 .background(Color.black)
                 

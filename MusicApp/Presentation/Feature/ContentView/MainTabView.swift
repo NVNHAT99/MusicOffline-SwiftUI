@@ -31,7 +31,7 @@ struct MainTabView: View {
                         .opacity(tabSelection == .playlist ? 1 : 0)
                         .animation(.easeInOut(duration: 0.5), value: tabSelection)
                     
-                    SettingView(viewModel: SettingViewViewModel())
+                    TransferView()
                         .opacity(tabSelection == .loadSong ? 1 : 0)
                         .animation(.easeInOut(duration: 0.5), value: tabSelection)
                     
@@ -41,7 +41,7 @@ struct MainTabView: View {
                 }
                 
                 
-                CustomTabBar(selectedTab: $tabSelection, items: viewModel.tabItems, type: .floating)
+                CustomTabBar(selectedTab: $tabSelection, items: viewModel.tabItems, type: .classic)
                     .frame(height: 80)
             }
             .ignoresSafeArea(.all, edges: [.bottom])

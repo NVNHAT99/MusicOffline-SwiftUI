@@ -18,7 +18,7 @@ struct LibaryView: View {
     }
     var body: some View {
         VStack (spacing: 0) {
-            CustomNavigationBar(type: .larger("My Libary"))
+            CustomNavigationBar(type: .large(title: "My Libary"))
                 .frame(height: 70)
                 .padding(.leading, 26)
                 .foregroundColor(.white)

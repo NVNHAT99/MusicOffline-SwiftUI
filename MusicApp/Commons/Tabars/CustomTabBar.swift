@@ -71,7 +71,7 @@ struct ClassicTabBar<T: Hashable>: View {
     let items: [TabItem<T>]
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(alignment: .center, spacing: 0) {
             ForEach(items) { item in
                 TabButtonView(
                     item: item,
@@ -87,7 +87,6 @@ struct ClassicTabBar<T: Hashable>: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 12)
         .background(Color.white)
         .overlay(Divider(), alignment: .top)
     }

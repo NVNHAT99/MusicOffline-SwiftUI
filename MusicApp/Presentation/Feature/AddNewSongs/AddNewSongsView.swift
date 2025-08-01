@@ -15,22 +15,11 @@ struct AddNewSongsView: View {
     let onCompleted: (Result<Bool, Error>) -> Void
     var body: some View {
         VStack {
-            CustomNavigationBar(type: .twoButtons(
-                leftView: {
-                    AnyView(
-                        Button {
-                            presentationMode.wrappedValue.dismiss()
-                        } label: {
-                            HStack(spacing: 2) {
-                                Image(systemName: "chevron.left")
-                                Text("Back")
-                            }
-                        }
-                    )
-                },
-                rightView: nil,
-                title: "Selection Songs")
-            ) // custom navigationbar
+            CustomNavigationBar(type: .custom(title: "Selection Songs",
+                                              left: .init(action: {
+                
+                                                                    }),
+                                              right: nil)) // custom navigationbar
             .frame(height: 50)
             .background(Color.black)
             
