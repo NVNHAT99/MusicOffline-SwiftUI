@@ -246,3 +246,19 @@ private extension Router {
         }
     }
 }
+
+@MainActor
+protocol NavigationActionHandler {
+    func popView()
+    func dismissView()
+}
+
+extension Router: NavigationActionHandler {
+    func popView() {
+        self.pop()
+    }
+    
+    func dismissView() {
+        self.dismiss()
+    }
+}

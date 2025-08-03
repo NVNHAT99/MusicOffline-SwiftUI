@@ -31,7 +31,7 @@ struct MainTabView: View {
                         .opacity(tabSelection == .playlist ? 1 : 0)
                         .animation(.easeInOut(duration: 0.5), value: tabSelection)
                     
-                    TransferView()
+                    HomeView()
                         .opacity(tabSelection == .loadSong ? 1 : 0)
                         .animation(.easeInOut(duration: 0.5), value: tabSelection)
                     

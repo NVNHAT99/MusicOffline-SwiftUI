@@ -12,4 +12,5 @@ struct TransferViewState {
     var isServerOn: Bool = false
     var messageToastView: String = String.empty
     var isShowToastView: Bool = false
+    var showLoading: Bool = false
 }

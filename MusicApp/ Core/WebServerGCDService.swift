@@ -56,12 +56,20 @@ final class WebServerGCDService: NSObject, WebServerGCDServiceProtocol {
         }
         
         if webUploader.isRunning {
-            loaderStateResultSubject.send(.alreadyRuning)
+            if let serverURL = webUploader.serverURL {
+                let str = serverURL.absoluteString
+                let start = str.index(str.startIndex, offsetBy: 7)
+                let end = str.index(str.endIndex, offsetBy: -1)
+                let ipAddressStr =  "Http://\(String(str[start..<end]))/"
+                loaderStateResultSubject.send(.startSuccess(ipAddress: ipAddressStr))
+            } else {
+                loaderStateResultSubject.send(.startFailed)
+            }
             return
         }
 
         let options: [String: Any] = [
-            "Port": 8080,
+            "Port": 61234,
             "AutomaticallySuspendInBackground": false
         ]
         
@@ -79,7 +87,7 @@ final class WebServerGCDService: NSObject, WebServerGCDServiceProtocol {
             let str = serverURL.absoluteString
             let start = str.index(str.startIndex, offsetBy: 7)
             let end = str.index(str.endIndex, offsetBy: -1)
-            let ipAddressStr =  "Http://\(String(str[start..<end]))/"
+            let ipAddressStr =  "\(String(str[start..<end]))"
             loaderStateResultSubject.send(.startSuccess(ipAddress: ipAddressStr))
         } else {
             loaderStateResultSubject.send(.startFailed)

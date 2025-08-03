@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingView: View {
     // MARK: - properties
     @StateObject var viewModel: SettingViewViewModel = SettingViewViewModel()
+    @StateObject private var router = Router<SettingRoute>()
     
     init(viewModel: SettingViewViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -25,16 +26,13 @@ struct SettingView: View {
             GeometryReader { proxy in
                 List {
                     Section {
-                        VStack(alignment: .leading) {
+                        Button {
+                            self.router.route(to: .transferAudio)
+                        } label: {
                             Text("Transfer Mp3 files")
                                 .fontWeight(.bold)
                         }
-                        // TODO: need replace by new logic router
-                        NavigationLink {
-                            
-                        } label: {
-                            Text("Remove Ads. buy now")
-                        }
+
                         
                     }
                     .listRowBackground(Color.headerBackground)
@@ -65,6 +63,8 @@ struct SettingView: View {
                     .padding(.bottom, 16)
             }
         }
+        .background(Color.backgroundColor)
+        .embedded(navigation: .stacks, with: self.router)
     }
 }
 
