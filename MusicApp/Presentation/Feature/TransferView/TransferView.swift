@@ -20,8 +20,7 @@ struct TransferView: View {
                 CustomNavigationBar(type: .custom(title: "Transfer audio file",
                                                   left: .init(title: "Cancel",
                                                               action: {
-                    viewModel.send(.handleBacAction)
-                    navigationHandler.dismissView()
+                    viewModel.send(.handleBackAction(self.navigationHandler))
                 }),
                                                   right: nil))
                 
@@ -109,6 +108,14 @@ struct TransferView: View {
                     .padding(20)
                     .background(.thinMaterial)
                     .cornerRadius(12)
+            }
+            
+            if viewModel.state.isShowToastView {
+                ToastView(isShowView: viewModel.isShowToastView(),
+                          message: viewModel.state.messageToastView,
+                          timeShowView: .seconds(2))
+                    .frame(height: 40)
+                    .padding(.bottom, 16)
             }
         }
     }

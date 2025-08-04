@@ -29,7 +29,7 @@ final class AddNewSongsViewModel: ObservableObject {
     }
     
     private func loadListSong() {
-        state.arrayMP3File = DocumentFileManager.shared.loadMP3File()
+//        state.arrayMP3File = DocumentFileManager.shared.loadMP3File()
     }
     
     private func addToPlaylist(onCompleted: (Result<Bool, Error>) -> Void) {
@@ -54,18 +54,18 @@ final class AddNewSongsViewModel: ObservableObject {
     }
     
     private func toggleSelected(at indext: Int) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else {
-                return
-            }
-            
-            self.state.arrayMP3File[indext].isSelected.toggle()
-            if self.state.arrayMP3File[indext].isSelected {
-                self.state.selectedCount += 1
-            } else {
-                self.state.selectedCount -= 1
-            }
-        }
+//        DispatchQueue.main.async { [weak self] in
+//            guard let self = self else {
+//                return
+//            }
+//            
+//            self.state.arrayMP3File[indext].isSelected.toggle()
+//            if self.state.arrayMP3File[indext].isSelected {
+//                self.state.selectedCount += 1
+//            } else {
+//                self.state.selectedCount -= 1
+//            }
+//        }
     }
 }
 

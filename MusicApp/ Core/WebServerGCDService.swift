@@ -19,6 +19,8 @@ enum WebLoaderResult {
 protocol WebServerGCDServiceProtocol {
     var loaderStateResultPublisher: AnyPublisher<WebLoaderResult, Never> { get }
     var uploadedFilePublisher: AnyPublisher<String, Never> { get }
+    var removeFilePublisher: AnyPublisher<String, Never> { get }
+    var updateFilePathPublisher: AnyPublisher<(String, String), Never> { get }
     func startWebUploader()
     func stopWebUploader()
 }
@@ -33,6 +35,8 @@ final class WebServerGCDService: NSObject, WebServerGCDServiceProtocol {
     
     private let loaderStateResultSubject = PassthroughSubject<WebLoaderResult, Never>()
     private let uploadedFileSubject = PassthroughSubject<String, Never>()
+    private let removeFileSubject = PassthroughSubject<String, Never>()
+    private let updatePathSubject = PassthroughSubject<(String, String), Never>()
     
     var loaderStateResultPublisher: AnyPublisher<WebLoaderResult, Never> {
         loaderStateResultSubject.eraseToAnyPublisher()
@@ -40,6 +44,14 @@ final class WebServerGCDService: NSObject, WebServerGCDServiceProtocol {
     
     var uploadedFilePublisher: AnyPublisher<String, Never> {
         uploadedFileSubject.eraseToAnyPublisher()
+    }
+    
+    var removeFilePublisher: AnyPublisher<String, Never> {
+        removeFileSubject.eraseToAnyPublisher()
+    }
+    
+    var updateFilePathPublisher: AnyPublisher<(String, String), Never> {
+        updatePathSubject.eraseToAnyPublisher()
     }
     
     private override init() {
@@ -112,5 +124,13 @@ final class WebServerGCDService: NSObject, WebServerGCDServiceProtocol {
 extension WebServerGCDService: GCDWebUploaderDelegate {
     func webUploader(_ uploader: GCDWebUploader, didUploadFileAtPath path: String) {
         uploadedFileSubject.send(path)
+    }
+    
+    func webUploader(_ uploader: GCDWebUploader, didDeleteItemAtPath path: String) {
+        removeFileSubject.send(path)
+    }
+    
+    func webUploader(_ uploader: GCDWebUploader, didMoveItemFromPath fromPath: String, toPath: String) {
+        updatePathSubject.send((fromPath, toPath))
     }
 }

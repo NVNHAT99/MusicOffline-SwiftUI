@@ -100,26 +100,26 @@ final class SettingViewViewModel: ObservableObject {
     
     private func deleteAllSongs() {
         
-        DocumentFileManager.shared.removeAllFile { [weak self] result in
-            guard let self = self else {
-                return
-            }
-            var copyState = self.state
-            switch result {
-            case .success:
-                copyState.messageToastView = "Deleted All Songs Success!"
-                copyState.isShowToastView = true
-            case .failure:
-                copyState.messageToastView = "Deleted All Songs Failed!"
-                copyState.isShowToastView = true
-            }
-            
-            DispatchQueue.main.async {
-                withAnimation {
-                    self.state = copyState
-                }
-            }
-        }
+//        DocumentFileManager.shared.removeAllFile { [weak self] result in
+//            guard let self = self else {
+//                return
+//            }
+//            var copyState = self.state
+//            switch result {
+//            case .success:
+//                copyState.messageToastView = "Deleted All Songs Success!"
+//                copyState.isShowToastView = true
+//            case .failure:
+//                copyState.messageToastView = "Deleted All Songs Failed!"
+//                copyState.isShowToastView = true
+//            }
+//            
+//            DispatchQueue.main.async {
+//                withAnimation {
+//                    self.state = copyState
+//                }
+//            }
+//        }
     }
     
     private func stopServer() {

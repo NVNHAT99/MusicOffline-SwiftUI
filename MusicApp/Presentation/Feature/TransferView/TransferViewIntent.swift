@@ -9,7 +9,7 @@ import Foundation
 
 enum TransferViewIntent {
     case toggleServer
-    case handleBacAction
+    case handleBackAction(NavigationActionHandler)
     case completedUploadSongs
     case copyIPAdress
 }

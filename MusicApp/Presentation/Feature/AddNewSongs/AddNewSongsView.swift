@@ -44,7 +44,7 @@ struct AddNewSongsView: View {
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 8)
                         }
-                        .listRowBackground(viewModel.state.arrayMP3File[index].isSelected ? Color.red.opacity(0.5) : Color.backgroundColor)
+                        .listRowBackground(Color.backgroundColor)
                         .listRowInsets(EdgeInsets())
                     }
                 }
