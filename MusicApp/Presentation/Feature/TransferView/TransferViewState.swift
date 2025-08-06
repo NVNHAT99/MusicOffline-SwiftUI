@@ -13,4 +13,5 @@ struct TransferViewState {
     var messageToastView: String = String.empty
     var isShowToastView: Bool = false
     var showLoading: Bool = false
+    var isShowForceSaveDialog: Bool = false
 }

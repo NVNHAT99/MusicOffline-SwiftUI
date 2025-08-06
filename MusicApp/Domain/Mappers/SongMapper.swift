@@ -35,19 +35,17 @@ struct SongMapper {
                     if let album = value as? String {
                         albumName = album
                     }
-                    //                case AVMetadataKey.commonKeyArtwork.rawValue:
-                    //                    if let data = value as? Data, let image = UIImage(data: data) {
-                    //                        thumbnail = image
-                    //                    }
+//                case AVMetadataKey.commonKeyArtwork.rawValue:
+//                    if let data = value as? Data, let image = UIImage(data: data) {
+//                        thumbnail = image
+//                    }
                 default:
                     break
                 }
             }
         }
         
-        let id = fileURL.sha256()
-        
-        return Song(id: id,
+        return Song(id: UUID(),
                     title: songName,
                     album: albumName,
                     artist: "artist",

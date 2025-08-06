@@ -10,7 +10,8 @@ import UIKit
 
 protocol DocumentFileServiceProtocol {
     func loadMetadata(from stringURL: String) async throws -> SongInfo?
-    func removeAllFiles() async throws -> Bool
+    func removeAllFiles() async throws
+    func removeFiles(_ pathFileElements: [PathFileElement]) async throws
 }
 
 
@@ -68,13 +69,27 @@ final class DocumentFileService: DocumentFileServiceProtocol {
         )
     }
     
-    func removeAllFiles() async throws -> Bool {
-        let documentURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let fileURLs = try FileManager.default.contentsOfDirectory(at: documentURL, includingPropertiesForKeys: nil)
-        
-        for fileURL in fileURLs {
-            try FileManager.default.removeItem(at: fileURL)
-        }
-        return true
+    func removeAllFiles() async throws {
+        try await Task.detached {
+            let documentURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            let fileURLs = try FileManager.default.contentsOfDirectory(at: documentURL, includingPropertiesForKeys: nil)
+            
+            for fileURL in fileURLs {
+                try FileManager.default.removeItem(at: fileURL)
+            }
+        }.value
+    }
+    
+    func removeFiles(_ pathFileElements: [PathFileElement]) async throws {
+        try await Task.detached {
+            for element in pathFileElements {
+                guard let path = element.pathLocalFile else { continue }
+                let fileURL = URL(fileURLWithPath: path)
+                
+                if FileManager.default.fileExists(atPath: fileURL.path) {
+                    try FileManager.default.removeItem(at: fileURL)
+                }
+            }
+        }.value
     }
 }

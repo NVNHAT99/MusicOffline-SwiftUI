@@ -10,7 +10,7 @@ import Foundation
 struct SongEntityMapper {
     static func mapToSong(_ entity: SongEntity) -> Song {
         
-        return Song(id: entity.id ?? "",
+        return Song(id: entity.id ?? UUID(),
                     title: entity.title ?? "",
                     album: entity.album ?? "",
                     artist: entity.artist ?? "",

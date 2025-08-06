@@ -118,6 +118,15 @@ struct TransferView: View {
                     .padding(.bottom, 16)
             }
         }
+        .alert("Are you sure?",
+              isPresented: viewModel.isShowUnSaveDialog()) {
+            Button("Save") {
+                viewModel.send(.completedUploadSongs)
+            }
+           
+        } message: {
+            Text("Do you want to save the uploaded files?")
+        }
     }
 }
 

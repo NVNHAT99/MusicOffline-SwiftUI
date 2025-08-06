@@ -2,7 +2,7 @@
 //  SongEntity+CoreDataProperties.swift
 //  
 //
-//  Created by Nhat Nguyen on 7/27/25.
+//  Created by Nhat Nguyen on 8/5/25.
 //
 //
 
@@ -16,11 +16,11 @@ extension SongEntity {
         return NSFetchRequest<SongEntity>(entityName: "SongEntity")
     }
 
-    @NSManaged public var id: String?
-    @NSManaged public var url: String?
-    @NSManaged public var title: String?
+    @NSManaged public var album: String?
     @NSManaged public var artist: String?
     @NSManaged public var duration: Double
-    @NSManaged public var album: String?
+    @NSManaged public var id: UUID?
+    @NSManaged public var title: String?
+    @NSManaged public var url: String?
 
 }

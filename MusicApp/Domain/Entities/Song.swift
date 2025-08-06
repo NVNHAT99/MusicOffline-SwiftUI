@@ -8,7 +8,7 @@
 import CoreData
 
 public struct Song {
-    let id: String
+    let id: UUID
     let title: String
     let album: String
     let artist: String

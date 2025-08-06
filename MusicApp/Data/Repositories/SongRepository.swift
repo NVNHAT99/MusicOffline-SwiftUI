@@ -8,7 +8,7 @@
 import Foundation
 import CoreData
 
-final class SongRepository: SongRepositoryProtocol {
+final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
     
     private let coreData: CoreDataProtocol
     
@@ -21,12 +21,11 @@ final class SongRepository: SongRepositoryProtocol {
             throw CoreDataError.invalidTitle
         }
         
-        let context = coreData.newBackgroundContext()
-        return try await context.perform {
+        try await coreData.performWithSerialQueue { context in
             let songEntity = SongMapper.mapToEntity(song: song, context: context)
             do {
                 try context.save()
-                print("✓ Saved song: \(songEntity.title ?? "") with ID: \(songEntity.id ?? "")")
+                print("✓ Saved song: \(songEntity.title ?? "") with ID: \(songEntity.id?.uuidString ?? "")")
             } catch {
                 context.rollback()
                 throw CoreDataError.saveFailed(error)
@@ -35,8 +34,7 @@ final class SongRepository: SongRepositoryProtocol {
     }
     
     func addSongs(_ songs: [Song]) async throws {
-        let context = coreData.newBackgroundContext()
-        return try await context.perform {
+        return try await coreData.performWithSerialQueue { context in
             for song in songs {
                 let _ = SongMapper.mapToEntity(song: song, context: context)
             }
@@ -50,9 +48,21 @@ final class SongRepository: SongRepositoryProtocol {
         }
     }
     
+    func fetchSongs(_ songIdArray: [UUID]) async throws -> [Song] {
+        return try await coreData.performWithSerialQueue { context in
+            let request: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "id IN %@", songIdArray)
+            
+            let result = try context.fetch(request)
+            
+            return result.compactMap { entity in
+                SongEntityMapper.mapToSong(entity)
+            }
+        }
+    }
+    
     func fetchAllSongs() async throws -> [Song] {
-        let context = coreData.newBackgroundContext()
-        return try await context.perform {
+        return try await coreData.performWithSerialQueue { context in
             let fetchRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)] // Sắp xếp theo title tăng dần
             
@@ -66,22 +76,62 @@ final class SongRepository: SongRepositoryProtocol {
         }
     }
     
-//    func updateSong(id: UUID, newTitle: String) async throws -> SongEntity {
-//        
-//    }
+    func updateSong(from oldPath: String, to newPath: String) async throws {
+        try await coreData.performWithSerialQueue { context in
+            let request: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "url == %@", oldPath)
+            request.fetchLimit = 1
+            
+            guard let song = try context.fetch(request).first else {
+                throw CoreDataError.entityNotFound
+            }
+            
+            song.url = newPath
+            
+            try context.save()
+        }
+    }
     
-    func deleteSong(withId id: String) async throws {
-        let context = coreData.newBackgroundContext()
-        try await context.perform {
+    func updateSongs(from dictionaryFileURLs: [String : String]) async throws {
+        try await coreData.performWithSerialQueue { context in
+            do {
+                for (oldPath, newPath) in dictionaryFileURLs {
+                    
+                    let request: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
+                    request.predicate = NSPredicate(format: "url == %@", oldPath)
+                    request.fetchLimit = 1
+                    
+                    guard let song = try context.fetch(request).first else {
+                        throw CoreDataError.entityNotFound
+                    }
+                    
+                    song.url = newPath
+                    try context.save()
+                }
+                
+                if context.hasChanges {
+                    try context.save()
+                }
+            } catch {
+                context.rollback()
+                throw error
+            }
+        }
+    }
+    
+
+    
+    func deleteSong(withURL url: String) async throws {
+        try await coreData.performWithSerialQueue { context in
             let fetchRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "id == %@", id)
+            fetchRequest.predicate = NSPredicate(format: "url == %@", url)
             fetchRequest.fetchLimit = 1
             
             do {
                 if let songToDelete = try context.fetch(fetchRequest).first {
                     context.delete(songToDelete)
                     try context.save()
-                    print("✓ Deleted song with ID: \(id)")
+                    print("✓ Deleted song with url: \(url)")
                 } else {
                     throw CoreDataError.entityNotFound
                 }
@@ -92,9 +142,33 @@ final class SongRepository: SongRepositoryProtocol {
         }
     }
     
+    func deleteSongs(with elements: [PathFileElement]) async throws {
+        try await coreData.performWithSerialQueue { context in
+            do {
+                for element in elements {
+                    guard let coreDataPath = element.pathCoreData else { continue }
+                    
+                    let request: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
+                    request.predicate = NSPredicate(format: "url == %@", coreDataPath)
+                    request.fetchLimit = 1
+                    
+                    if let song = try context.fetch(request).first {
+                        context.delete(song)
+                    }
+                }
+                
+                if context.hasChanges {
+                    try context.save()
+                }
+            } catch {
+                context.rollback()
+                throw error
+            }
+        }
+    }
+    
     func deleteAllSongs() async throws {
-        let context = coreData.newBackgroundContext()
-        try await context.perform {
+        try await coreData.performWithSerialQueue { context in
             let fetchRequest: NSFetchRequest<NSFetchRequestResult> = SongEntity.fetchRequest()
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
             deleteRequest.resultType = .resultTypeObjectIDs
@@ -110,6 +184,49 @@ final class SongRepository: SongRepositoryProtocol {
                 context.rollback()
                 throw CoreDataError.deleteFailed(error)
             }
+        }
+    }
+}
+
+// MARK: - For CompletedUpload usecase
+extension SongRepository {
+    func performBatchOperation(
+        songsToAdd: [Song],
+        pathsToUpdate: [String: String],
+        elementsToDelete: [PathFileElement]
+    ) async throws {
+        try await coreData.performWithSerialQueue { context in
+            // Add
+            for song in songsToAdd {
+                let _ = SongMapper.mapToEntity(song: song, context: context)
+            }
+            
+            // Update
+            for (oldPath, newPath) in pathsToUpdate {
+                let request: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
+                request.predicate = NSPredicate(format: "url == %@", oldPath)
+                request.fetchLimit = 1
+                
+                if let song = try context.fetch(request).first {
+                    song.url = newPath
+                }
+            }
+            
+            // Delete
+            for element in elementsToDelete {
+                guard let coreDataPath = element.pathCoreData else { continue }
+                
+                let request: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
+                request.predicate = NSPredicate(format: "url == %@", coreDataPath)
+                request.fetchLimit = 1
+                
+                if let song = try context.fetch(request).first {
+                    context.delete(song)
+                }
+            }
+            
+            // Auto save/rollback
+            try context.save()
         }
     }
 }

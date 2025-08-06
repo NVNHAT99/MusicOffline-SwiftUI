@@ -38,11 +38,16 @@ enum CoreDataError: Error, LocalizedError {
 protocol CoreDataProtocol {
     var viewContext: NSManagedObjectContext { get }
     func newBackgroundContext() -> NSManagedObjectContext
+    func performWithSerialQueue<T>(
+        _ operation: @escaping (NSManagedObjectContext) throws -> T
+    ) async throws -> T
 }
 
-final class CoreDataManager: CoreDataProtocol {
+final class CoreDataManager: CoreDataProtocol, @unchecked Sendable {
+    
     static let shared = CoreDataManager()
     private let container: NSPersistentContainer
+    private let operationQueue = DispatchQueue(label: "com.musicapp.songrepository", qos: .userInitiated)
     
     private init() {
         container = NSPersistentContainer(name: "Library")
@@ -70,6 +75,34 @@ final class CoreDataManager: CoreDataProtocol {
         // Configure contexts
         container.viewContext.automaticallyMergesChangesFromParent = true
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+    }
+    
+    // MARK: - performWithSerialQueue Implementation
+    func performWithSerialQueue<T>(
+        _ operation: @escaping (NSManagedObjectContext) throws -> T
+    ) async throws -> T {
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            guard let self = self else {
+                continuation.resume(throwing: CoreDataError.entityNotFound) // hoặc error khác phù hợp
+                return
+            }
+            operationQueue.async {
+                let context = self.newBackgroundContext()
+                context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+                
+                context.perform {
+                    do {
+                        let result = try operation(context)
+                        
+                        context.reset()
+                        continuation.resume(returning: result)
+                    } catch {
+                        context.reset()
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
     }
     
     var viewContext: NSManagedObjectContext {
