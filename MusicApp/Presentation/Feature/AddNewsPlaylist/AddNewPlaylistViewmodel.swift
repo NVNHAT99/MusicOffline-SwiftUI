@@ -1,0 +1,67 @@
+//
+//  AddNewlibaryViewmodel.swift
+//  MusicApp
+//
+//  Created by Nhat on 10/7/23.
+//
+
+import Foundation
+import CoreData
+import SwiftUI
+
+final class AddNewPlaylistViewmodel: ObservableObject {
+    
+    // MARK: - properties
+    @Published private(set) var state: AddNewPlaylistState
+    private let addPlaylistUseCase: AddPlaylistUseCaseProtocol
+    
+    init(state: AddNewPlaylistState = .init(),
+         addPlaylistUseCase: AddPlaylistUseCaseProtocol = AddPlaylistUseCase()) {
+        self.state = state
+        self.addPlaylistUseCase = addPlaylistUseCase
+    }
+    
+    func send(intent: AddNewPlaylistIntent) {
+        switch intent {
+        case .addNewLibary(let onCompleted):
+            addNewPlaylist(onCompleted: onCompleted)
+        }
+    }
+    
+    private func addNewPlaylist(onCompleted: @escaping () -> Void) {
+        Task {
+            do {
+                try await addPlaylistUseCase.execute(with: self.state.playlistName)
+                await MainActor.run {
+                    onCompleted()
+                }
+            } catch {
+                // TODO: handle error here
+            }
+        }
+    }
+    
+    func bindingName() -> Binding<String> {
+        return .init { [weak self] in
+            guard let self = self else { return String.empty}
+            return self.state.playlistName
+        } set: { [weak self] newValue in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.state.playlistName = newValue
+            }
+        }
+    }
+    
+    func bindingHeightOfKeyBoard() -> Binding<CGFloat> {
+        return .init { [weak self] in
+            guard let self = self else { return 0}
+            return self.state.heightOfKeyboard
+        } set: { [weak self] newValue in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.state.heightOfKeyboard = newValue
+            }
+        }
+    }
+}

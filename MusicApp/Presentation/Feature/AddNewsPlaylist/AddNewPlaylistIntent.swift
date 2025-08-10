@@ -8,5 +8,5 @@
 import Foundation
 
 enum AddNewPlaylistIntent {
-    case addNewLibary(onDismiss: () -> Void)
+    case addNewLibary(onCompleted: () -> Void)
 }

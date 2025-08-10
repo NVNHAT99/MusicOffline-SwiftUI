@@ -69,7 +69,7 @@ struct TabButtonView<T: Hashable>: View {
 struct ClassicTabBar<T: Hashable>: View {
     @Binding var selectedTab: T
     let items: [TabItem<T>]
-
+    let backgroundColor: Color
     var body: some View {
         HStack(alignment: .center, spacing: 0) {
             ForEach(items) { item in
@@ -87,7 +87,7 @@ struct ClassicTabBar<T: Hashable>: View {
             }
         }
         .padding(.horizontal, 16)
-        .background(Color.white)
+        .background(backgroundColor)
         .overlay(Divider(), alignment: .top)
     }
 }
@@ -237,11 +237,11 @@ struct CustomTabBar<T: Hashable>: View {
     @Binding var selectedTab: T
     let items: [TabItem<T>]
     let type: TabBarType
-
+    let backgroundColor: Color
     var body: some View {
         switch type {
         case .classic:
-            ClassicTabBar(selectedTab: $selectedTab, items: items)
+            ClassicTabBar(selectedTab: $selectedTab, items: items, backgroundColor: backgroundColor)
         case .floating:
             FloatingTabBar(selectedTab: $selectedTab, items: items)
         case .minimal:
@@ -296,7 +296,8 @@ struct ContentView2: View {
 
                 CustomTabBar(selectedTab: $selectedTab,
                              items: tabItems,
-                             type: tabBarType)
+                             type: tabBarType,
+                             backgroundColor: Color.backgroundColor)
             }
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)

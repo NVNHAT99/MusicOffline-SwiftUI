@@ -7,24 +7,24 @@
 
 import Foundation
 
-protocol GetSongUseCaseProtocol {
-    func excute(_ songIdArray: [UUID]) async throws -> [Song]
-    func excuteGetAll() async throws -> [Song]
+protocol FetchSongUseCaseProtocol {
+    func execute(_ songIdArray: [UUID]) async throws -> [Song]
+    func executeGetAll() async throws -> [Song]
 }
 
-final class GetSongUseCase : GetSongUseCaseProtocol {
+final class FetchSongUseCase : FetchSongUseCaseProtocol {
     let repository: SongRepositoryProtocol
     
     init(repository: SongRepositoryProtocol = SongRepository()) {
         self.repository = repository
     }
     
-    func excute(_ songIdArray: [UUID]) async throws -> [Song] {
+    func execute(_ songIdArray: [UUID]) async throws -> [Song] {
         let result = try await repository.fetchSongs(songIdArray)
         return result
     }
     
-    func excuteGetAll() async throws -> [Song] {
+    func executeGetAll() async throws -> [Song] {
         return try await repository.fetchAllSongs()
     }
 }

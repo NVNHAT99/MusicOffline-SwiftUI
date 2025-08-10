@@ -8,8 +8,8 @@
 import Foundation
 
 protocol UpdateSongUseCaseProtocol {
-    func excute(from oldPath: String, to newPath: String) async throws
-    func excuteWithList(with dictionaryPath: [String: String]) async throws
+    func execute(from oldPath: String, to newPath: String) async throws
+    func executeWithList(with dictionaryPath: [String: String]) async throws
 }
 
 final class UpdateSongUseCase: UpdateSongUseCaseProtocol {
@@ -20,11 +20,11 @@ final class UpdateSongUseCase: UpdateSongUseCaseProtocol {
         self.songRepository = songRepository
     }
     
-    func excute(from oldPath: String, to newPath: String) async throws {
+    func execute(from oldPath: String, to newPath: String) async throws {
         try await songRepository.updateSong(from: oldPath, to: newPath)
     }
     
-    func excuteWithList(with dictionaryPath: [String : String]) async throws {
+    func executeWithList(with dictionaryPath: [String : String]) async throws {
         try await songRepository.updateSongs(from: dictionaryPath)
     }
 }

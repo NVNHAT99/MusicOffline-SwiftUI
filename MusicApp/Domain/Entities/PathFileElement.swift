@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PathFileElement {
-    let pathLocalFile: String?
-    let pathCoreData: String?
+public struct PathFileElement {
+    public let pathLocalFile: String?
+    public let pathCoreData: String?
 }

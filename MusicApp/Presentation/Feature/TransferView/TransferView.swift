@@ -70,20 +70,6 @@ struct TransferView: View {
                             
                             Text("Then upload files from your computer.\nplease don't switch to another app or lock your phone while transfering, affter all file upload like this image you must tap on save button to save your file, if you don't press save button, all your file you upload will be deleted")
                                 .lineLimit(.max)
-                            VStack {
-                                Button {
-                                    viewModel.send(.completedUploadSongs)
-                                } label: {
-                                    VStack {
-                                        Text("Save")
-                                            .font(.system(size: 16, weight: .semibold))
-                                            .frame(width: 94, height: 44)
-                                            .foregroundColor(.white)
-                                            .background(.black.opacity(0.8))
-                                            .cornerRadius(8, corners: .allCorners)
-                                    }
-                                }
-                            }.frame(maxWidth: .infinity)
                         }
                         .foregroundColor(.white)
                         .padding(.horizontal, 24)
@@ -99,7 +85,7 @@ struct TransferView: View {
                 .padding()
                 
                 Spacer()
-            }
+            } // vstak
             .frame(maxWidth: .infinity)
             
             if viewModel.state.showLoading {
@@ -117,16 +103,7 @@ struct TransferView: View {
                     .frame(height: 40)
                     .padding(.bottom, 16)
             }
-        }
-        .alert("Are you sure?",
-              isPresented: viewModel.isShowUnSaveDialog()) {
-            Button("Save") {
-                viewModel.send(.completedUploadSongs)
-            }
-           
-        } message: {
-            Text("Do you want to save the uploaded files?")
-        }
+        }// zstack
     }
 }
 

@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+enum HomeSkeletonType {
+    case others
+    case reccent
+}
 struct HomeView: View {
     // MARK: - Properties
     @StateObject var viewModel: HomeViewModel = HomeViewModel()
@@ -17,34 +21,16 @@ struct HomeView: View {
                     .font(.system(size: 24, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 16) {
-                        ForEach(0..<10, id: \.self) { _ in
-                            HomeCardView()
-                                .frame(width: 160)
-                        }
-                    }
-                   
-                }
-                .scrollIndicators(.hidden)
+                self.albumSection()
             } // VStack - album section
             
             VStack {
-                 Text("My Playlist")
-                    .font(.system(size: 24, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 16) {
-                        ForEach(0..<10, id: \.self) { _ in
-                            HomeCardView()
-                                .frame(width: 160)
-                        }
-                    }
-                }
-                .scrollIndicators(.hidden)
-                
-            } // VStack - playlist section
+                Text("Playlist")
+                   .font(.system(size: 24, weight: .semibold, design: .rounded))
+                   .foregroundStyle(.white)
+                   .frame(maxWidth: .infinity, alignment: .leading)
+                self.playlistSection()
+            }
             
             // recent play
             
@@ -53,16 +39,7 @@ struct HomeView: View {
                     .font(.system(size: 24, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                ScrollView(.vertical) {
-                    LazyVStack {
-                        ForEach(0..<10, id: \.self) { _ in
-                            SongItemView()
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 80)
-                        }
-                    }
-
-                }
+                recentSongsSection()
                 
             } // VStack - playlist section
             .padding(.trailing, 16)
@@ -72,7 +49,99 @@ struct HomeView: View {
         }
         .padding(.leading, 16)
         .onAppear {
-            viewModel.fetchSongs()
+            viewModel.send(.fetchSongs)
+        }
+    }
+    
+    @ViewBuilder
+    private func albumSection() -> some View {
+        if viewModel.state.isLoading {
+            skeletonView()
+        } else if viewModel.state.albums.isEmpty {
+            Text("Hiện tại chưa có album nào")
+                .foregroundColor(.gray)
+                .frame(height: 160)
+        } else {
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: 16) {
+                    ForEach(viewModel.state.albums) { album in
+                        HomeCardView(
+                            title: album.title,
+                            imageName: "",
+                            subTitle: ""
+                        )
+                        .frame(height: 160)
+                    }
+                }
+            }
+            .scrollIndicators(.hidden)
+        }
+    }
+    
+    @ViewBuilder
+    private func playlistSection() -> some View {
+        if viewModel.state.isLoading {
+            skeletonView()
+        } else if viewModel.state.playlists.isEmpty {
+            Text("Hiện tại chưa có playlist nào")
+                .foregroundColor(.gray)
+                .frame(height: 160)
+        } else {
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: 16) {
+                    ForEach(viewModel.state.playlists) { playlist in
+                        HomeCardView(
+                            title: playlist.name,
+                            imageName: "",
+                            subTitle: ""
+                        )
+                    }
+                }
+            }
+            .scrollIndicators(.hidden)
+        }
+    }
+    
+    @ViewBuilder
+    private func recentSongsSection() -> some View {
+        if viewModel.state.isLoading {
+            skeletonView(with: .reccent)
+        } else if viewModel.state.recentSongs.isEmpty {
+            Text("Hiện tại chưa có recent song nào")
+                .foregroundColor(.gray)
+                .frame(height: 160)
+        } else {
+            ScrollView(.horizontal) {
+                LazyVStack(spacing: 16) {
+                    ForEach(viewModel.state.recentSongs) { recenSong in
+                        SongItemView()
+                    }
+                }
+            }
+            .scrollIndicators(.hidden)
+        }
+    }
+    
+    @ViewBuilder
+    private func skeletonView(with type: HomeSkeletonType = .others) -> some View {
+        if type == .reccent {
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 8) {
+                    ForEach(0..<3) { _ in
+                        SongSkeletonItemView()
+                    }
+                }
+            }
+            .scrollIndicators(.hidden)
+        } else {
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: 16) {
+                    ForEach(0..<3) { _ in
+                        HomeCardSkeletonView()
+                    }
+                }
+            }
+            .scrollIndicators(.hidden)
         }
     }
 }

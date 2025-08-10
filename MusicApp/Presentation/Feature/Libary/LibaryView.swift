@@ -9,82 +9,98 @@ import SwiftUI
 
 struct LibaryView: View {
     
-    @ObservedObject private var handler: LibaryViewViewModel
+    @StateObject private var handler: LibaryViewViewModel
     @State private var isPresented: Bool = false
     @StateObject private var router = Router<LibaryRouter>()
-//    @State isPresented:
+    
     init (handler: LibaryViewViewModel) {
-        self.handler = handler
+        self._handler = StateObject(wrappedValue: handler)
     }
     var body: some View {
-        VStack (spacing: 0) {
-            CustomNavigationBar(type: .large(title: "My Libary"))
-                .frame(height: 70)
-                .padding(.leading, 26)
-                .foregroundColor(.white)
-            VStack (alignment: .leading, spacing: 0) {
-                HStack {
-                    Text("Playlists")
-                        .padding(26)
-                        .foregroundColor(.white)
-                        .font(.system(size: 28))
-                    
+        ZStack(alignment: .leading, content: {
+            
+            Color.backgroundColor
+                .ignoresSafeArea()
+            
+            VStack (spacing: 0) {
+                CustomNavigationBar(type: .large(title: "My Libary"))
+                    .frame(height: 70)
+                    .foregroundColor(.white)
+                VStack (alignment: .leading, spacing: 0) {
                     Spacer()
-                    
-                    Button {
-                        router.route(to: .addPlaylist)
-                    } label: {
-                        Text("Add New")
+                        .frame(height: 24)
+                    HStack {
+                        Text("Playlists")
                             .foregroundColor(.white)
-                    } // Button Add new
-                    
-                    Spacer()
-                        .frame(width: 10)
-                }
-                if false {
-                    VStack(alignment: .center) {
-                        Text("You don't have any play list yet")
-                            .foregroundColor(.white)
-                            .frame(alignment: .center)
+                            .font(.system(size: 28)) // text
                     }
-                    .frame(height: 50)
-                } else {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHStack {
-                            ForEach(0...3, id: \.self) { _ in
-                                NavigationLink {
-                                    
-                                } label: {
-                                    PlayListItemView(playListName: "tex 1")
+                    .padding(.bottom, 24)
+                    
+                    if handler.state.isLoading  {
+                        ScrollView(.vertical) {
+                            LazyVStack(spacing: 8) {
+                                ForEach(0..<3) { _ in
+                                    SongSkeletonItemView()
                                 }
                             }
-                        } // LazyHStack
-                        .frame(height: 210)
-                    } // Scroll
-                    .padding(.leading, 26)
-                }
-                
-                Spacer()
-                    .frame(height: 15)
-                VStack (alignment: .leading) {
-                    Text("Albums")
-                        .foregroundColor(.white)
-                    ScrollView {
-                        LazyVStack {
-                            ForEach(0...9, id: \.self) { _ in
-                                PlayListItemView(playListName: "Text")
-                            } // LazyVGridView
+                        } // scrollview
+                        .scrollIndicators(.hidden)
+                        
+                    } else if !handler.state.playlist.isEmpty {
+                        
+                        ScrollView(.vertical) {
+                            LazyVStack(spacing: 12) {
+                                ForEach(handler.state.playlist) { item in
+                                    PlayListItemView(playListName: item.name)
+                                }
+                            }
+                        } // Scroll
+                        .scrollIndicators(.hidden)
+                    } else {
+                        VStack(alignment: .center) {
+                            Text("You don't have any play list yet")
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity, alignment: .center)
                         }
-                    } // ScrollView
-                    .navigationBarHidden(true)
-                } // VStack
-                .padding([.leading, .trailing], 26)
+                        .frame(maxHeight: .infinity)
+                    }
+                    
+                    Spacer()
+                }// VStack
+                .padding(.horizontal, 16)
             } // VStack
-        } // VStack
+            
+            VStack {
+                    Spacer()
+
+                    HStack {
+                        Spacer()
+
+                        Button {
+                            router.route(to: .addPlaylist, dismissCompletion: {
+                                self.handler.send(intent: .loadPlaylist)
+                            })
+                        } label: {
+                            Image(systemName: "plus")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
+                                .foregroundColor(.white)
+                                .padding(20)
+                                .background(
+                                    Circle()
+                                        .fill(Color.cyan)
+                                        .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3)
+                                )
+                        }
+                        .padding()
+                    }
+                }
+
+        }) // zstack
         .onAppear {
             handler.send(intent: .loadPlaylist)
         }
-        .background(Color.backgroundColor)
         .embedded(navigation: .stacks,
                   with: router)
         

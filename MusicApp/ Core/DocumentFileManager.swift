@@ -33,7 +33,7 @@ final class DocumentFileService: DocumentFileServiceProtocol {
         var songName = url.lastPathComponent.replacingOccurrences(of: ".mp3", with: "")
         var albumName = String.Unkown
         var thumbnail: UIImage?
-        let duration = asset.duration.seconds
+        let duration = try await asset.load(.duration)
 
         let metadata = try await asset.load(.metadata)
         
@@ -65,7 +65,7 @@ final class DocumentFileService: DocumentFileServiceProtocol {
             image: .empty,
             singerName: .Unkown,
             thumbnail: thumbnail,
-            duration: duration
+            duration: duration.seconds
         )
     }
     

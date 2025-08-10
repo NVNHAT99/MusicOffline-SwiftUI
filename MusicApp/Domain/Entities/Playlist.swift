@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct Playlist {
-    let id: String
-    let name: String
-    let songs: [Song]
+public struct Playlist: Identifiable, Equatable {
+    public let id: UUID
+    public let name: String
+    public let songIDs: [String]
 }

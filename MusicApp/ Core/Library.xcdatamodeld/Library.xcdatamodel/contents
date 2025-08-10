@@ -3,7 +3,7 @@
     <entity name="PlaylistEntity" representedClassName="PlaylistEntity" syncable="YES">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <relationship name="songs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongEntity"/>
+        <attribute name="songIDs" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformerName" customClassName="NSArray"/>
     </entity>
     <entity name="SongEntity" representedClassName="SongEntity" syncable="YES">
         <attribute name="album" optional="YES" attributeType="String"/>

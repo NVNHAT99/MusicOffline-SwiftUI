@@ -41,6 +41,12 @@ protocol CoreDataProtocol {
     func performWithSerialQueue<T>(
         _ operation: @escaping (NSManagedObjectContext) throws -> T
     ) async throws -> T
+    
+    func performTransferInTransferContext<T>(
+        _ operation: @escaping (NSManagedObjectContext) throws -> T
+    ) async throws -> T
+    
+    var isTransferQueueIdle: Bool { get }
 }
 
 final class CoreDataManager: CoreDataProtocol, @unchecked Sendable {
@@ -48,6 +54,24 @@ final class CoreDataManager: CoreDataProtocol, @unchecked Sendable {
     static let shared = CoreDataManager()
     private let container: NSPersistentContainer
     private let operationQueue = DispatchQueue(label: "com.musicapp.songrepository", qos: .userInitiated)
+    private let transferQueue: OperationQueue
+    
+    var viewContext: NSManagedObjectContext {
+        container.viewContext
+    }
+    
+    func newBackgroundContext() -> NSManagedObjectContext {
+        let context = container.newBackgroundContext()
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        return context
+    }
+    
+    private lazy var transferContext: NSManagedObjectContext = {
+        let context = container.newBackgroundContext()
+        context.name = "TransferContext"
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        return context
+    }()
     
     private init() {
         container = NSPersistentContainer(name: "Library")
@@ -75,6 +99,10 @@ final class CoreDataManager: CoreDataProtocol, @unchecked Sendable {
         // Configure contexts
         container.viewContext.automaticallyMergesChangesFromParent = true
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        
+        transferQueue = OperationQueue()
+        transferQueue.maxConcurrentOperationCount = 1
+        transferQueue.name = "com.musicapp.transferQueue"
     }
     
     // MARK: - performWithSerialQueue Implementation
@@ -105,13 +133,29 @@ final class CoreDataManager: CoreDataProtocol, @unchecked Sendable {
         }
     }
     
-    var viewContext: NSManagedObjectContext {
-        container.viewContext
+    func performTransferInTransferContext<T>(_ operation: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            guard let self = self else {
+                continuation.resume(throwing: CoreDataError.entityNotFound) // hoặc error khác phù hợp
+                return
+            }
+            
+            let block = BlockOperation {
+                self.transferContext.perform {
+                    do {
+                        let result = try operation(self.transferContext)
+                        continuation.resume(returning: result)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+            
+            self.transferQueue.addOperation(block)
+        }
     }
     
-    func newBackgroundContext() -> NSManagedObjectContext {
-        let context = container.newBackgroundContext()
-        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        return context
+    var isTransferQueueIdle: Bool {
+        transferQueue.operations.count == 0
     }
 }

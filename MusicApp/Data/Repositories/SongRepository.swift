@@ -21,8 +21,8 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
             throw CoreDataError.invalidTitle
         }
         
-        try await coreData.performWithSerialQueue { context in
-            let songEntity = SongMapper.mapToEntity(song: song, context: context)
+        try await coreData.performTransferInTransferContext { context in
+            let songEntity = SongEntityMapper.makeEntity(song, context: context)
             do {
                 try context.save()
                 print("✓ Saved song: \(songEntity.title ?? "") with ID: \(songEntity.id?.uuidString ?? "")")
@@ -34,9 +34,9 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
     }
     
     func addSongs(_ songs: [Song]) async throws {
-        return try await coreData.performWithSerialQueue { context in
+        return try await coreData.performTransferInTransferContext { context in
             for song in songs {
-                let _ = SongMapper.mapToEntity(song: song, context: context)
+                let _ = SongEntityMapper.makeEntity(song, context: context)
             }
             do {
                 try context.save()
@@ -49,7 +49,7 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
     }
     
     func fetchSongs(_ songIdArray: [UUID]) async throws -> [Song] {
-        return try await coreData.performWithSerialQueue { context in
+        return try await coreData.performTransferInTransferContext { context in
             let request: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
             request.predicate = NSPredicate(format: "id IN %@", songIdArray)
             
@@ -62,7 +62,7 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
     }
     
     func fetchAllSongs() async throws -> [Song] {
-        return try await coreData.performWithSerialQueue { context in
+        return try await coreData.performTransferInTransferContext { context in
             let fetchRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)] // Sắp xếp theo title tăng dần
             
@@ -77,7 +77,7 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
     }
     
     func updateSong(from oldPath: String, to newPath: String) async throws {
-        try await coreData.performWithSerialQueue { context in
+        try await coreData.performTransferInTransferContext { context in
             let request: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
             request.predicate = NSPredicate(format: "url == %@", oldPath)
             request.fetchLimit = 1
@@ -93,7 +93,7 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
     }
     
     func updateSongs(from dictionaryFileURLs: [String : String]) async throws {
-        try await coreData.performWithSerialQueue { context in
+        try await coreData.performTransferInTransferContext { context in
             do {
                 for (oldPath, newPath) in dictionaryFileURLs {
                     
@@ -122,7 +122,7 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
 
     
     func deleteSong(withURL url: String) async throws {
-        try await coreData.performWithSerialQueue { context in
+        try await coreData.performTransferInTransferContext { context in
             let fetchRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "url == %@", url)
             fetchRequest.fetchLimit = 1
@@ -143,7 +143,7 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
     }
     
     func deleteSongs(with elements: [PathFileElement]) async throws {
-        try await coreData.performWithSerialQueue { context in
+        try await coreData.performTransferInTransferContext { context in
             do {
                 for element in elements {
                     guard let coreDataPath = element.pathCoreData else { continue }
@@ -168,7 +168,7 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
     }
     
     func deleteAllSongs() async throws {
-        try await coreData.performWithSerialQueue { context in
+        try await coreData.performTransferInTransferContext { context in
             let fetchRequest: NSFetchRequest<NSFetchRequestResult> = SongEntity.fetchRequest()
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
             deleteRequest.resultType = .resultTypeObjectIDs
@@ -198,7 +198,7 @@ extension SongRepository {
         try await coreData.performWithSerialQueue { context in
             // Add
             for song in songsToAdd {
-                let _ = SongMapper.mapToEntity(song: song, context: context)
+                let _ = SongEntityMapper.makeEntity(song, context: context)
             }
             
             // Update

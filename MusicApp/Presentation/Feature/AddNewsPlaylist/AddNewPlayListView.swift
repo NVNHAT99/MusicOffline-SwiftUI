@@ -19,7 +19,7 @@ struct AddNewPlayListView: View {
                     ZStack(alignment: .leading) {
                         // this view make text field change place holder color
                         // if the new of version of swiftUI have this modifer so you could change
-                        if viewmodel.state.name.isEmpty {
+                        if viewmodel.state.playlistName.isEmpty {
                             Text("Enter playlist name here")
                                 .foregroundColor(.white.opacity(0.6))
                             .padding(24)
@@ -37,9 +37,9 @@ struct AddNewPlayListView: View {
                     Spacer()
                         .frame(height: 10)
                     Button {
-                        if viewmodel.state.name != String.empty {
-                            
-                        }
+                        viewmodel.send(intent: .addNewLibary(onCompleted: {
+                            self.router.dismiss()
+                        }))
                     } label: {
                         Text("Create")
                             .foregroundColor(.white)
@@ -61,15 +61,13 @@ struct AddNewPlayListView: View {
                 .cornerRadius(12)
                 .shadow(radius: 4)
                 .onTapGesture {}
-                .modifier(CustomModifiers.PushContentKeyboardModifier(heightOfKeyboard: viewmodel.bindingHeightOfKeyBoard(),
-                                                                      offsetYOfView: proxyVStack.frame(in: .global).maxY,
-                                                                      isPresented: true))
             }
             .frame(height: 200)
             .padding(.horizontal, 24)
         } // ZSTACK
-        .ignoresSafeArea()
+        .ignoresSafeArea([.container])
         .onTapGesture {
+            
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             router.dismiss()
         }
@@ -78,6 +76,7 @@ struct AddNewPlayListView: View {
 
 struct AddNewPlayListView_Previews: PreviewProvider {
     static var previews: some View {
-        AddNewPlayListView(viewmodel: AddNewPlaylistViewmodel(), router: .init())
+        AddNewPlayListView(viewmodel: AddNewPlaylistViewmodel(),
+                           router: .init())
     }
 }

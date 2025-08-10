@@ -88,5 +88,7 @@ extension Color {
     static let whiteAlpha30: Color = Color(hexString: "#FFFFFF", alpha: 0.3)
     static let headerBackground: Color = Color(hexString: "#26292D", alpha: 1.0)
     static let bottomBackground: Color = Color(hexString: "#41464B", alpha: 1.0)
+    static let cyan: Color = Color(hexString: "#4DD0E1")
+    static let color292C2E: Color = Color(hexString: "#292C2E")
 }
 

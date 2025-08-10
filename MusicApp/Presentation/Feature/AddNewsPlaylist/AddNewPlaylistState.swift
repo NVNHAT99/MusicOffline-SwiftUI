@@ -11,6 +11,6 @@ struct AddNewPlaylistState {
     var isShowToastView: Bool = false
     var toastViewMessage: String = String.empty
     var completedAddPlaylist: Bool = false
-    var name: String = String.empty
+    var playlistName: String = String.empty
     var heightOfKeyboard: CGFloat = 0.0
 }

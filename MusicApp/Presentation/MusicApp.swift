@@ -19,6 +19,7 @@ struct MusicApp: App {
         .onChange(of: scenePhase) { newPhase in
             switch newPhase {
             case .background:
+                print("😴 background task")
                 WebServerGCDService.shared.stopWebUploader()
             case .inactive:
                 print("😴 App inactive")

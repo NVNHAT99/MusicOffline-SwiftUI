@@ -89,3 +89,9 @@ struct RoundedCorner: Shape {
         return Path(path.cgPath)
     }
 }
+
+extension View {
+    func shimmer() -> some View {
+        modifier(ShimmerViewModifier())
+    }
+}

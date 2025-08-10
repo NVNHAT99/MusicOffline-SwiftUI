@@ -8,8 +8,9 @@
 import Foundation
 
 protocol DeleteSongUseCaseProtocol {
-    func excute(_ pathFileElemets: [PathFileElement]) async throws
-    func excuteDeleteAll() async throws
+    func executeList(_ pathFileElemets: [PathFileElement]) async throws
+    func executeDeleteAll() async throws
+    func execute(width path: String) async throws
 }
 
 final class DeleteSongUseCase: DeleteSongUseCaseProtocol {
@@ -22,14 +23,19 @@ final class DeleteSongUseCase: DeleteSongUseCaseProtocol {
         self.documentFileService = documentFileService
     }
     
-    func excute(_ pathFileElemets: [PathFileElement]) async throws {
+    func executeList(_ pathFileElemets: [PathFileElement]) async throws {
         try await repository.deleteSongs(with: pathFileElemets)
         try await documentFileService.removeFiles(pathFileElemets)
         
     }
     
-    func excuteDeleteAll() async throws {
+    func executeDeleteAll() async throws {
         try await repository.deleteAllSongs()
         try await documentFileService.removeAllFiles()
+    }
+    
+    func execute(width path: String) async throws {
+        try await repository.deleteSong(withURL: path)
+        try await documentFileService.removeFiles([.init(pathLocalFile: path, pathCoreData: nil)])
     }
 }

@@ -8,4 +8,8 @@
 import Foundation
 
 struct HomeViewState {
+    var isLoading: Bool = false
+    var albums: [Album] = []
+    var playlists: [Playlist] = []
+    var recentSongs: [Song] = []
 }

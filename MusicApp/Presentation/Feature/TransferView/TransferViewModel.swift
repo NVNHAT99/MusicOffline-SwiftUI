@@ -15,17 +15,16 @@ final class TransferViewModel: ObservableObject {
     
     private let webUploaderUseCase: ManageWebUploaderUseCaseProtocol
     private let uploadSongUseCase: UploadSongUseCaseProtocol
-    private let batchOperationUseCase: BatchOperationUseCaseProtocol
+    private let transferUseCase: TransferUseCaseProtocol
     
     init(state: TransferViewState = .init(),
          webUploaderUseCase: ManageWebUploaderUseCaseProtocol = ManageWebUploaderUseCase(),
          uploadSongUseCase: UploadSongUseCaseProtocol = UploadSongUseCase(),
-         batchOperationUseCase: BatchOperationUseCaseProtocol = BatchOperationUseCase()) {
-        
+         transferUseCase: TransferUseCaseProtocol = TransferUseCase()) {
         self.state = state
         self.webUploaderUseCase = webUploaderUseCase
         self.uploadSongUseCase = uploadSongUseCase
-        self.batchOperationUseCase = batchOperationUseCase
+        self.transferUseCase = transferUseCase
         
         bindViewModel()
     }
@@ -35,7 +34,9 @@ final class TransferViewModel: ObservableObject {
         // Track uploaded files
         uploadSongUseCase.uploadedFilePublisher
             .sink { [weak self] path in
-                self?.batchOperationUseCase.trackFileUploaded(path)
+                Task {
+                    try await self?.transferUseCase.executeAdd(by: path)
+                }
             }
             .store(in: &cancelBag)
         
@@ -50,14 +51,18 @@ final class TransferViewModel: ObservableObject {
         // Track deleted files
         uploadSongUseCase.deletedFilePublisher
             .sink { [weak self] path in
-                self?.batchOperationUseCase.trackFileDeleted(path)
+                Task {
+                    try await self?.transferUseCase.executeDelete(from: path)
+                }
             }
             .store(in: &cancelBag)
         
         // Track updated file paths
         uploadSongUseCase.updatePathFilePublisher
             .sink { [weak self] (oldPath, newPath) in
-                self?.batchOperationUseCase.trackFileUpdated(from: oldPath, to: newPath)
+                Task {
+                    try await self?.transferUseCase.executeUpdate(from: oldPath, to: newPath)
+                }
             }
             .store(in: &cancelBag)
     }
@@ -127,31 +132,6 @@ final class TransferViewModel: ObservableObject {
         }
     }
     
-    private func commitAllOperations() {
-        state.showLoading = true
-        
-        Task {
-            do {
-                try await batchOperationUseCase.commitAllOperations()
-                await MainActor.run {
-                    var newStatte = self.state
-                    newStatte.showLoading = false
-                    newStatte.isShowToastView = true
-                    newStatte.messageToastView = "All your's changes have been saved!"
-                    self.state = newStatte
-                }
-            } catch {
-                await MainActor.run {
-                    var newStatte = self.state
-                    newStatte.showLoading = false
-                    newStatte.isShowToastView = true
-                    newStatte.messageToastView = "All your's changes can't saved!"
-                    self.state = newStatte
-                }
-            }
-        }
-    }
-    
     func send(_ intent: TransferViewIntent) {
         switch intent {
         case .toggleServer:
@@ -162,17 +142,24 @@ final class TransferViewModel: ObservableObject {
             }
             
         case .handleBackAction(let navigationHandler):
-            if batchOperationUseCase.hasPendingChanges() {
+            if transferUseCase.isAllTaskDone() {
                 Task {
-                    await self.handleBackActionWithPendingChanges()
+                    // TODO: need clear transfer context here
+                    await MainActor.run {
+                        navigationHandler.dismissView()
+                    }
                 }
             } else {
-                handleBackActionWithoutPendingChanges(navigationHandler)
+                Task {
+                    await MainActor.run {
+                        var newStatte = self.state
+                        newStatte.showLoading = false
+                        newStatte.isShowToastView = true
+                        newStatte.messageToastView = "Your changes are still being saved. Please wait a moment."
+                        self.state = newStatte
+                    }
+                }
             }
-            
-        case .completedUploadSongs:
-            commitAllOperations()
-            
         case .copyIPAdress:
             UIPasteboard.general.string = state.ipAdress
         }

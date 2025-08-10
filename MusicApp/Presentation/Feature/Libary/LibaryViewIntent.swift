@@ -9,8 +9,6 @@ import Foundation
 
 enum LibaryViewIntent {
     case loadPlaylist
-    case addNewPlayList(String)
     case deletePlaylist(Playlist)
     case updateIsPresented(Bool)
-    case showAddNewPlaylist(value: Bool)
 }

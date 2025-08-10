@@ -41,7 +41,10 @@ struct MainTabView: View {
                 }
                 
                 
-                CustomTabBar(selectedTab: $tabSelection, items: viewModel.tabItems, type: .classic)
+                CustomTabBar(selectedTab: $tabSelection,
+                             items: viewModel.tabItems,
+                             type: .classic,
+                             backgroundColor: Color.black)
                     .frame(height: 80)
             }
             .ignoresSafeArea(.all, edges: [.bottom])

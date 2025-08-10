@@ -10,22 +10,21 @@ import SwiftUI
 struct PlayListItemView: View {
     var playListName: String = String.empty
     var body: some View {
-        GeometryReader { proxy in
-            VStack {
-                Spacer()
-                HStack() {
-                    Text(playListName)
-                        .frame(maxWidth: 200, alignment: .leading)
-                        .font(.system(size: 16, weight: .semibold))
-                        .lineLimit(1)
-                }
-                Spacer()
+        VStack {
+            Spacer()
+            HStack() {
+                Text(playListName)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.system(size: 20, weight: .semibold))
+                    .lineLimit(1)
             }
-            .foregroundColor(.white)
-            .padding(.horizontal, 8)
-            .padding(.trailing, 8)
-            .frame(height: proxy.size.height)
+            Spacer()
         }
+        .foregroundColor(.white)
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity)
+        .background(Color.color292C2E)
+        .cornerRadius(8, corners: .allCorners)
     }
 }
 
