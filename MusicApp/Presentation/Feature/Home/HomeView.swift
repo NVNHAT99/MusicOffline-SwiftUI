@@ -12,7 +12,9 @@ enum HomeSkeletonType {
     case reccent
 }
 struct HomeView: View {
+    
     // MARK: - Properties
+    @EnvironmentObject var reloadManager: TabReloadManager
     @StateObject var viewModel: HomeViewModel = HomeViewModel()
     var body: some View {
         VStack {
@@ -50,6 +52,11 @@ struct HomeView: View {
         .padding(.leading, 16)
         .onAppear {
             viewModel.send(.fetchSongs)
+        }
+        .onChange(of: reloadManager.resetTab) { _, newValue in
+            if newValue.contains(.home) {
+                self.viewModel.send(.fetchSongs)
+            }
         }
     }
     

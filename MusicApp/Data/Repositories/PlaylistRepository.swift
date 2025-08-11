@@ -31,6 +31,24 @@ final class PlaylistRepository: PlaylistRepositoryProtocol {
         }
     }
     
+    func fetchPlaylist(with name: String) async throws -> Playlist? {
+        return try await coreDataService.performWithSerialQueue { context in
+            let fetchRequest: NSFetchRequest<PlaylistEntity> = PlaylistEntity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "name =[cd] %@", name)
+            fetchRequest.fetchLimit = 1
+            
+            do {
+                guard let playlist = try context.fetch(fetchRequest).first else {
+                    return nil
+                }
+                let result = PlaylistEntityMapper.mapToPlayList(playlist)
+                return result
+            } catch {
+                throw CoreDataError.entityNotFound
+            }
+        }
+    }
+    
     func addPlaylist(with playlist: Playlist) async throws {
         try await coreDataService.performWithSerialQueue { context in
             let playlistEntity = PlaylistEntityMapper.makePlaylistEntity(playlist,

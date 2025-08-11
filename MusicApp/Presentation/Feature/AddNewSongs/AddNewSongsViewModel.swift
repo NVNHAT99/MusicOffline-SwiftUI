@@ -23,8 +23,6 @@ final class AddNewSongsViewModel: ObservableObject {
             toggleSelected(at: index)
         case .addToPlaylist(let onCompleted):
             addToPlaylist(onCompleted: onCompleted)
-        default:
-            break
         }
     }
     

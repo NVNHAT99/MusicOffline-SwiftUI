@@ -36,7 +36,18 @@ final class AddNewPlaylistViewmodel: ObservableObject {
                     onCompleted()
                 }
             } catch {
-                // TODO: handle error here
+                if let error = error as? AddPlaylistError {
+                    // TODO: handle error here
+                    await MainActor.run {
+                        var newState = self.state
+                        newState.isShowToastView = true
+                        switch error {
+                        case .playListNameExtisted:
+                            newState.toastViewMessage = "This playlist already exists. Please choose a different name."
+                        }
+                        self.state = newState
+                    }
+                }
             }
         }
     }
@@ -63,5 +74,13 @@ final class AddNewPlaylistViewmodel: ObservableObject {
                 self.state.heightOfKeyboard = newValue
             }
         }
+    }
+    
+    var bindingShowToastView: Binding<Bool> {
+        .init(get: {
+            return self.state.isShowToastView
+        }, set: { newValue in
+            return self.state.isShowToastView = newValue
+        })
     }
 }

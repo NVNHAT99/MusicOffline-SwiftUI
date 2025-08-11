@@ -10,11 +10,13 @@ import SwiftUI
 struct MainTabView: View {
     @State private var tabSelection: MainTab
     @StateObject private var viewModel: MainTabViewVM
-    
-    init(tabSelection: MainTab = .home, viewModel: MainTabViewVM = MainTabViewVM()) {
+    @StateObject private var reloadManager: TabReloadManager
+    init(tabSelection: MainTab = .home,
+         viewModel: MainTabViewVM = MainTabViewVM(),
+         reloadManager: TabReloadManager = TabReloadManager()) {
         self.tabSelection = tabSelection
         _viewModel = StateObject(wrappedValue: viewModel)
-        
+        _reloadManager = StateObject(wrappedValue: reloadManager)
     }
     
     var body: some View {
@@ -49,6 +51,7 @@ struct MainTabView: View {
             }
             .ignoresSafeArea(.all, edges: [.bottom])
         }
+        .environmentObject(reloadManager)
     }
 }
 

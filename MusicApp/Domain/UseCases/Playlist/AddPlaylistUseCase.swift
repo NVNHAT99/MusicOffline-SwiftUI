@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum AddPlaylistError: Error {
+    case playListNameExtisted
+}
+
 protocol AddPlaylistUseCaseProtocol {
     func execute(with name: String) async throws
 }
@@ -20,6 +24,11 @@ final class AddPlaylistUseCase: AddPlaylistUseCaseProtocol {
     }
     
     func execute(with name: String) async throws {
+        // kiểm tra playlist name đã tồn tại hay chưa
+        if let _ = try await repository.fetchPlaylist(with: name) {
+            throw AddPlaylistError.playListNameExtisted
+        }
+        
         try await repository.addPlaylist(with: .init(id: UUID(),
                                                      name: name,
                                                      songIDs: []))

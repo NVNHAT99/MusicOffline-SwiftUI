@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AddNewPlayListView: View {
     // MARK: - PROPERTIES
+    @EnvironmentObject var reloadManager: TabReloadManager
     @StateObject var viewmodel: AddNewPlaylistViewmodel = AddNewPlaylistViewmodel()
     let router: Router<LibaryRouter>
     var body: some View {
@@ -38,6 +39,7 @@ struct AddNewPlayListView: View {
                         .frame(height: 10)
                     Button {
                         viewmodel.send(intent: .addNewLibary(onCompleted: {
+                            self.reloadManager.resetTab = [.home]
                             self.router.dismiss()
                         }))
                     } label: {
@@ -64,6 +66,15 @@ struct AddNewPlayListView: View {
             }
             .frame(height: 200)
             .padding(.horizontal, 24)
+            
+            if viewmodel.state.isShowToastView {
+                VStack {
+                    Spacer()
+                    ToastView(isShowView: viewmodel.bindingShowToastView, message: viewmodel.state.toastViewMessage, timeShowView: .seconds(2))
+                        .frame(height: 60)
+                        .padding(.bottom, 16)
+                }
+            }
         } // ZSTACK
         .ignoresSafeArea([.container])
         .onTapGesture {
