@@ -15,8 +15,7 @@ final class LibaryViewViewModel: ObservableObject {
     @Published private(set) var state: LibaryViewState
     private let fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol
     
-    init(state: LibaryViewState = LibaryViewState(isLoading: false,
-                                                  isPresnted: false,
+    init(state: LibaryViewState = LibaryViewState(isLoading: true,
                                                   playlist: []),
          fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol = FetchPlaylistUseCase()) {
         self.state = state
@@ -29,8 +28,6 @@ final class LibaryViewViewModel: ObservableObject {
             loadPlaylists()
         case .deletePlaylist(let playlist):
             deletePlaylist(playlist: playlist)
-        case .updateIsPresented(let newValue):
-            state.isPresnted = newValue
         }
     }
     
@@ -46,10 +43,11 @@ final class LibaryViewViewModel: ObservableObject {
     }
     
     private func loadPlaylists(isFromDeleted: Bool = false) {
-        self.state.isLoading = true
         Task {
+            await MainActor.run {
+                self.state.isLoading = true
+            }
             let playlist = try await fetchPlaylistaUseCase.executeGetAll()
-            
             await MainActor.run {
                 var newSate = self.state
                 newSate.isLoading = false
@@ -57,16 +55,6 @@ final class LibaryViewViewModel: ObservableObject {
                 self.state = newSate
             }
         }
-    }
-    // this code cant not using for sheet modfier
-    // because that make change value for the state and that make the view rerender
-    // this could be using for binding value for the other view no presented
-    func isPresented() -> Binding<Bool> {
-        return Binding<Bool>(
-            get: { self.state.isPresnted },
-            set: { _ in
-            }
-        )
     }
     
     func isCompletedAddPlaylist() -> Binding<Bool> {

@@ -7,32 +7,38 @@
 
 import SwiftUI
 
-struct SongInfo {
-    let name: String
-    let albumName: String
-    let image: String
-    let singerName: String
-    let thumbnail: UIImage?
-    let duration: Double
-}
-
 struct SongItemView: View {
+    
+    let song: SongModel
+    let onTapPlayAction: OnTapAction?
     
     var body: some View {
         HStack {
-            Image("demoSongImage")
+            Image(systemName: "music.note")
                 .resizable()
                 .scaledToFit()
-            Text("Taylor Swift - shake")
+                .frame(width: 24, height: 24)
                 .foregroundStyle(.white)
-            Spacer()
+                
+            Text(song.title)
+                .lineLimit(2)
+                .foregroundStyle(.white)
+                .font(.system(size: 14))
             
-            Text("3:20")
+            Spacer()
+                .frame(width: 8)
+            
+            Text(song.durationString)
                 .foregroundStyle(.white)
+                .font(.system(size: 14))
+            
             Spacer()
                 .frame(width: 16)
+            
+            Spacer()
+            
             Button {
-                
+                onTapPlayAction?()
             } label: {
                 Image(systemName: "play.circle.fill")
                     .resizable()
@@ -40,9 +46,9 @@ struct SongItemView: View {
                     .frame(width: 20, height: 20)
                     .tint(.white)
             }
-
         }
-        .padding(.trailing, 16)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
         .background(Color.backgroundColor)
         .cornerRadius(16, corners: .allCorners)
         
@@ -50,8 +56,14 @@ struct SongItemView: View {
 }
 
 #Preview {
-    SongItemView()
-        .frame(height: 100)
+    SongItemView(song: .init(id: UUID(),
+                             title: "shake it off",
+                             album: "taylor",
+                             artist: "taylor",
+                             duration: 12.0,
+                             urlStr: ""),
+                 onTapPlayAction: nil)
+        .frame(height: 64)
         .padding()
         
 }

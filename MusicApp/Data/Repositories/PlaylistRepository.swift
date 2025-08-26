@@ -49,6 +49,24 @@ final class PlaylistRepository: PlaylistRepositoryProtocol {
         }
     }
     
+    func fetchPlaylist(with id: UUID) async throws -> Playlist? {
+        return try await coreDataService.performWithSerialQueue { context in
+            let fetchRequest: NSFetchRequest<PlaylistEntity> = PlaylistEntity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+            fetchRequest.fetchLimit = 1
+            
+            do {
+                guard let playlist = try context.fetch(fetchRequest).first else {
+                    return nil
+                }
+                let result = PlaylistEntityMapper.mapToPlayList(playlist)
+                return result
+            } catch {
+                throw CoreDataError.entityNotFound
+            }
+        }
+    }
+    
     func addPlaylist(with playlist: Playlist) async throws {
         try await coreDataService.performWithSerialQueue { context in
             let playlistEntity = PlaylistEntityMapper.makePlaylistEntity(playlist,
@@ -109,6 +127,27 @@ final class PlaylistRepository: PlaylistRepositoryProtocol {
                 }
             } catch {
                 throw CoreDataError.deleteFailed(error)
+            }
+        }
+    }
+    
+    func updatePlaylist(by playlistID: UUID, with songIds: [String]) async throws {
+        try await coreDataService.performWithSerialQueue { context in
+            
+            let fetchPlaylistRequest: NSFetchRequest<PlaylistEntity> = PlaylistEntity.fetchRequest()
+            fetchPlaylistRequest.predicate = NSPredicate(format: "id == %@", playlistID as CVarArg)
+            fetchPlaylistRequest.fetchLimit = 1
+            
+            do {
+                if let playlistUpdate = try context.fetch(fetchPlaylistRequest).first {
+                    playlistUpdate.songIDStrings = songIds
+                }
+                
+                if context.hasChanges {
+                    try context.save()
+                }
+            } catch {
+                throw CoreDataError.saveFailed(error)
             }
         }
     }

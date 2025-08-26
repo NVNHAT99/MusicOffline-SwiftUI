@@ -26,7 +26,7 @@ struct PlaySongView: View {
                         .clipped().cornerRadius( 16, corners: .allCorners)
                     Spacer()
                         .frame(height: 20)
-                    Text(viewModel.state.song?.name ?? String.empty)
+                    Text(viewModel.state.song?.title ?? String.empty)
                         .foregroundColor(.white)
                         .font(.system(size: 16, weight: .semibold))
                         .lineLimit(1)
@@ -34,24 +34,24 @@ struct PlaySongView: View {
                     Spacer()
                         .frame(height: 20)
                     VStack (spacing: 0) {
-                        CustomSliderView(value: viewModel.sliderValue(),
-                                         isDragSliderView: viewModel.isDrag(),
-                                         trackHeight: 6,
-                                         minValue: 0,
-                                         maxValue: viewModel.state.song?.duration ?? 0,
-                                         trackColor: .gray.opacity(0.3),
-                                         progressColor: .white,
-                                         onCompletedDrag: { value in
-                            viewModel.send(intent: .updateRunning(newTime: value))
-                        })
-                        .frame(height: 12)
-                        HStack {
-                            Text(viewModel.convertTime(input: Int(viewModel.state.currentTimePlaying)))
-                            Spacer()
-                            Text(viewModel.convertTime(input: Int(viewModel.state.song?.duration ?? 0)))
-                        }
-                        .foregroundColor(.white)
-                        .padding(.top, 4)
+//                        CustomSliderView(value: viewModel.sliderValue(),
+//                                         isDragSliderView: viewModel.isDrag(),
+//                                         trackHeight: 6,
+//                                         minValue: 0,
+//                                         maxValue: viewModel.state.song?.duration ?? "",
+//                                         trackColor: .gray.opacity(0.3),
+//                                         progressColor: .white,
+//                                         onCompletedDrag: { value in
+//                            viewModel.send(intent: .updateRunning(newTime: value))
+//                        })
+//                        .frame(height: 12)
+//                        HStack {
+//                            Text(viewModel.convertTime(input: Int(viewModel.state.currentTimePlaying)))
+//                            Spacer()
+//                            Text(viewModel.convertTime(input: Int(viewModel.state.song?.duration ?? 0)))
+//                        }
+//                        .foregroundColor(.white)
+//                        .padding(.top, 4)
                     }
                     
                     Spacer()

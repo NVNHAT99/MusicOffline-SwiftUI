@@ -11,46 +11,47 @@ import SwiftUI
 
 final class PlaylistDetailViewModel: ObservableObject {
     // MARK: - PROPERTIES
+    private let fetchSongUseCase: FetchSongUseCaseProtocol
+    private let fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol
+    @Published private(set) var state: PlaylistDetailState
+    private var playlist: Playlist?
     
-    @Published private(set) var state: PlaylistDetailsState
-    
-    init(state: PlaylistDetailsState = PlaylistDetailsState()) {
+    init(playlist: Playlist?,
+         state: PlaylistDetailState = .init(),
+         fetchSongUseCase: FetchSongUseCaseProtocol = FetchSongUseCase(),
+         fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol = FetchPlaylistUseCase()) {
+        self.playlist = playlist
         self.state = state
+        self.fetchSongUseCase = fetchSongUseCase
+        self.fetchPlaylistUseCase = fetchPlaylistUseCase
     }
     
-    func send(intent: PlaylistDetailIntent) {
+    func send(_ intent: PlaylistDetailIntent) {
         switch intent {
         case .playSongAt(let urlStr):
             playSong(urlStr: urlStr)
         case .deleteSong(let index):
             deleteSongAt(index: index)
-        case .updatePlaylist(let playlist):
-            state.playlist = playlist
-        case .handleAddNewSongs(let result):
-            handleAddNewSongs(result: result)
+        case .loadPlaylist:
+            self.loadPlaylist()
         default:
             break
         }
     }
     
-    private func handleAddNewSongs(result: Result<Bool, Error>) {
-        var stateCopy = self.state
-        switch result {
-        case .success:
-            stateCopy.isShowToastView = true
-            stateCopy.toastViewMessage = "Add new Songs Successfuly."
-        case .failure:
-            stateCopy.isShowToastView = true
-            stateCopy.toastViewMessage = "Add new Songs failed."
-        }
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else {
-                return
+    private func loadPlaylist() {
+        Task {
+            await MainActor.run {
+                self.state.isLoading = true
             }
-            
-            withAnimation {
-                self.state = stateCopy
+            let playlist = try await fetchPlaylistUseCase.excute(with: self.playlist?.id.uuidString ?? String.empty)
+            let songs = try await fetchSongUseCase.execute(playlist.songIDs).map({ SongMapper.mapToSongModel($0) })
+            self.playlist = playlist
+            await MainActor.run {
+                var newState = state
+                newState.isLoading = false
+                newState.songs = songs
+                self.state = newState
             }
         }
     }
@@ -105,24 +106,6 @@ final class PlaylistDetailViewModel: ObservableObject {
 //        }
     }
     
-    func playlistBinding() -> Binding<Playlist?> {
-        return Binding<Playlist?>(
-            get: {
-                self.state.playlist
-            },
-            set: { newPlaylist in
-                self.state.playlist = newPlaylist
-            }
-        )
-    }
-    
-    var songsForUI: [SongIdentifiable] {
-//        return state.playlist?.songsArray.enumerated().map { index, song in
-//                SongIdentifiable(songUrlStr: song, index: index)
-//        } ?? []
-        return []
-    }
-    
     func isShowToastView() -> Binding<Bool> {
         return .init {
             return self.state.isShowToastView
@@ -131,10 +114,32 @@ final class PlaylistDetailViewModel: ObservableObject {
         }
 
     }
-}
-
-struct SongIdentifiable: Identifiable {
-    let id = UUID()
-    let songUrlStr: String
-    let index: Int
+    
+    func getTitle() -> String {
+        return self.playlist?.name ?? String.empty
+    }
+    
+    func getSongIds() -> [UUID] {
+        if let ids = playlist?.songIDs {
+            return ids.compactMap({ UUID(uuidString: $0) })
+        }
+        return []
+    }
+    
+    func getPlaylistId() -> String {
+        if let id = playlist?.id {
+            return id.uuidString
+        }
+        return String.empty
+    }
+    
+    var bindEditCompleted: Binding<Bool> {
+        .init(get: {
+            return false
+        }, set: { newValue in
+            if newValue {
+                self.loadPlaylist()
+            }
+        })
+    }
 }

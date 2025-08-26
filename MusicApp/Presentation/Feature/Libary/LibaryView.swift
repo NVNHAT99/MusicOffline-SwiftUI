@@ -9,8 +9,8 @@ import SwiftUI
 
 struct LibaryView: View {
     
+    @EnvironmentObject var reloadManager: TabReloadManager
     @StateObject private var handler: LibaryViewViewModel
-    @State private var isPresented: Bool = false
     @StateObject private var router = Router<LibaryRouter>()
     
     init (handler: LibaryViewViewModel) {
@@ -47,11 +47,13 @@ struct LibaryView: View {
                         .scrollIndicators(.hidden)
                         
                     } else if !handler.state.playlist.isEmpty {
-                        
                         ScrollView(.vertical) {
                             LazyVStack(spacing: 12) {
                                 ForEach(handler.state.playlist) { item in
                                     PlayListItemView(playListName: item.name)
+                                        .onTapGesture {
+                                            self.router.route(to: .gotoPlaylistDetail(item))
+                                        }
                                 }
                             }
                         } // Scroll
@@ -86,7 +88,7 @@ struct LibaryView: View {
                                 .scaledToFit()
                                 .frame(width: 24, height: 24)
                                 .foregroundColor(.white)
-                                .padding(20)
+                                .padding(12)
                                 .background(
                                     Circle()
                                         .fill(Color.cyan)
@@ -98,17 +100,20 @@ struct LibaryView: View {
                 }
 
         }) // zstack
-        .onAppear {
-            handler.send(intent: .loadPlaylist)
-        }
         .embedded(navigation: .stacks,
                   with: router)
-        
+        .onChange(of: reloadManager.resetTab) { _, newValue in
+            if newValue.contains(.playlist) {
+                self.handler.send(intent: .loadPlaylist)
+            }
+        }
     }
 }
 
 struct LibaryTabView_Previews: PreviewProvider {
     static var previews: some View {
-        LibaryView(handler: LibaryViewViewModel())
+        LibaryView(handler: LibaryViewViewModel(state: .init(
+            isLoading: false,
+            playlist: [])))
     }
 }

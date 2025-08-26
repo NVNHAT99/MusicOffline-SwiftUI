@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum AddNewSongsIntent {
+enum EditPlaylistIntent {
     case loadListSong
     case toggleSelectedAt(index: Int)
-    case addToPlaylist(onCompleted: (Result<Bool, Error>) -> Void)
+    case savePlaylist
 }

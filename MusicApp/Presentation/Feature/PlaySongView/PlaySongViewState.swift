@@ -12,7 +12,7 @@ struct PlaySongState {
     var stateRepeat: StateRepeat
     var timeToTurnOff: Double?
     var currentTimePlaying: Double
-    var song: SongInfo?
+    var song: SongModel?
     var isDragSlideView: Bool = false
     var toastViewMessage: String = String.empty
     var isShowToastView: Bool = false

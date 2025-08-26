@@ -17,76 +17,80 @@ final class PlaySongViewModel: ObservableObject {
         self.state = .init(isPlaying: playlisManager.isPlaying(),
                            stateRepeat: playlisManager.getStateRepeat(),
                            currentTimePlaying: playlisManager.getCurrentTimePlay(),
-                           song: playlisManager.getCurrentSongInfo())
+                           song: .init(id: UUID(), title: "",
+                                       album: "",
+                                       artist: "",
+                                       duration: 0.0,
+                                       urlStr: ""))
         
-        playlisManager.prepareNewSongPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] songInfo in
-                guard let self = self else {
-                    return
-                }
-                DispatchQueue.main.async {
-                    self.state.song = songInfo
-                }
-            }
-            .store(in: &cancelBag)
-        
-        playlisManager.currentTimePublisher
-            .sink { [weak self] newValue in
-                guard let self = self else {
-                    return
-                }
-                DispatchQueue.main.async {
-                    if !self.state.isDragSlideView {
-                        self.state.currentTimePlaying = newValue
-                    }
-                }
-            }
-            .store(in: &cancelBag)
-        
-        playlisManager.isPlayingPublisher
-            .sink { [weak self] newValue in
-                guard let self = self else {
-                    return
-                }
-                DispatchQueue.main.async {
-                    if newValue != self.state.isPlaying {
-                        self.state.isPlaying = newValue
-                    }
-                }
-            }
-            .store(in: &cancelBag)
-        
-        playlisManager.isPlayAudioFailed
-            .sink { [weak self] value in
-                guard let self = self else {
-                    return
-                }
-                if value {
-                    if self.state.isShowToastView {
-                        self.state.isShowToastView = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            var stateCopy = self.state
-                            stateCopy.isShowToastView = true
-                            stateCopy.toastViewMessage = "Play new song is failed."
-                            withAnimation {
-                                self.state = stateCopy
-                            }
-                        }
-                    } else {
-                        var stateCopy = self.state
-                        stateCopy.isShowToastView = true
-                        stateCopy.toastViewMessage = "Play new song is failed."
-                        DispatchQueue.main.async {
-                            withAnimation {
-                                self.state.isShowToastView = false
-                                self.state = stateCopy
-                            }
-                        }
-                    }
-                }
-            }
-            .store(in: &cancelBag)
+//        playlisManager.prepareNewSongPublisher
+//            .receive(on: DispatchQueue.main)
+//            .sink { [weak self] songInfo in
+//                guard let self = self else {
+//                    return
+//                }
+//                DispatchQueue.main.async {
+//                    self.state.song = songInfo
+//                }
+//            }
+//            .store(in: &cancelBag)
+//        
+//        playlisManager.currentTimePublisher
+//            .sink { [weak self] newValue in
+//                guard let self = self else {
+//                    return
+//                }
+//                DispatchQueue.main.async {
+//                    if !self.state.isDragSlideView {
+//                        self.state.currentTimePlaying = newValue
+//                    }
+//                }
+//            }
+//            .store(in: &cancelBag)
+//        
+//        playlisManager.isPlayingPublisher
+//            .sink { [weak self] newValue in
+//                guard let self = self else {
+//                    return
+//                }
+//                DispatchQueue.main.async {
+//                    if newValue != self.state.isPlaying {
+//                        self.state.isPlaying = newValue
+//                    }
+//                }
+//            }
+//            .store(in: &cancelBag)
+//        
+//        playlisManager.isPlayAudioFailed
+//            .sink { [weak self] value in
+//                guard let self = self else {
+//                    return
+//                }
+//                if value {
+//                    if self.state.isShowToastView {
+//                        self.state.isShowToastView = false
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                            var stateCopy = self.state
+//                            stateCopy.isShowToastView = true
+//                            stateCopy.toastViewMessage = "Play new song is failed."
+//                            withAnimation {
+//                                self.state = stateCopy
+//                            }
+//                        }
+//                    } else {
+//                        var stateCopy = self.state
+//                        stateCopy.isShowToastView = true
+//                        stateCopy.toastViewMessage = "Play new song is failed."
+//                        DispatchQueue.main.async {
+//                            withAnimation {
+//                                self.state.isShowToastView = false
+//                                self.state = stateCopy
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            .store(in: &cancelBag)
     }
     
     func send(intent: PlaysongViewIntent) {
@@ -191,11 +195,7 @@ final class PlaySongViewModel: ObservableObject {
     }
     
     func wrapperImage() -> UIImage {
-        if let image = state.song?.thumbnail {
-            return image
-        } else {
-            return UIImage(named: "defaultThumbnail") ?? UIImage()
-        }
+        return UIImage(named: "defaultThumbnail") ?? UIImage()
     }
     
     func wrapRepeatIcon() -> String {

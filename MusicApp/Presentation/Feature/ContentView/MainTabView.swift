@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct MainTabView: View {
+    
     @State private var tabSelection: MainTab
     @StateObject private var viewModel: MainTabViewVM
     @StateObject private var reloadManager: TabReloadManager
+    
     init(tabSelection: MainTab = .home,
          viewModel: MainTabViewVM = MainTabViewVM(),
          reloadManager: TabReloadManager = TabReloadManager()) {
@@ -51,6 +53,14 @@ struct MainTabView: View {
             }
             .ignoresSafeArea(.all, edges: [.bottom])
         }
+        .onChange(of: self.tabSelection, { oldValue, newValue in
+            if oldValue != newValue {
+                reloadManager.resetTab = [newValue]
+            }
+        })
+        .onAppear(perform: {
+            self.reloadManager.resetTab = [.home]
+        })
         .environmentObject(reloadManager)
     }
 }

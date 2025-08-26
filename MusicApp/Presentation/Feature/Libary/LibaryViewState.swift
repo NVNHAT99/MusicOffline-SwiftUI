@@ -9,7 +9,6 @@ import Foundation
 
 struct LibaryViewState {
     var isLoading: Bool = true
-    var isPresnted: Bool
     var playlist: [Playlist]
     var isShowToastView: Bool = false
     var toastViewMessage: String = String.empty

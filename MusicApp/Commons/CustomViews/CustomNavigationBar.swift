@@ -65,7 +65,7 @@ struct CustomNavigationBar: View {
                     Image(systemName: "chevron.left")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 16, height: 16)
+                        .frame(width: 24, height: 24)
                         .foregroundStyle(tintColor)
 
                     if let title = title, !title.isEmpty {
@@ -93,6 +93,7 @@ struct CustomNavigationBar: View {
             .padding(.horizontal, 16)
 
             Text(title)
+                .foregroundStyle(.white)
                 .lineLimit(1)
                 .font(.system(size: 18, weight: .semibold))
                 .multilineTextAlignment(.center)
@@ -107,6 +108,9 @@ struct CustomNavigationBar: View {
                     HStack(spacing: 4) {
                         if let icon = button.icon {
                             Image(systemName: icon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
                         }
                         if let title = button.title {
                             Text(title)

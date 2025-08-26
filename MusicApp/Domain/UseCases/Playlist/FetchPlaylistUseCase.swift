@@ -9,6 +9,7 @@ import Foundation
 
 protocol FetchPlaylistUseCaseProtocol {
     func executeGetAll() async throws -> [Playlist]
+    func excute(with playlistId: String) async throws -> Playlist
 }
 
 final class FetchPlaylistUseCase: FetchPlaylistUseCaseProtocol {
@@ -20,5 +21,14 @@ final class FetchPlaylistUseCase: FetchPlaylistUseCaseProtocol {
     
     func executeGetAll() async throws -> [Playlist] {
         try await repository.fetchAllPlayList()
+    }
+    
+    func excute(with playlistId: String) async throws -> Playlist {
+        if let playlistUUID = UUID(uuidString: playlistId),
+           let playlist = try await repository.fetchPlaylist(with: playlistUUID) {
+            return playlist
+        }
+        
+        throw CoreDataError.entityNotFound
     }
 }

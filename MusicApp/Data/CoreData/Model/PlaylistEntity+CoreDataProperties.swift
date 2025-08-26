@@ -21,3 +21,15 @@ extension PlaylistEntity {
     @NSManaged public var songIDs: NSArray?
 
 }
+
+extension PlaylistEntity {
+    var songIDStrings: [String] {
+        get { songIDs as? [String] ?? [] }
+        set { songIDs = newValue as NSArray }
+    }
+    
+    var songUUIDs: [UUID] {
+        get { songIDStrings.compactMap { UUID(uuidString: $0) } }
+        set { songIDStrings = newValue.map { $0.uuidString } }
+    }
+}

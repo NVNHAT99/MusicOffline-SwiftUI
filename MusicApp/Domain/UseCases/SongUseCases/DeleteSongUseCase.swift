@@ -25,17 +25,14 @@ final class DeleteSongUseCase: DeleteSongUseCaseProtocol {
     
     func executeList(_ pathFileElemets: [PathFileElement]) async throws {
         try await repository.deleteSongs(with: pathFileElemets)
-        try await documentFileService.removeFiles(pathFileElemets)
         
     }
     
     func executeDeleteAll() async throws {
         try await repository.deleteAllSongs()
-        try await documentFileService.removeAllFiles()
     }
     
     func execute(width path: String) async throws {
         try await repository.deleteSong(withURL: path)
-        try await documentFileService.removeFiles([.init(pathLocalFile: path, pathCoreData: nil)])
     }
 }

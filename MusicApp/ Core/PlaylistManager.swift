@@ -16,7 +16,6 @@ final class PlaylistManager: ObservableObject {
     private var playVM: PlayViewModel?
     private var subscribs: Set<AnyCancellable> = []
     private(set) var stateRepeat: StateRepeat = .nomal
-    private var currentSongInfo: SongInfo?
     private var timerTurnOff: Timer?
     private var playlistShuffle: Playlist?
     
@@ -26,7 +25,6 @@ final class PlaylistManager: ObservableObject {
     let isPlayingPublisher = PassthroughSubject<Bool, Never>()
     let isPlayAudioFailed = PassthroughSubject<Bool, Never>()
     let currentTimePublisher = PassthroughSubject<Double, Never>()
-    let prepareNewSongPublisher = PassthroughSubject<SongInfo?, Never>()
     let stateRepeatPublisher = PassthroughSubject<StateRepeat, Never>()
     private init() {
         loadLastUserData()
@@ -144,13 +142,6 @@ final class PlaylistManager: ObservableObject {
 //        }
     }
     
-    func getCurrentSongInfo() -> SongInfo? {
-        if currentSongInfo == nil {
-            returnEmptySong()
-        }
-        
-        return currentSongInfo
-    }
     
     func setUpSubscrib() {
 //        let currentTimePlay = UserDefaults.standard.double(forKey: "currentTimePlay")

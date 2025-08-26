@@ -50,9 +50,6 @@ struct HomeView: View {
             Spacer()
         }
         .padding(.leading, 16)
-        .onAppear {
-            viewModel.send(.fetchSongs)
-        }
         .onChange(of: reloadManager.resetTab) { _, newValue in
             if newValue.contains(.home) {
                 self.viewModel.send(.fetchSongs)
@@ -103,6 +100,7 @@ struct HomeView: View {
                             subTitle: ""
                         )
                     }
+                    .frame(height: 160)
                 }
             }
             .scrollIndicators(.hidden)
@@ -121,7 +119,8 @@ struct HomeView: View {
             ScrollView(.horizontal) {
                 LazyVStack(spacing: 16) {
                     ForEach(viewModel.state.recentSongs) { recenSong in
-                        SongItemView()
+//                        SongItemView()
+                        EmptyView()
                     }
                 }
             }
@@ -157,5 +156,6 @@ struct HomeTabView_Previews: PreviewProvider {
     static var previews: some View {
         HomeView()
             .background(Color.backgroundColor)
+            .environmentObject(TabReloadManager())
     }
 }
