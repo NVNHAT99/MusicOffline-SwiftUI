@@ -28,7 +28,10 @@ struct EditPlaylistView: View {
                                                           action: {
                 self.router.pop()
             }),
-                                              right: nil)) // custom navigationbar
+                                              right: .init(title: "Save",
+                                                           action: {
+                self.viewModel.send(intent: .savePlaylist)
+            }))) // custom navigationbar
             .frame(height: 50)
             
             if viewModel.state.isLoading {
@@ -63,22 +66,6 @@ struct EditPlaylistView: View {
                     }
                 }
             }
-            
-            Spacer()
-            
-            Button {
-                viewModel.send(intent: .savePlaylist)
-            } label: {
-                Text("Save")
-            }
-            .frame(width: 128, height: 48)
-            .background(viewModel.state.isEnableSaveButton ? Color.blue.opacity(0.8) : .gray)
-            .cornerRadius(8, corners: .allCorners)
-            .disabled(viewModel.state.isEnableSaveButton ? false : true)
-            .foregroundColor(.white)
-            Spacer()
-            Spacer()
-                .frame(height: 16)
         } // VStack
         .background(Color.backgroundColor)
         .navigationBarHidden(true)

@@ -1,0 +1,361 @@
+//
+//  PlayerManager.swift
+//  MusicApp
+//
+//  Created by Nhat Nguyen on 8/27/25.
+//
+
+import Foundation
+import Combine
+
+enum RepeatMode {
+    case none
+    case one
+    case all
+}
+
+protocol PlayerManagerProtocol: ObservableObject {
+    
+    var state: PlayerManagerState { get }
+    var statePublisher: Published<PlayerManagerState>.Publisher { get }
+    
+    // Controls
+    func setCurrentPlaylist(id: UUID) async
+    func play(_ playlistId: UUID, songs: [SongModel], songPlay: SongModel) async
+    func play(song: SongModel) async
+    func play() async
+    func pause() async
+    func stop() async
+    func next() async
+    func previous() async
+    func toggleShuffle() async
+    func setRepeatMode(_ mode: RepeatMode) async
+    func scheduleStop(after seconds: TimeInterval) async
+    func cancelScheduleStop() async
+    func seek(to duration: Double)
+}
+
+struct PlayerManagerState {
+    var currentSong: SongModel?
+    var isPlaying: Bool = false
+    var repeatMode: RepeatMode = .none
+    var shuffleEnabled: Bool = false
+    var currentTimePlay: TimeInterval = 0
+}
+
+final class PlayerManager: PlayerManagerProtocol {
+    
+    static let shared = PlayerManager(
+        engine: AVAudioPlayerEngineService.shared,
+        timerService: GCDTimerService(),
+        progressTimerService: ProgressTimerService(),
+        fetchPlaylistUseCase: FetchPlaylistUseCase(),
+        fetchSongUseCase: FetchSongUseCase()
+    )
+
+    // MARK: - Dependencies
+    private let engine: AVAudioPlayerEngineService
+    private let timerService: TimerServiceProtocol
+    private let progressTimerService: ProgressTimerServiceProtocol
+    private let fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol
+    private let fetchSongUseCase: FetchSongUseCaseProtocol
+    
+    // MARK: - Published state
+    @Published private(set) var state: PlayerManagerState = .init()
+    var statePublisher: Published<PlayerManagerState>.Publisher {
+        $state
+    }
+    // MARK: - Private state
+    private var cancellables = Set<AnyCancellable>()
+    private var shuffledOrder: [Int] = []
+    private var playlist: [SongModel] = []
+    private var currentPlaylistID: UUID?
+    // MARK: - Init
+    private init(engine: AVAudioPlayerEngineService,
+                 timerService: TimerServiceProtocol,
+                 progressTimerService: ProgressTimerServiceProtocol,
+                 fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol,
+                 fetchSongUseCase: FetchSongUseCaseProtocol) {
+        self.engine = engine
+        self.timerService = timerService
+        self.fetchPlaylistUseCase = fetchPlaylistUseCase
+        self.fetchSongUseCase = fetchSongUseCase
+        self.progressTimerService = progressTimerService
+        subscribeToEngineEvents()
+        subscribeToPlaylistEvents()
+    }
+
+    // MARK: - Subscribe
+    private func subscribeToEngineEvents() {
+        engine.eventPublisher
+            .sink { [weak self] event in
+                guard let self else { return }
+                switch event {
+                case .finished(let success):
+                    if success {
+                        Task { await self.handleSongFinished() }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+        
+        progressTimerService.tickPublisher
+            .sink { [weak self] time in
+                self?.state.currentTimePlay = time
+            }
+            .store(in: &cancellables)
+    }
+
+    private func subscribeToPlaylistEvents() {
+        PlaylistEventCenter.shared.subject
+            .sink { [weak self] event in
+                guard let self else { return }
+                switch event {
+                case .updated(let id):
+                    if id == self.currentPlaylistID {
+                        Task {
+                            await self.reloadPlaylist(id: id)
+                        }
+                    }
+                case .deleted(let id):
+                    if id == self.currentPlaylistID {
+                        Task { await self.resetState() }
+                    }
+                case .added:
+                    break
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    // MARK: - Controls
+    func setCurrentPlaylist(id: UUID) async {
+        self.currentPlaylistID = id
+        await reloadPlaylist(id: id)
+    }
+
+    func play(song: SongModel) async {
+        await updateState { state in
+            state.currentSong = song
+            state.isPlaying = true
+        }
+        loadAndPlay(song: song)
+    }
+
+    func play() async {
+        if state.currentSong == nil {
+            return
+        }
+        
+        engine.play()
+        progressTimerService.start(interval: 1.0, from: self.state.currentTimePlay)
+        await updateState { state in
+            state.isPlaying = true
+        }
+    }
+    
+    func play(_ playlistId: UUID, songs: [SongModel], songPlay: SongModel) async {
+        self.currentPlaylistID = playlistId
+        self.playlist = songs
+        await updateState { state in
+            state.currentSong = songPlay
+        }
+        loadAndPlay(song: songPlay)
+    }
+    
+    func pause() async {
+        engine.pause()
+        progressTimerService.pause()
+        await updateState { state in
+            state.isPlaying = false
+        }
+    }
+
+    func stop() async {
+        timerService.cancel()
+        engine.stop()
+        await updateState { state in
+            state.isPlaying = false
+        }
+    }
+
+    func next() async {
+        guard !playlist.isEmpty else { return }
+        
+        switch state.repeatMode {
+        case .one:
+            if let s = state.currentSong {
+                await play(song: s)
+            }
+        case .none:
+            if let idx = await computeNextIndex() {
+                let s = playlist[idx]
+                await play(song: s)
+            } else {
+                if let song = playlist.first {
+                    self.state.currentSong = song
+                    self.state.currentTimePlay = 0
+                    loadSong(song: song)
+                }
+            }
+        case .all:
+            if let idx = await computeNextIndex() {
+                let s = playlist[idx]
+                await play(song: s)
+            }
+        }
+    }
+
+    func previous() async {
+        guard !playlist.isEmpty else { return }
+        let prevIdx = ((currentIndex ?? 0) - 1 + playlist.count) % playlist.count
+        let s = playlist[prevIdx]
+        await play(song: s)
+    }
+
+    func toggleShuffle() async {
+        await updateState { state in
+            state.shuffleEnabled.toggle()
+        }
+        
+        if state.shuffleEnabled {
+            await regenerateShuffleOrder(anchoringAt: currentIndex)
+        } else {
+            shuffledOrder.removeAll()
+        }
+    }
+
+    func setRepeatMode(_ mode: RepeatMode) async {
+        await updateState { state in
+            state.repeatMode = mode
+        }
+    }
+
+    func scheduleStop(after seconds: TimeInterval) async {
+        if self.state.currentSong == nil {
+            return
+        }
+        
+        timerService.schedule(after: seconds) { [weak self] in
+            Task {
+                await self?.pause()
+            }
+        }
+    }
+    
+    func cancelScheduleStop() async {
+        if self.state.currentSong == nil {
+            return
+        }
+        
+        timerService.cancel()
+    }
+    
+    func seek(to duration: Double) {
+        engine.seek(to: duration)
+        self.state.currentTimePlay = duration
+        progressTimerService.start(interval: 1.0, from: duration)
+    }
+
+    // MARK: - Helpers
+    private var currentIndex: Int? {
+        guard let s = state.currentSong else { return nil }
+        return playlist.firstIndex(of: s)
+    }
+
+    private func computeNextIndex() async -> Int? {
+        guard !playlist.isEmpty else { return nil }
+
+        if state.shuffleEnabled {
+            if let curr = currentIndex,
+               let pos = shuffledOrder.firstIndex(of: curr) {
+                let nextPos = pos + 1
+                if nextPos < shuffledOrder.count {
+                    return shuffledOrder[nextPos]
+                } else {
+                    if state.repeatMode == .all {
+                        await regenerateShuffleOrder(anchoringAt: nil)
+                        return shuffledOrder.first
+                    }
+                    return nil
+                }
+            } else {
+                if shuffledOrder.isEmpty {
+                    await regenerateShuffleOrder(anchoringAt: nil)
+                }
+                return shuffledOrder.first
+            }
+        } else {
+            let idx = ((currentIndex ?? -1) + 1)
+            if idx < playlist.count { return idx }
+            return state.repeatMode == .all ? 0 : nil
+        }
+    }
+
+    private func regenerateShuffleOrder(anchoringAt anchor: Int?) async {
+        var indices = Array(playlist.indices).shuffled()
+        if let a = anchor, let pos = indices.firstIndex(of: a) {
+            indices.swapAt(0, pos)
+        }
+        shuffledOrder = indices
+    }
+
+    private func loadAndPlay(song: SongModel) {
+        do {
+            let url = URL(fileURLWithPath: song.urlStr ?? "")
+            print("🎵 Loading from: \(url.absoluteString)")
+            try engine.load(url: url)
+            engine.play()
+            self.state.isPlaying = true
+            progressTimerService.start(interval: 1, from: 0)
+        } catch {
+            print("⚠️ Error loading song: \(error)")
+        }
+    }
+    
+    private func loadSong(song: SongModel) {
+        do {
+            let url = URL(fileURLWithPath: song.urlStr ?? "")
+            try engine.load(url: url)
+            self.state.isPlaying = false
+        } catch {
+            print("⚠️ Error loading song: \(error)")
+        }
+    }
+
+    private func handleSongFinished() async {
+        print("bài hát đã hết")
+        progressTimerService.stop()
+        self.state.isPlaying = false
+        
+        switch state.repeatMode {
+        case .one:
+            if let s = state.currentSong {
+                await play(song: s)
+            }
+        case .all, .none:
+            await next()
+        }
+    }
+    
+    private func reloadPlaylist(id: UUID) async {
+        do {
+            let playlist = try await fetchPlaylistUseCase.execute(with: id.uuidString)
+            let newSongs = try await fetchSongUseCase.execute(playlist.songIDs)
+            self.playlist = newSongs.map({ SongMapper.mapToSongModel($0) })
+        } catch {
+            print("Error reloading playlist: \(error)")
+        }
+    }
+    
+    private func resetState() async {
+        await updateState { state in
+            state = PlayerManagerState()
+        }
+    }
+    
+    // Thread-safe state updates
+    private func updateState(_ update: @escaping (inout PlayerManagerState) -> Void) async {
+        update(&self.state)
+    }
+}

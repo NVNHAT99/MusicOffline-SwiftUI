@@ -12,7 +12,7 @@ final class TransferViewModel: ObservableObject {
     
     @Published private(set) var state: TransferViewState
     private var cancelBag: Set<AnyCancellable> = []
-    
+    private var isNeedDissmis: Bool = false
     private let webUploaderUseCase: ManageWebUploaderUseCaseProtocol
     private let uploadSongUseCase: UploadSongUseCaseProtocol
     private let transferUseCase: TransferUseCaseProtocol
@@ -25,7 +25,6 @@ final class TransferViewModel: ObservableObject {
         self.webUploaderUseCase = webUploaderUseCase
         self.uploadSongUseCase = uploadSongUseCase
         self.transferUseCase = transferUseCase
-        
         bindViewModel()
     }
     
@@ -122,15 +121,6 @@ final class TransferViewModel: ObservableObject {
             self.state.isShowForceSaveDialog = true
         }
     }
-
-    private func handleBackActionWithoutPendingChanges(_ navigationHandler: NavigationActionHandler) {
-        webUploaderUseCase.stop()
-        Task {
-            await MainActor.run {
-                navigationHandler.dismissView()
-            }
-        }
-    }
     
     func send(_ intent: TransferViewIntent) {
         switch intent {
@@ -143,8 +133,8 @@ final class TransferViewModel: ObservableObject {
             
         case .handleBackAction(let navigationHandler):
             if transferUseCase.isAllTaskDone() {
+                webUploaderUseCase.stop()
                 Task {
-                    // TODO: need clear transfer context here
                     await MainActor.run {
                         navigationHandler.dismissView()
                     }

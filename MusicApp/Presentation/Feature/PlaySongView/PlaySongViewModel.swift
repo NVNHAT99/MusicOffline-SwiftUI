@@ -21,7 +21,7 @@ final class PlaySongViewModel: ObservableObject {
                                        album: "",
                                        artist: "",
                                        duration: 0.0,
-                                       urlStr: ""))
+                                       urlStr: nil))
         
 //        playlisManager.prepareNewSongPublisher
 //            .receive(on: DispatchQueue.main)

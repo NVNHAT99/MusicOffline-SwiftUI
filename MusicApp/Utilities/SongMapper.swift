@@ -30,4 +30,15 @@ struct SongMapper {
             urlStr: song.urlStr
         )
     }
+    
+    static func mapToSong(_ songModel: SongModel) -> Song {
+        return Song(
+            id: songModel.id,
+            title: songModel.title,
+            album: songModel.album,
+            artist: songModel.artist,
+            duration: songModel.duration,
+            urlStr: songModel.urlStr ?? ""
+        )
+    }
 }

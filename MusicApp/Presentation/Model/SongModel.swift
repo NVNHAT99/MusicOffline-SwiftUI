@@ -13,11 +13,7 @@ public struct SongModel: Identifiable, Equatable {
     public let album: String
     public let artist: String
     public let duration: Double
-    public let urlStr: String
-    
-    var url: URL? {
-        URL(string: urlStr)
-    }
+    public let urlStr: String?
     
     var durationString: String {
         duration.toTimeString()

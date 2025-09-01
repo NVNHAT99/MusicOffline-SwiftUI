@@ -28,8 +28,8 @@ final class PlaylistDetailViewModel: ObservableObject {
     
     func send(_ intent: PlaylistDetailIntent) {
         switch intent {
-        case .playSongAt(let urlStr):
-            playSong(urlStr: urlStr)
+        case .playSongAt(let song):
+            playSong(at: song)
         case .deleteSong(let index):
             deleteSongAt(index: index)
         case .loadPlaylist:
@@ -44,7 +44,7 @@ final class PlaylistDetailViewModel: ObservableObject {
             await MainActor.run {
                 self.state.isLoading = true
             }
-            let playlist = try await fetchPlaylistUseCase.excute(with: self.playlist?.id.uuidString ?? String.empty)
+            let playlist = try await fetchPlaylistUseCase.execute(with: self.playlist?.id.uuidString ?? String.empty)
             let songs = try await fetchSongUseCase.execute(playlist.songIDs).map({ SongMapper.mapToSongModel($0) })
             self.playlist = playlist
             await MainActor.run {
@@ -56,11 +56,14 @@ final class PlaylistDetailViewModel: ObservableObject {
         }
     }
     
-    private func playSong(urlStr: String) {
-//        if let index = state.playlist?.songsArray.firstIndex(of: urlStr) {
-//            PlaylistManager.shared.updatePlaylist(playlist: state.playlist, currentIndex: index)
-//            PlaylistManager.shared.playSong(urlString: urlStr)
-//        }
+    private func playSong(at song: SongModel) {
+        guard let playlistId = self.playlist?.id else {
+            return
+        }
+        
+        Task {
+            await PlayerManager.shared.play(playlistId, songs: state.songs, songPlay: song)
+        }
     }
     
     private func deleteSongAt(index: Int) {

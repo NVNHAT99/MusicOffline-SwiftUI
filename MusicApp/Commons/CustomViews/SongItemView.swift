@@ -61,7 +61,7 @@ struct SongItemView: View {
                              album: "taylor",
                              artist: "taylor",
                              duration: 12.0,
-                             urlStr: ""),
+                             urlStr: nil),
                  onTapPlayAction: nil)
         .frame(height: 64)
         .padding()

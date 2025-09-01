@@ -26,8 +26,12 @@ final class HomeViewModel: ObservableObject {
     }
     
     private func fetchSongs() {
-        state.isLoading = true
         Task {
+            
+            await MainActor.run {
+                state.isLoading = true
+            }
+            
             do {
                 let result = try await fetchHomeDataUseCase.execute()
                 await MainActor.run {

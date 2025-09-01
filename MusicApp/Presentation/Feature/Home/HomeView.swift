@@ -17,39 +17,43 @@ struct HomeView: View {
     @EnvironmentObject var reloadManager: TabReloadManager
     @StateObject var viewModel: HomeViewModel = HomeViewModel()
     var body: some View {
-        VStack {
+        ScrollView(content: {
             VStack {
-                 Text("Albums")
-                    .font(.system(size: 24, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                self.albumSection()
-            } // VStack - album section
-            
-            VStack {
-                Text("Playlist")
-                   .font(.system(size: 24, weight: .semibold, design: .rounded))
-                   .foregroundStyle(.white)
-                   .frame(maxWidth: .infinity, alignment: .leading)
-                self.playlistSection()
-            }
-            
-            // recent play
-            
-            VStack {
-                 Text("Recently Played")
-                    .font(.system(size: 24, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                recentSongsSection()
+                VStack {
+                     Text("Albums")
+                        .font(.system(size: 24, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    self.albumSection()
+                } // VStack - album section
                 
-            } // VStack - playlist section
-            .padding(.trailing, 16)
-            
-            // recent play
-            Spacer()
-        }
+                VStack {
+                    Text("Playlist")
+                       .font(.system(size: 24, weight: .semibold, design: .rounded))
+                       .foregroundStyle(.white)
+                       .frame(maxWidth: .infinity, alignment: .leading)
+                    self.playlistSection()
+                }
+                
+                // recent play
+                
+                VStack {
+                     Text("Recently Played")
+                        .font(.system(size: 24, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    recentSongsSection()
+                    
+                } // VStack - playlist section
+                .padding(.trailing, 16)
+                
+                // recent play
+                Spacer()
+            }
+        })
         .padding(.leading, 16)
+        .padding(.top, 24)
+        .background(Color.backgroundColor)
         .onChange(of: reloadManager.resetTab) { _, newValue in
             if newValue.contains(.home) {
                 self.viewModel.send(.fetchSongs)

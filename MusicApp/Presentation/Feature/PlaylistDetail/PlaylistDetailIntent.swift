@@ -7,7 +7,7 @@
 
 import Foundation
 enum PlaylistDetailIntent {
-    case playSongAt(urlStr: String)
+    case playSongAt(song: SongModel)
     case deleteSong(index: Int)
     case loadPlaylist
 }

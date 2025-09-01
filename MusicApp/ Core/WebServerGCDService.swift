@@ -115,8 +115,6 @@ final class WebServerGCDService: NSObject, WebServerGCDServiceProtocol {
         if webUploader.isRunning {
             webUploader.stop()
             loaderStateResultSubject.send(.stopSucesss)
-        } else {
-            loaderStateResultSubject.send(.stopFailed)
         }
     }
 }

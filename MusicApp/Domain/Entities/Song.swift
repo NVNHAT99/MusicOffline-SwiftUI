@@ -12,11 +12,17 @@ public struct Song: Identifiable, Equatable {
     public let album: String
     public let artist: String
     public let duration: Double
-    // url is mean the path of file in your phone
     public let urlStr: String
     
+    public var url: URL? {
+        if urlStr.hasPrefix("file://") {
+            return URL(string: urlStr) // absolute file URL
+        } else {
+            return URL(fileURLWithPath: urlStr) // plain path
+        }
+    }
     
-    var url: URL? {
-        return URL(string: urlStr)
+    public var durationString: String {
+        duration.toTimeString()
     }
 }

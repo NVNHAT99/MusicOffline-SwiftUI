@@ -12,10 +12,13 @@ struct SelectedSongItemView: View {
     
     var body: some View {
         HStack {
-            Image("demoSongImage")
+            Image(systemName: "music.note")
                 .resizable()
                 .scaledToFit()
-            Text("Taylor Swift - shake")
+                .foregroundStyle(.white)
+                .frame(width: 16, height: 16)
+            
+            Text(songData.song.title)
                 .foregroundStyle(.white)
             Spacer()
             if songData.isSelected {
@@ -28,9 +31,9 @@ struct SelectedSongItemView: View {
                 
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
         .padding(.leading, 8)
-        .padding(.trailing, 16)
+        .padding(.trailing, 8)
         .background(Color.headerBackground)
         .cornerRadius(16, corners: .allCorners)
     }
@@ -42,6 +45,6 @@ struct SelectedSongItemView: View {
                                                      album: "",
                                                      artist: "",
                                                      duration: 12.0,
-                                                     urlStr: ""),
+                                                     urlStr: nil),
                                          isSelected: true))
 }

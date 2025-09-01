@@ -87,6 +87,7 @@ struct ClassicTabBar<T: Hashable>: View {
             }
         }
         .padding(.horizontal, 16)
+        .padding(.bottom, 12)
         .background(backgroundColor)
         .overlay(Divider(), alignment: .top)
     }

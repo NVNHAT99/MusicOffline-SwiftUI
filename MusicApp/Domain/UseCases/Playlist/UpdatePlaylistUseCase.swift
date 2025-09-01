@@ -26,6 +26,7 @@ final class UpdatePlaylistUseCase: UpdatePlaylistUseCaseProtocol {
     func execute(from playlistId: String, with songIds: [String]) async throws {
         if let uuidPlaylist = UUID(uuidString: playlistId) {
             try await repository.updatePlaylist(by: uuidPlaylist, with: songIds)
+            PlaylistEventCenter.shared.subject.send(.updated(uuidPlaylist))
         } else {
             throw UpdatePlaylistError.invalidUUID
         }

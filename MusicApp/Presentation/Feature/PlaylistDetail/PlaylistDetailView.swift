@@ -74,7 +74,7 @@ struct PlaylistDetailView: View {
                     ForEach(self.viewModel.state.songs) { song in
                         SongItemView(song: song,
                                      onTapPlayAction: {
-                            self.viewModel.send(.playSongAt(urlStr: song.urlStr))
+                            self.viewModel.send(.playSongAt(song: song))
                         })
                         .frame(height: 54)
                     }

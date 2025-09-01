@@ -15,7 +15,7 @@ final class LibaryViewViewModel: ObservableObject {
     @Published private(set) var state: LibaryViewState
     private let fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol
     
-    init(state: LibaryViewState = LibaryViewState(isLoading: true,
+    init(state: LibaryViewState = LibaryViewState(isLoading: false,
                                                   playlist: []),
          fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol = FetchPlaylistUseCase()) {
         self.state = state
