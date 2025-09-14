@@ -38,10 +38,12 @@ struct AddNewPlayListView: View {
                     Spacer()
                         .frame(height: 10)
                     Button {
-                        viewmodel.send(intent: .addNewLibary(onCompleted: {
-                            self.reloadManager.resetTab = [.home]
-                            self.router.dismiss()
-                        }))
+                        if !viewmodel.state.playlistName.isEmpty {
+                            viewmodel.send(intent: .addNewLibary(onCompleted: {
+                                self.reloadManager.resetTab = [.home]
+                                self.router.dismiss()
+                            }))
+                        }
                     } label: {
                         Text("Create")
                             .foregroundColor(.white)

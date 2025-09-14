@@ -121,7 +121,7 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
     
 
     
-    func deleteSong(withURL url: String) async throws {
+    func deleteSong(withURL url: String) async throws -> UUID {
         try await coreData.performTransferInTransferContext { context in
             let fetchRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "url == %@", url)
@@ -131,6 +131,7 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
                 if let songToDelete = try context.fetch(fetchRequest).first {
                     context.delete(songToDelete)
                     try context.save()
+                    return songToDelete.id ?? UUID()
                     print("✓ Deleted song with url: \(url)")
                 } else {
                     throw CoreDataError.entityNotFound

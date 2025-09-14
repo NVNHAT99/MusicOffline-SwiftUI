@@ -31,6 +31,21 @@ final class PlaylistRepository: PlaylistRepositoryProtocol {
         }
     }
     
+    func fetchPlaylist(with idArray: [UUID]) async throws -> [Playlist] {
+        return try await coreDataService.performWithSerialQueue { context in
+            let fetchRequest: NSFetchRequest<PlaylistEntity> = PlaylistEntity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id IN %@", idArray)
+            
+            do {
+                let resultList = try context.fetch(fetchRequest)
+                let result = resultList.compactMap({ PlaylistEntityMapper.mapToPlayList($0) })
+                return result
+            } catch {
+                throw CoreDataError.entityNotFound
+            }
+        }
+    }
+    
     func fetchPlaylist(with name: String) async throws -> Playlist? {
         return try await coreDataService.performWithSerialQueue { context in
             let fetchRequest: NSFetchRequest<PlaylistEntity> = PlaylistEntity.fetchRequest()
@@ -93,8 +108,8 @@ final class PlaylistRepository: PlaylistRepositoryProtocol {
             do {
                 if let playlistToDelete = try context.fetch(fetchPlaylistRequest).first {
                     context.delete(playlistToDelete)
-                    try context.save()
                     print("✓ Deleted playlist: \(playlistToDelete.name ?? "") with ID: \(playlistToDelete.id?.uuidString ?? "")")
+                    try context.save()
                 } else {
                     throw CoreDataError.entityNotFound
                 }
@@ -143,6 +158,24 @@ final class PlaylistRepository: PlaylistRepositoryProtocol {
                     playlistUpdate.songIDStrings = songIds
                 }
                 
+                if context.hasChanges {
+                    try context.save()
+                }
+            } catch {
+                throw CoreDataError.saveFailed(error)
+            }
+        }
+    }
+
+    func removeDeleteSong(from songId: UUID) async throws {
+        try await coreDataService.performWithSerialQueue { context in
+            let request: NSFetchRequest<PlaylistEntity> = PlaylistEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "ANY songIDs == %@", songId.uuidString)
+            do {
+                let arrayPlaylist = try context.fetch(request)
+                for playlist in arrayPlaylist {
+                    playlist.songUUIDs = playlist.songUUIDs.filter { $0 != songId }
+                }
                 if context.hasChanges {
                     try context.save()
                 }

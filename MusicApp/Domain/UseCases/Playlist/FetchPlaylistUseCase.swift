@@ -10,6 +10,7 @@ import Foundation
 protocol FetchPlaylistUseCaseProtocol {
     func executeGetAll() async throws -> [Playlist]
     func execute(with playlistId: String) async throws -> Playlist
+    func excute(with playlistIdArray: [String]) async throws -> [Playlist]
 }
 
 final class FetchPlaylistUseCase: FetchPlaylistUseCaseProtocol {
@@ -28,6 +29,13 @@ final class FetchPlaylistUseCase: FetchPlaylistUseCaseProtocol {
            let playlist = try await repository.fetchPlaylist(with: playlistUUID) {
             return playlist
         }
+        
+        throw CoreDataError.entityNotFound
+    }
+    
+    func excute(with playlistIdArray: [String]) async throws -> [Playlist] {
+        let playlistUUIDs = playlistIdArray.compactMap({ UUID(uuidString: $0 )})
+        return try await repository.fetchPlaylist(with: playlistUUIDs)
         
         throw CoreDataError.entityNotFound
     }

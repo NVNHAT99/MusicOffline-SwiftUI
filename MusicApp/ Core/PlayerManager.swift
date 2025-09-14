@@ -18,10 +18,11 @@ protocol PlayerManagerProtocol: ObservableObject {
     
     var state: PlayerManagerState { get }
     var statePublisher: Published<PlayerManagerState>.Publisher { get }
-    
+    var refreshHomePubliser: AnyPublisher<Void, Never> { get }
     // Controls
     func setCurrentPlaylist(id: UUID) async
     func play(_ playlistId: UUID, songs: [SongModel], songPlay: SongModel) async
+    func play(_ playlistId: UUID, songPlay: SongModel) async
     func play(song: SongModel) async
     func play() async
     func pause() async
@@ -65,6 +66,12 @@ final class PlayerManager: PlayerManagerProtocol {
     var statePublisher: Published<PlayerManagerState>.Publisher {
         $state
     }
+    
+    private let refreshHomeSubject = PassthroughSubject<Void, Never>()
+    var refreshHomePubliser: AnyPublisher<Void, Never> {
+        refreshHomeSubject.eraseToAnyPublisher()
+    }
+    
     // MARK: - Private state
     private var cancellables = Set<AnyCancellable>()
     private var shuffledOrder: [Int] = []
@@ -83,6 +90,26 @@ final class PlayerManager: PlayerManagerProtocol {
         self.progressTimerService = progressTimerService
         subscribeToEngineEvents()
         subscribeToPlaylistEvents()
+        
+        initData()
+    }
+    
+    private func initData() {
+        if let playlistID = UUID(uuidString: RecentSongsManager.fetchCurrentPlaylist() ?? "") {
+            Task {
+                await reloadPlaylist(id: playlistID)
+                if let recentSong = RecentSongsManager.fetchRecentSongs().first, self.playlist.contains(recentSong.song) {
+                    self.state.currentSong = recentSong.song
+                    
+                } else {
+                    self.state.currentSong = self.playlist.first
+                }
+                
+                if let currentSong = self.state.currentSong {
+                    loadSong(song: currentSong)
+                }
+            }
+        }
     }
 
     // MARK: - Subscribe
@@ -120,7 +147,11 @@ final class PlayerManager: PlayerManagerProtocol {
                 case .deleted(let id):
                     if id == self.currentPlaylistID {
                         Task { await self.resetState() }
+                    } else {
+                        RecentSongsManager.removePlaylist(id: id.uuidString)
                     }
+                    
+                    refreshHomeSubject.send()
                 case .added:
                     break
                 }
@@ -161,6 +192,20 @@ final class PlayerManager: PlayerManagerProtocol {
             state.currentSong = songPlay
         }
         loadAndPlay(song: songPlay)
+    }
+    
+    func play(_ playlistId: UUID, songPlay: SongModel) async {
+        do {
+            self.currentPlaylistID = playlistId
+            let playlist = try await fetchPlaylistUseCase.execute(with: playlistId.uuidString)
+            self.playlist = try await fetchSongUseCase.execute(playlist.songIDs).map({SongMapper.mapToSongModel($0)})
+            await updateState { state in
+                state.currentSong = songPlay
+            }
+            loadAndPlay(song: songPlay)
+        } catch {
+            print("cant play song from recent song")
+        }
     }
     
     func pause() async {
@@ -305,6 +350,11 @@ final class PlayerManager: PlayerManagerProtocol {
             let url = URL(fileURLWithPath: song.urlStr ?? "")
             print("🎵 Loading from: \(url.absoluteString)")
             try engine.load(url: url)
+            // lưu bài hát hiện tại vào user default
+            RecentSongsManager.add(song, in: self.currentPlaylistID?.uuidString)
+            RecentSongsManager.saveCurrentPlaylist(id: self.currentPlaylistID?.uuidString ?? "")
+            RecentSongsManager.addRecentPlaylist(id: self.currentPlaylistID?.uuidString ?? String.empty)
+            refreshHomeSubject.send()
             engine.play()
             self.state.isPlaying = true
             progressTimerService.start(interval: 1, from: 0)
@@ -343,15 +393,20 @@ final class PlayerManager: PlayerManagerProtocol {
             let playlist = try await fetchPlaylistUseCase.execute(with: id.uuidString)
             let newSongs = try await fetchSongUseCase.execute(playlist.songIDs)
             self.playlist = newSongs.map({ SongMapper.mapToSongModel($0) })
+            self.currentPlaylistID = id
         } catch {
             print("Error reloading playlist: \(error)")
         }
     }
     
     private func resetState() async {
-        await updateState { state in
-            state = PlayerManagerState()
+        if state.currentSong != nil {
+            RecentSongsManager.removePlaylist(id: self.currentPlaylistID?.uuidString ?? String.empty)
         }
+        state = PlayerManagerState()
+        engine.stop()
+        progressTimerService.stop()
+        timerService.cancel()
     }
     
     // Thread-safe state updates

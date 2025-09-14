@@ -12,6 +12,7 @@ enum UpdatePlaylistError: Error {
 }
 protocol UpdatePlaylistUseCaseProtocol {
     func execute(from playlistId: String, with songIds: [String]) async throws
+    func removeDeleteSong(from path: String) async throws
 }
 
 final class UpdatePlaylistUseCase: UpdatePlaylistUseCaseProtocol {
@@ -30,5 +31,9 @@ final class UpdatePlaylistUseCase: UpdatePlaylistUseCaseProtocol {
         } else {
             throw UpdatePlaylistError.invalidUUID
         }
+    }
+    
+    func removeDeleteSong(from path: String) async throws {
+        
     }
 }

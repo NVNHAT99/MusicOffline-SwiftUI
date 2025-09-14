@@ -10,7 +10,5 @@ import Foundation
 enum MainTab: Int, CaseIterable, Hashable {
     case home
     case playlist
-    case play
-    case loadSong
     case settings
 }

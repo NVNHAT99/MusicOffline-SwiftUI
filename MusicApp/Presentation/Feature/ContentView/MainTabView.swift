@@ -29,11 +29,14 @@ struct MainTabView: View {
                 .zIndex(0)
             VStack(spacing: 0) {
                 
-                NowPlayingView(isExpanded: $isExpland)
-                    .ignoresSafeArea()
-                    .embedded(navigation: .stacks, with: self.router)
+                if viewModel.isShowNowPlaying {
+                    NowPlayingView(isExpanded: $isExpland)
+                        .ignoresSafeArea()
+                        .embedded(navigation: .stacks, with: self.router)
+                } else {
+                    Spacer()
+                }
                     
-                
                 CustomTabBar(
                     selectedTab: $tabSelection,
                     items: viewModel.tabItems,
@@ -46,23 +49,20 @@ struct MainTabView: View {
             }
             .zIndex(isExpland ? 2 : 1)
             
-            ZStack {
-                HomeView()
-                    .opacity(tabSelection == .home ? 1 : 0)
+            TabView(selection: $tabSelection) {
+                HomeView(viewModel: .init())
                     .animation(.easeInOut(duration: 0.25), value: tabSelection)
+                    .tag(MainTab.home)
                 
                 LibaryView(handler: LibaryViewViewModel())
-                    .opacity(tabSelection == .playlist ? 1 : 0)
                     .animation(.easeInOut(duration: 0.25), value: tabSelection)
-                
-                HomeView()
-                    .opacity(tabSelection == .loadSong ? 1 : 0)
-                    .animation(.easeInOut(duration: 0.25), value: tabSelection)
+                    .tag(MainTab.playlist)
                 
                 SettingView(viewModel:  SettingViewViewModel())
-                    .opacity(tabSelection == .settings ? 1 : 0)
                     .animation(.easeInOut(duration: 0.25), value: tabSelection)
+                    .tag(MainTab.settings)
             }
+            .background(Color.clear)
             .padding(.bottom, 140)
             .zIndex(isExpland ? 1 : 2)
             

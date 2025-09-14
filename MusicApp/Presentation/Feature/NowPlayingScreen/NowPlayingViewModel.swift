@@ -21,6 +21,7 @@ final class NowPlayingViewModel: ObservableObject {
     // MARK: - Init
     init(playerManager: any PlayerManagerProtocol = PlayerManager.shared) {
         self.playerManager = playerManager
+        self.state = .init()
         setupBindings()
     }
     
@@ -34,12 +35,12 @@ final class NowPlayingViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Initial update
+        // Initial updater
         updateFromPlayerState(playerManager.state)
     }
     
     private func updateFromPlayerState(_ state: PlayerManagerState) {
-        var newState: NowPlayingState = .init()
+        var newState: NowPlayingState = self.state
         newState.currentSong = state.currentSong
         newState.isPlaying = state.isPlaying
         newState.shuffleEnabled = state.shuffleEnabled

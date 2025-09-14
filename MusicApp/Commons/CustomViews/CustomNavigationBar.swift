@@ -110,7 +110,8 @@ struct CustomNavigationBar: View {
                             Image(systemName: icon)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 24, height: 24)
+                                .foregroundStyle(.white)
+                                .frame(width: 20, height: 20)
                         }
                         if let title = button.title {
                             Text(title)

@@ -48,12 +48,20 @@ struct LibaryView: View {
                         
                     } else if !handler.state.playlist.isEmpty {
                         ScrollView(.vertical) {
-                            LazyVStack(spacing: 12) {
+                            LazyVStack(spacing: 0) {
                                 ForEach(handler.state.playlist) { item in
-                                    PlayListItemView(playListName: item.name)
-                                        .onTapGesture {
-                                            self.router.route(to: .gotoPlaylistDetail(item))
-                                        }
+                                    PlayListItemView(playListName: item.name,
+                                                     onDelete: {
+                                        self.handler.send(intent: .deletePlaylist(item))
+                                    },
+                                                     ontapItem: {
+                                        self.router.route(to: .gotoPlaylistDetail(item))
+                                    })
+                                    
+                                    if !self.handler.isLastItem(item: item) {
+                                        Divider()
+                                            .background(Color.gray)
+                                    }
                                 }
                             }
                         } // Scroll
@@ -115,5 +123,6 @@ struct LibaryTabView_Previews: PreviewProvider {
         LibaryView(handler: LibaryViewViewModel(state: .init(
             isLoading: false,
             playlist: [])))
+        .environmentObject(TabReloadManager())
     }
 }

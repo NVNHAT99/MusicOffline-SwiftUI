@@ -8,5 +8,6 @@
 import Foundation
 
 enum HomeViewIntent {
-    case fetchSongs
+    case fetchData
+    case play(RecentSongItem)
 }

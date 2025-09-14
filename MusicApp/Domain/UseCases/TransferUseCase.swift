@@ -22,15 +22,19 @@ final class TransferUseCase: TransferUseCaseProtocol {
     private let updateSongUseCase: UpdateSongUseCaseProtocol
     private let deleteSongUseCase: DeleteSongUseCaseProtocol
     private let coreDataService: CoreDataProtocol
+    // TODO: - Remove all use case must using service
+    private let repository: PlaylistRepositoryProtocol
     
     init(addSongUseCase: AddSongUseCaseProtocol = AddSongUseCase(),
          updateSongUseCase: UpdateSongUseCaseProtocol = UpdateSongUseCase(),
          deleteSongUseCase: DeleteSongUseCaseProtocol = DeleteSongUseCase(),
-         coreDataService: CoreDataProtocol = CoreDataManager.shared) {
+         coreDataService: CoreDataProtocol = CoreDataManager.shared,
+         repository: PlaylistRepositoryProtocol = PlaylistRepository()) {
         self.addSongUseCase = addSongUseCase
         self.updateSongUseCase = updateSongUseCase
         self.deleteSongUseCase = deleteSongUseCase
         self.coreDataService = coreDataService
+        self.repository = repository
     }
     
     func executeAdd(by path: String) async throws {
@@ -42,7 +46,8 @@ final class TransferUseCase: TransferUseCaseProtocol {
     }
     
     func executeDelete(from path: String) async throws {
-        try await deleteSongUseCase.execute(width: path)
+        let songId = try await deleteSongUseCase.execute(width: path)
+        try await repository.removeDeleteSong(from: songId)
     }
     
     func isAllTaskDone() -> Bool {

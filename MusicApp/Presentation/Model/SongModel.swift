@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct SongModel: Identifiable, Equatable {
+public struct SongModel: Identifiable, Equatable, Codable {
     public let id: UUID
     public let title: String
     public let album: String

@@ -9,17 +9,21 @@ import Foundation
 import SwiftUI
 import CoreData
 
+@MainActor
 final class LibaryViewViewModel: ObservableObject {
     // MARK: - PROPERTIES
     
     @Published private(set) var state: LibaryViewState
     private let fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol
+    private let deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol
     
     init(state: LibaryViewState = LibaryViewState(isLoading: false,
                                                   playlist: []),
-         fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol = FetchPlaylistUseCase()) {
+         fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol = FetchPlaylistUseCase(),
+         deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol = DeletetPlaylistUseCase()) {
         self.state = state
         self.fetchPlaylistaUseCase = fetchPlaylistaUseCase
+        self.deletePlaylistUseCase = deletePlaylistUseCase
     }
     
     func send(intent: LibaryViewIntent) {
@@ -33,13 +37,10 @@ final class LibaryViewViewModel: ObservableObject {
     
     
     private func deletePlaylist(playlist: Playlist) {
-//        let context = PersistenceController.shared.viewContext
-//        context.performAndWait {
-//            context.delete(playlist)
-//            PersistenceController.shared.saveContext()
-//            loadPlaylists(isFromDeleted: true)
-//            PlaylistManager.shared.updateAffterDeletePlaylist(playlist: playlist)
-//        }
+        Task {
+            try await deletePlaylistUseCase.execute(by: playlist.id)
+            self.state.playlist = self.state.playlist.filter({ $0 != playlist})
+        }
     }
     
     private func loadPlaylists(isFromDeleted: Bool = false) {
@@ -70,5 +71,9 @@ final class LibaryViewViewModel: ObservableObject {
         } set: { newValue in
             self.state.isShowToastView = newValue
         }
+    }
+    
+    func isLastItem(item: Playlist) -> Bool {
+        return self.state.playlist.last == item
     }
 }

@@ -17,12 +17,11 @@ struct TransferView: View {
             Color.backgroundColor
                 .ignoresSafeArea()
             VStack {
-                CustomNavigationBar(type: .custom(title: "Transfer audio file",
-                                                  left: .init(title: "Cancel",
-                                                              action: {
+                CustomNavigationBar(type: .backButton(title: nil,
+                                                      tintColor: .white,
+                                                      action: {
                     viewModel.send(.handleBackAction(self.navigationHandler))
-                }),
-                                                  right: nil))
+                }))
                 
                 
                 .foregroundStyle(.white)

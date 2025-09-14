@@ -29,7 +29,7 @@ extension PlaylistEntity {
     }
     
     var songUUIDs: [UUID] {
-        get { songIDStrings.compactMap { UUID(uuidString: $0) } }
+        get { songIDStrings.compactMap { UUID( uuidString: $0) } }
         set { songIDStrings = newValue.map { $0.uuidString } }
     }
 }

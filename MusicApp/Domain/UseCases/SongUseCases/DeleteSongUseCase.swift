@@ -10,7 +10,7 @@ import Foundation
 protocol DeleteSongUseCaseProtocol {
     func executeList(_ pathFileElemets: [PathFileElement]) async throws
     func executeDeleteAll() async throws
-    func execute(width path: String) async throws
+    func execute(width path: String) async throws -> UUID
 }
 
 final class DeleteSongUseCase: DeleteSongUseCaseProtocol {
@@ -32,7 +32,7 @@ final class DeleteSongUseCase: DeleteSongUseCaseProtocol {
         try await repository.deleteAllSongs()
     }
     
-    func execute(width path: String) async throws {
+    func execute(width path: String) async throws -> UUID {
         try await repository.deleteSong(withURL: path)
     }
 }

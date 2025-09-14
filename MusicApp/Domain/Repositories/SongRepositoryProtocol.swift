@@ -15,7 +15,7 @@ protocol SongRepositoryProtocol {
     func fetchAllSongs() async throws -> [Song]
     func updateSong(from oldPath: String, to newPath: String) async throws
     func updateSongs(from dictionaryFileURLs: [String : String]) async throws
-    func deleteSong(withURL url: String) async throws
+    func deleteSong(withURL url: String) async throws -> UUID
     func deleteSongs(with elements: [PathFileElement]) async throws
     func deleteAllSongs() async throws
     

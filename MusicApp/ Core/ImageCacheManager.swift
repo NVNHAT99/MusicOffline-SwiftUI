@@ -24,7 +24,7 @@ actor ImageCacheManager: ImageCacheProtocol {
         diskURL = cacheDir.appendingPathComponent("ImageCache")
         try? FileManager.default.createDirectory(at: diskURL, withIntermediateDirectories: true)
         memoryCache.countLimit = 100
-        memoryCache.totalCostLimit = 100 * 1024 * 1024 // max cache in ram is 100MB
+        memoryCache.totalCostLimit = 50 * 1024 * 1024 // max cache in ram is 50MB
     }
     
     private func key(for urlString: String) -> String {

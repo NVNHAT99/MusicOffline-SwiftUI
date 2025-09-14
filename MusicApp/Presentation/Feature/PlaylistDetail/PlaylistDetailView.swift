@@ -36,7 +36,6 @@ struct PlaylistDetailView: View {
                                                                                   viewModel.bindEditCompleted))
                                            }))) // Custom NavigationBar
             .frame(height: 50)
-            .background(Color.black)
             
             VStack {
                 if viewModel.state.isLoading {
@@ -48,8 +47,8 @@ struct PlaylistDetailView: View {
             Spacer()
         }
         .navigationBarHidden(true)
-        .background(Color.black)
-        .transition(.slide)
+        .background(Color.backgroundColor)
+        
         .overlay(alignment: .bottom) {
             if viewModel.state.isShowToastView {
                 ToastView(isShowView: viewModel.isShowToastView(),

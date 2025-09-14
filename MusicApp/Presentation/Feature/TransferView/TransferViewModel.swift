@@ -50,8 +50,9 @@ final class TransferViewModel: ObservableObject {
         // Track deleted files
         uploadSongUseCase.deletedFilePublisher
             .sink { [weak self] path in
+                guard let self = self else { return }
                 Task {
-                    try await self?.transferUseCase.executeDelete(from: path)
+                    try await self.transferUseCase.executeDelete(from: path)
                 }
             }
             .store(in: &cancelBag)

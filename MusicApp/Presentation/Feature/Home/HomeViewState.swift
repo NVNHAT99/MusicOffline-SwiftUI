@@ -8,8 +8,9 @@
 import Foundation
 
 struct HomeViewState {
-    var isLoading: Bool = false
+    var isLoadingRecentSongs: Bool = false
+    var isLoadingPlaylist: Bool = false
     var albums: [Album] = []
     var playlists: [Playlist] = []
-    var recentSongs: [Song] = []
+    var recentSongs: [RecentSongItem] = []
 }

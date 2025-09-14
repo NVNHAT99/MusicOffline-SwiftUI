@@ -6,22 +6,43 @@
 //
 
 import SwiftUI
+import Combine
 
 final class HomeViewModel: ObservableObject {
-    private let fetchHomeDataUseCase: FetchHomeDataUseCaseProtocol
+    
+    private let fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol
+    private let playerManager: any PlayerManagerProtocol
     @Published var state: HomeViewState
+    private var cancellables = Set<AnyCancellable>()
     
-    
-    init(fetchHomeDataUseCase: FetchHomeDataUseCaseProtocol = FetchHomeDataUseCase(),
+    init(fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol = FetchPlaylistUseCase(),
+         playerManager: any PlayerManagerProtocol = PlayerManager.shared,
          state: HomeViewState = .init()) {
-        self.fetchHomeDataUseCase = fetchHomeDataUseCase
         self.state = state
+        self.playerManager = playerManager
+        self.fetchPlaylistUseCase = fetchPlaylistUseCase
+        
+        playerManager.refreshHomePubliser
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self]  _ in
+                guard let self = self else {
+                    return
+                }
+                
+                self.fetchSongs()
+            }.store(in: &cancellables)
     }
     
     func send(_ intent: HomeViewIntent) {
         switch intent {
-        case .fetchSongs:
+        case .fetchData:
             self.fetchSongs()
+        case .play(let recentSongItem):
+            Task {
+                if let playlistId = UUID(uuidString: recentSongItem.playlistId ?? "") {
+                    await playerManager.play( playlistId, songPlay: recentSongItem.song)
+                }
+            }
         }
     }
     
@@ -29,22 +50,36 @@ final class HomeViewModel: ObservableObject {
         Task {
             
             await MainActor.run {
-                state.isLoading = true
+                var newState = self.state
+                newState.isLoadingPlaylist = true
+                newState.isLoadingRecentSongs = true
+                self.state = newState
             }
             
-            do {
-                let result = try await fetchHomeDataUseCase.execute()
+            Task {
+                let playlistRecentID = RecentSongsManager.fetchRecentPlaylists()
+                let recentPlaylist = try await fetchPlaylistUseCase.excute(with: playlistRecentID)
+                let mockData = try await fetchPlaylistUseCase.executeGetAll()
+                print("da vao day: \(playlistRecentID)")
+                print("da vao day: \(mockData)")
                 await MainActor.run {
                     var newState = self.state
-                    newState.albums = result.albums
-                    newState.playlists = result.playlists
-                    newState.recentSongs = result.recentSongs
-                    newState.isLoading = false
+                    newState.isLoadingPlaylist = false
+                    newState.playlists = recentPlaylist
                     self.state = newState
                 }
-            } catch {
-                print("da xuat hien error")
             }
+            
+            Task {
+                let recentSongs = RecentSongsManager.fetchRecentSongs()
+                await MainActor.run {
+                    var newState = self.state
+                    newState.isLoadingRecentSongs = false
+                    newState.recentSongs = recentSongs
+                    self.state = newState
+                }
+            }
+            
         }
     }
 }

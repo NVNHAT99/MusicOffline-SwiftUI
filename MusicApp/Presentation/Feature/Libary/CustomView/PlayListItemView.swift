@@ -9,28 +9,37 @@ import SwiftUI
 
 struct PlayListItemView: View {
     var playListName: String = String.empty
+    var onDelete: () -> Void
+    var ontapItem: (() -> Void)?
     var body: some View {
-        VStack {
-            Spacer()
-            HStack() {
+        ContainerSwipeView {
+            HStack {
+                Image (systemName: "music.note.list")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
                 Text(playListName)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.system(size: 20, weight: .semibold))
                     .lineLimit(1)
             }
-            Spacer()
+            .foregroundColor(.white)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity)
+            .background(Color.backgroundColor)
+            .onTapGesture {
+                ontapItem?()
+            }
+        } onDelete: {
+            onDelete()
         }
-        .foregroundColor(.white)
-        .padding(.horizontal, 16)
-        .frame(maxWidth: .infinity)
-        .background(Color.color292C2E)
-        .cornerRadius(8, corners: .allCorners)
     }
 }
 
 struct PlayListItemView_Previews: PreviewProvider {
     static var previews: some View {
-        PlayListItemView(playListName: String.Unkown)
+        PlayListItemView(playListName: String.Unkown, onDelete: {})
             .background(.gray)
             .previewLayout(.sizeThatFits)
     }
