@@ -117,7 +117,7 @@ struct HomeView: View {
             // code này ở đây thì gây ra hiện tượng trên, thay bằng empty view thì không bị
             Text("There are no recently played songs.")
                 .foregroundColor(.gray)
-                .padding(.top, 54)
+                .frame(height: 160)
         } else {
             LazyVStack(spacing: 16) {
                 ForEach(viewModel.state.recentSongs) { recenSong in

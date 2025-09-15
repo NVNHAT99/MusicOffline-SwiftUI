@@ -125,6 +125,8 @@
 		649783802A96690C00394E1D /* CustomSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6497837F2A96690C00394E1D /* CustomSliderView.swift */; };
 		6497D6312E67DC9700AAB440 /* RecentSongsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6497D6302E67DC9700AAB440 /* RecentSongsManager.swift */; };
 		6497D6792E67FACB00AAB440 /* DocumentFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6497D6782E67FACB00AAB440 /* DocumentFileManager.swift */; };
+		649904D12E77F9F500683598 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649904D02E77F9F500683598 /* SplashView.swift */; };
+		649904D42E77FECE00683598 /* AppLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 649904D32E77FECE00683598 /* AppLaunchScreen.storyboard */; };
 		6499C94F2A07EB1200D5F1F0 /* MusicApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6499C94E2A07EB1200D5F1F0 /* MusicApp.swift */; };
 		6499C9532A07EB1300D5F1F0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6499C9522A07EB1300D5F1F0 /* Assets.xcassets */; };
 		6499C9562A07EB1300D5F1F0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6499C9552A07EB1300D5F1F0 /* Preview Assets.xcassets */; };
@@ -160,6 +162,7 @@
 		64F24FE32A828CE00081310A /* PlaylistDetailState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64F24FE22A828CE00081310A /* PlaylistDetailState.swift */; };
 		64F913262A1F0C1900733B44 /* HomeViewIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64F913252A1F0C1900733B44 /* HomeViewIntent.swift */; };
 		64F913342A1F5C9F00733B44 /* MainTabViewVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64F913332A1F5C9F00733B44 /* MainTabViewVM.swift */; };
+		64FC62512E777B5A00E6F517 /* AppDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64FC62502E777B5A00E6F517 /* AppDependencies.swift */; };
 		B5CB3E0C4D5BC30AA6A59505 /* Pods_MusicApp_MusicAppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8978F6901A7A14D7C19BCE7F /* Pods_MusicApp_MusicAppUITests.framework */; };
 		C9B465B310FED0167DEFBB9E /* Pods_MusicAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9B00B927EFC063FE22AE283 /* Pods_MusicAppTests.framework */; };
 /* End PBXBuildFile section */
@@ -302,6 +305,8 @@
 		6497837F2A96690C00394E1D /* CustomSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSliderView.swift; sourceTree = "<group>"; };
 		6497D6302E67DC9700AAB440 /* RecentSongsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSongsManager.swift; sourceTree = "<group>"; };
 		6497D6782E67FACB00AAB440 /* DocumentFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentFileManager.swift; sourceTree = "<group>"; };
+		649904D02E77F9F500683598 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		649904D32E77FECE00683598 /* AppLaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AppLaunchScreen.storyboard; sourceTree = "<group>"; };
 		6499C94B2A07EB1200D5F1F0 /* MusicApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MusicApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6499C94E2A07EB1200D5F1F0 /* MusicApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicApp.swift; sourceTree = "<group>"; };
 		6499C9522A07EB1300D5F1F0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -341,6 +346,7 @@
 		64F24FE22A828CE00081310A /* PlaylistDetailState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistDetailState.swift; sourceTree = "<group>"; };
 		64F913252A1F0C1900733B44 /* HomeViewIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewIntent.swift; sourceTree = "<group>"; };
 		64F913332A1F5C9F00733B44 /* MainTabViewVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabViewVM.swift; sourceTree = "<group>"; };
+		64FC62502E777B5A00E6F517 /* AppDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDependencies.swift; sourceTree = "<group>"; };
 		7BBE52D5357B387F453047CF /* Pods_MusicApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MusicApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8978F6901A7A14D7C19BCE7F /* Pods_MusicApp_MusicAppUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MusicApp_MusicAppUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E3329E1001E0FC9BC17DDFC /* Pods-MusicApp-MusicAppUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MusicApp-MusicAppUITests.release.xcconfig"; path = "Target Support Files/Pods-MusicApp-MusicAppUITests/Pods-MusicApp-MusicAppUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -673,6 +679,7 @@
 				647C040F2E5EA5AA00A06BD3 /* PlayerManager.swift */,
 				6497D6302E67DC9700AAB440 /* RecentSongsManager.swift */,
 				6497D6782E67FACB00AAB440 /* DocumentFileManager.swift */,
+				64FC62502E777B5A00E6F517 /* AppDependencies.swift */,
 			);
 			path = " Core";
 			sourceTree = "<group>";
@@ -780,6 +787,15 @@
 			path = CustomViews;
 			sourceTree = "<group>";
 		};
+		649904D22E77FEB000683598 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				649904D32E77FECE00683598 /* AppLaunchScreen.storyboard */,
+				6499C94E2A07EB1200D5F1F0 /* MusicApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
 		6499C9422A07EB1100D5F1F0 = {
 			isa = PBXGroup;
 			children = (
@@ -848,7 +864,6 @@
 			children = (
 				6453E7622E5CC6E80017754E /* Model */,
 				64F913272A1F35FA00733B44 /* Feature */,
-				6499C94E2A07EB1200D5F1F0 /* MusicApp.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -931,6 +946,7 @@
 		64F913272A1F35FA00733B44 /* Feature */ = {
 			isa = PBXGroup;
 			children = (
+				649904D22E77FEB000683598 /* App */,
 				647C04132E5FF3DD00A06BD3 /* NowPlayingScreen */,
 				64C6C2B22E3C6868003D9193 /* GuideTransferView */,
 				64C6C2AD2E3C60D0003D9193 /* TransferView */,
@@ -993,6 +1009,7 @@
 				641875102E328EEF006726C3 /* MainTab.swift */,
 				6496B4132E498E1400C31B0A /* TabReloadManager.swift */,
 				64117D542E6590A40024DFA0 /* MainTabRoute.swift */,
+				649904D02E77F9F500683598 /* SplashView.swift */,
 			);
 			path = ContentView;
 			sourceTree = "<group>";
@@ -1131,6 +1148,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6499C9562A07EB1300D5F1F0 /* Preview Assets.xcassets in Resources */,
+				649904D42E77FECE00683598 /* AppLaunchScreen.storyboard in Resources */,
 				6499C9532A07EB1300D5F1F0 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1300,6 +1318,7 @@
 				642584E42AC1DFF6009C3DEB /* SettingViewIntent.swift in Sources */,
 				641875652E3694A0006726C3 /* HomeViewModel.swift in Sources */,
 				64A72BB32ABC9714006C6818 /* EditPlaylistViewModel.swift in Sources */,
+				64FC62512E777B5A00E6F517 /* AppDependencies.swift in Sources */,
 				645F83D42AD1B71E007B259D /* AddNewPlaylistViewmodel.swift in Sources */,
 				6497D6792E67FACB00AAB440 /* DocumentFileManager.swift in Sources */,
 				642584E22AC1DFED009C3DEB /* SettingViewViewModel.swift in Sources */,
@@ -1328,6 +1347,7 @@
 				649783802A96690C00394E1D /* CustomSliderView.swift in Sources */,
 				645F83D62AD1B72E007B259D /* AddNewPlaylistIntent.swift in Sources */,
 				64C6C29D2E3A0811003D9193 /* ManageWebUploaderUseCase.swift in Sources */,
+				649904D12E77F9F500683598 /* SplashView.swift in Sources */,
 				647C04082E5E08BA00A06BD3 /* Double + Ext.swift in Sources */,
 				647C04102E5EA5AA00A06BD3 /* PlayerManager.swift in Sources */,
 				64464D452A3AF91000D0FBA3 /* LibaryViewViewModel.swift in Sources */,
@@ -1583,6 +1603,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MusicApp/Preview Content\"";
@@ -1590,10 +1611,12 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MusicApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "IMuzic Off Box";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -1601,7 +1624,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = nothing.music.nhatnv99.MusicApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1616,6 +1639,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MusicApp/Preview Content\"";
@@ -1623,10 +1647,12 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MusicApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "IMuzic Off Box";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -1634,7 +1660,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = nothing.music.nhatnv99.MusicApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

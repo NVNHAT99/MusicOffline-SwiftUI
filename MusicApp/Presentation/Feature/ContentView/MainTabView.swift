@@ -27,6 +27,7 @@ struct MainTabView: View {
             Color.backgroundColor
                 .ignoresSafeArea()
                 .zIndex(0)
+            
             VStack(spacing: 0) {
                 
                 if viewModel.isShowNowPlaying {
@@ -43,7 +44,7 @@ struct MainTabView: View {
                     type: .classic,
                     backgroundColor: .black
                 )
-                .frame(maxHeight: isExpland ? 0 : 70)
+                .frame(maxHeight: isExpland ? 0 : 80)
                 .opacity(isExpland ? 0 : 1)       // fade ẩn
                 .animation(.easeInOut(duration: 0.25), value: isExpland)
             }
@@ -53,17 +54,20 @@ struct MainTabView: View {
                 HomeView(viewModel: .init())
                     .animation(.easeInOut(duration: 0.25), value: tabSelection)
                     .tag(MainTab.home)
+                    .toolbar(.hidden, for: .tabBar)
                 
                 LibaryView(handler: LibaryViewViewModel())
                     .animation(.easeInOut(duration: 0.25), value: tabSelection)
                     .tag(MainTab.playlist)
+                    .toolbar(.hidden, for: .tabBar)
                 
                 SettingView(viewModel:  SettingViewViewModel())
                     .animation(.easeInOut(duration: 0.25), value: tabSelection)
                     .tag(MainTab.settings)
+                    .toolbar(.hidden, for: .tabBar)
             }
             .background(Color.clear)
-            .padding(.bottom, 140)
+            .padding(.bottom, viewModel.isShowNowPlaying ? 160 : 80)
             .zIndex(isExpland ? 1 : 2)
             
         }

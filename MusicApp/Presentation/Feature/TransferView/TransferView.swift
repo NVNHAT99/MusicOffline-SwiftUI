@@ -67,8 +67,13 @@ struct TransferView: View {
                                 
                             }
                             
-                            Text("Then upload files from your computer.\nplease don't switch to another app or lock your phone while transfering, affter all file upload like this image you must tap on save button to save your file, if you don't press save button, all your file you upload will be deleted")
+                            Text("Then upload files from your computer.\nplease don't switch to another app or lock your phone while transfering.")
                                 .lineLimit(.max)
+                            
+                            Image("transfer_1")
+                                .resizable()
+                                .aspectRatio(1.0, contentMode: .fit)
+                                
                         }
                         .foregroundColor(.white)
                         .padding(.horizontal, 24)
@@ -96,11 +101,14 @@ struct TransferView: View {
             }
             
             if viewModel.state.isShowToastView {
-                ToastView(isShowView: viewModel.isShowToastView(),
-                          message: viewModel.state.messageToastView,
-                          timeShowView: .seconds(2))
-                    .frame(height: 40)
-                    .padding(.bottom, 16)
+                VStack {
+                    Spacer()
+                    ToastView(isShowView: viewModel.isShowToastView(),
+                              message: viewModel.state.messageToastView,
+                              timeShowView: .seconds(2))
+                        .frame(height: 40)
+                        .padding(.bottom, 16)
+                }
             }
         }// zstack
     }

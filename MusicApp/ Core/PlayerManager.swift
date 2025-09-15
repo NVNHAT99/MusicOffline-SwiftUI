@@ -312,28 +312,46 @@ final class PlayerManager: PlayerManagerProtocol {
         guard !playlist.isEmpty else { return nil }
 
         if state.shuffleEnabled {
-            if let curr = currentIndex,
-               let pos = shuffledOrder.firstIndex(of: curr) {
-                let nextPos = pos + 1
-                if nextPos < shuffledOrder.count {
-                    return shuffledOrder[nextPos]
-                } else {
-                    if state.repeatMode == .all {
-                        await regenerateShuffleOrder(anchoringAt: nil)
-                        return shuffledOrder.first
-                    }
-                    return nil
-                }
-            } else {
-                if shuffledOrder.isEmpty {
-                    await regenerateShuffleOrder(anchoringAt: nil)
-                }
-                return shuffledOrder.first
-            }
+            return await computeNextShuffleIndex()
         } else {
-            let idx = ((currentIndex ?? -1) + 1)
-            if idx < playlist.count { return idx }
-            return state.repeatMode == .all ? 0 : nil
+            return computeNextLinearIndex()
+        }
+    }
+
+    private func computeNextShuffleIndex() async -> Int? {
+        guard let currentIndex = currentIndex else {
+            if shuffledOrder.isEmpty {
+                await regenerateShuffleOrder(anchoringAt: nil)
+            }
+            return shuffledOrder.first
+        }
+
+        guard let currentPos = shuffledOrder.firstIndex(of: currentIndex) else {
+            await regenerateShuffleOrder(anchoringAt: currentIndex)
+            return shuffledOrder.first
+        }
+
+        let nextPos = currentPos + 1
+        if nextPos < shuffledOrder.count {
+            return shuffledOrder[nextPos]
+        } else if state.repeatMode == .all {
+            await regenerateShuffleOrder(anchoringAt: nil)
+            return shuffledOrder.first
+        } else {
+            return nil
+        }
+    }
+
+    private func computeNextLinearIndex() -> Int? {
+        let currentIndex = self.currentIndex ?? -1
+        let nextIndex = currentIndex + 1
+
+        if nextIndex < playlist.count {
+            return nextIndex
+        } else if state.repeatMode == .all {
+            return 0
+        } else {
+            return nil
         }
     }
 
@@ -368,6 +386,7 @@ final class PlayerManager: PlayerManagerProtocol {
             let url = URL(fileURLWithPath: song.urlStr ?? "")
             try engine.load(url: url)
             self.state.isPlaying = false
+            self.progressTimerService.stop()
         } catch {
             print("⚠️ Error loading song: \(error)")
         }

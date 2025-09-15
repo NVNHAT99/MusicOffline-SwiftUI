@@ -19,3 +19,10 @@ public struct SongModel: Identifiable, Equatable, Codable {
         duration.toTimeString()
     }
 }
+
+extension SongModel {
+    func fileURLString() throws -> String {
+        guard let urlStr else { throw URLError(.badURL) }
+        return urlStr
+    }
+}

@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(swift:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(find:*)",
+      "Bash(open:*)"
     ],
     "deny": [],
     "ask": []

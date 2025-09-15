@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct NowPlayingView: View {
     @Binding var isExpanded: Bool
@@ -14,6 +15,8 @@ struct NowPlayingView: View {
     // Constants for layout
     private let miniPlayerHeight: CGFloat = 80
     private let cornerRadius: CGFloat = 12
+    private let cache = ImageCacheFactory.createDefaultCache()
+    @State private var uiImage: UIImage?
     
     var body: some View {
         VStack {
@@ -28,17 +31,60 @@ struct NowPlayingView: View {
         }
         .background(Color.backgroundColor)
         .animation(.spring(response: 0.6, dampingFraction: 0.8), value: isExpanded)
+        .task {
+            do {
+                if let currentSong = self.viewModel.state.currentSong,
+                   let data = await cache.get(for: try currentSong.fileURLString()) {
+                    if let image = UIImage(data: data) {
+                        uiImage = image
+                    } else {
+                        uiImage = UIImage(named: "demoThumbnail2")
+                    }
+                    
+                } else {
+                    uiImage = UIImage(named: "demoThumbnail2")
+                }
+            } catch {
+                uiImage = UIImage(named: "demoThumbnail2")
+            }
+        }
+        .onChange(of: self.viewModel.state.currentSong) { oldValue, newValue in
+            Task {
+                do {
+                    if let currentSong = self.viewModel.state.currentSong,
+                       let data = await cache.get(for: try currentSong.fileURLString()) {
+                        if let image = UIImage(data: data) {
+                            uiImage = image
+                        } else {
+                            uiImage = UIImage(named: "demoThumbnail2")
+                        }
+                    } else {
+                        uiImage = UIImage(named: "demoThumbnail2")
+                    }
+                } catch {
+                    uiImage = UIImage(named: "demoThumbnail2")
+                }
+            }
+        }
     }
     
     // MARK: - Mini Player View
     private var miniPlayer: some View {
         HStack(spacing: 12) {
             // Album artwork
-            Image("demoThumbnail2")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 50, height: 50)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+            if let uiImage = uiImage {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 50)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            } else {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 50, height: 50)
+                    .shimmer()
+            }
+            
             
             // Song info
             VStack(alignment: .leading, spacing: 2) {
@@ -126,14 +172,19 @@ struct NowPlayingView: View {
                     .frame(height: 16)
                 
                 // Album artwork
-                Image("demoThumbnail2")
-                    .resizable()
-                    .scaledToFit()
-                    .aspectRatio(1.0, contentMode: .fit)
-                    .frame(width: geometry.size.width * 4 / 5)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
-                
+                if let uiImage = uiImage {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geometry.size.width * 4 / 5, height: geometry.size.width * 4 / 5)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+                } else {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: geometry.size.width * 4 / 5, height: geometry.size.width * 4 / 5)
+                        .shimmer()
+                }
                 Spacer()
                     .frame(height: 44)
                 

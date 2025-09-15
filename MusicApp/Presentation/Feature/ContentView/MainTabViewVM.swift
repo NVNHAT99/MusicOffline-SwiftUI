@@ -11,7 +11,7 @@ import Combine
 final class MainTabViewVM: ObservableObject {
     let tabItems: [TabItem<MainTab>] = [TabItem(icon: "house", selectedIcon: "house.fill", title: "Home", color: .white, tag: .home),
                                         TabItem(icon: "books.vertical", selectedIcon: "books.vertical.fill", title: "Library", color: .white, tag: .playlist),
-                                        TabItem(icon: "person", selectedIcon: "gearshape.fill", title: "Setting", color: .white, tag: .settings)
+                                        TabItem(icon: "gearshape", selectedIcon: "gearshape.fill", title: "Setting", color: .white, tag: .settings)
     ]
     
     @Published var isShowNowPlaying: Bool = false

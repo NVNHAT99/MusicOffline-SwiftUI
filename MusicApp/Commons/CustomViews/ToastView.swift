@@ -16,12 +16,15 @@ struct ToastView: View {
             Color.gray.opacity(0.6)
             
             VStack {
+                Spacer()
+                
                 Text(message)
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .lineLimit(2)
             }
+            .frame(maxHeight: .infinity)
         }
         .cornerRadius(10)
         .transition(.opacity)
