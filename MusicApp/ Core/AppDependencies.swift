@@ -23,6 +23,7 @@ class AppDependencies {
     private let webServerService: WebServerGCDService
     private let userDataDefault: UserDataDefault
     private let helper: Helper
+    private let nowPlayingService: NowPlayingInfoServiceProtocol
 
     // MARK: - Initialization
     private init() {
@@ -34,9 +35,11 @@ class AppDependencies {
         self.webServerService = WebServerGCDService.shared
         self.userDataDefault = UserDataDefault.shared
         self.helper = Helper.shared
+        self.nowPlayingService = NowPlayingInfoService.shared
 
         // Setup lifecycle observers
         setupLifecycleObservers()
+        self.nowPlayingService.bind(to: makePlayerManager())
     }
 
     // MARK: - Factory Methods
@@ -66,6 +69,10 @@ class AppDependencies {
 
     func makeHelper() -> Helper {
         return helper
+    }
+    
+    func makeNowPlayingService() -> NowPlayingInfoServiceProtocol {
+        return nowPlayingService
     }
 
     // MARK: - Repository Factory Methods
