@@ -8,7 +8,7 @@
 import Foundation
 
 struct PlaylistMapper {
-    static func makePlaylist(width title: String, and songIDs: [String]) -> Playlist {
+    static func makePlaylist(width title: String, and songIDs: [UUID]) -> Playlist {
         return Playlist.init(id: UUID(), name: title, songIDs: songIDs)
     }
 }

@@ -20,7 +20,7 @@ final class DeletetPlaylistUseCase: DeletetPlaylistUseCaseProtocol {
     }
     
     func execute(by playlistID: UUID) async throws {
-        try await repository.deletePlaylist(with: playlistID.uuidString)
+        try await repository.deletePlaylist(with: playlistID)
         PlaylistEventCenter.shared.subject.send(.deleted(playlistID))
     }
 }

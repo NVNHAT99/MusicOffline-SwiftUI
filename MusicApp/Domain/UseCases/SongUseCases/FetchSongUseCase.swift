@@ -8,7 +8,7 @@
 import Foundation
 
 protocol FetchSongUseCaseProtocol {
-    func execute(_ songIdArray: [String]) async throws -> [Song]
+    func execute(_ songIdArray: [UUID]) async throws -> [Song]
     func executeGetAll() async throws -> [Song]
 }
 
@@ -19,9 +19,8 @@ final class FetchSongUseCase : FetchSongUseCaseProtocol {
         self.repository = repository
     }
     
-    func execute(_ songIdArray: [String]) async throws -> [Song] {
-        let uuidArray: [UUID] = songIdArray.compactMap { UUID(uuidString: $0) }
-        let result = try await repository.fetchSongs(uuidArray)
+    func execute(_ songIdArray: [UUID]) async throws -> [Song] {
+        let result = try await repository.fetchSongs(songIdArray)
         return result
     }
     

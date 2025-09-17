@@ -7,11 +7,8 @@
 
 import Foundation
 
-enum UpdatePlaylistError: Error {
-    case invalidUUID
-}
 protocol UpdatePlaylistUseCaseProtocol {
-    func execute(from playlistId: String, with songIds: [String]) async throws
+    func execute(from playlistId: UUID, with songIds: [UUID]) async throws
     func removeDeleteSong(from path: String) async throws
 }
 
@@ -24,13 +21,9 @@ final class UpdatePlaylistUseCase: UpdatePlaylistUseCaseProtocol {
     }
     
     
-    func execute(from playlistId: String, with songIds: [String]) async throws {
-        if let uuidPlaylist = UUID(uuidString: playlistId) {
-            try await repository.updatePlaylist(by: uuidPlaylist, with: songIds)
-            PlaylistEventCenter.shared.subject.send(.updated(uuidPlaylist))
-        } else {
-            throw UpdatePlaylistError.invalidUUID
-        }
+    func execute(from playlistId: UUID, with songIds: [UUID]) async throws {
+        try await repository.updatePlaylist(by: playlistId, with: songIds)
+        PlaylistEventCenter.shared.subject.send(.updated(playlistId))
     }
     
     func removeDeleteSong(from path: String) async throws {

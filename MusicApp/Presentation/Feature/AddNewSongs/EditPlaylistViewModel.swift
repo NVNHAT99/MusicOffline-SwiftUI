@@ -14,9 +14,9 @@ final class EditPlaylistViewModel: ObservableObject {
     private let updatePlaylistUseCase: UpdatePlaylistUseCaseProtocol
     private let fetchSongUseCase: FetchSongUseCaseProtocol
     private var currentSongs: [SelectedSong] = []
-    private let playlistID: String
+    private let playlistID: UUID
     init(currenSongIDs: [UUID],
-         playlistID: String,
+         playlistID: UUID,
          updatePlaylistUseCase: UpdatePlaylistUseCaseProtocol = UpdatePlaylistUseCase(),
          fetchSongUseCase: FetchSongUseCaseProtocol = FetchSongUseCase()) {
         self.state = .init(songIDs: currenSongIDs)
@@ -58,8 +58,9 @@ final class EditPlaylistViewModel: ObservableObject {
                 self.state.isEnableSaveButton = false
             }
             do {
+                let selectedSongUUIDs = self.state.allSongs.filter { $0.isSelected }.map { $0.songUUID }
                 try await updatePlaylistUseCase.execute(from: playlistID,
-                                                        with: self.state.allSongs.filter { $0.isSelected }.map({ $0.songUUIDString }))
+                                                        with: selectedSongUUIDs)
                 await MainActor.run {
                     self.state.isSavePlaylistSuccess = true
                 }

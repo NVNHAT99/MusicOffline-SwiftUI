@@ -95,14 +95,11 @@ final class PlaylistRepository: PlaylistRepositoryProtocol {
         }
     }
     
-    func deletePlaylist(with playListId: String) async throws {
+    func deletePlaylist(with playListId: UUID) async throws {
         try await coreDataService.performWithSerialQueue { context in
-            guard let uuid = UUID(uuidString: playListId) else {
-                throw CoreDataError.entityNotFound
-            }
             
             let fetchPlaylistRequest: NSFetchRequest<PlaylistEntity> = PlaylistEntity.fetchRequest()
-            fetchPlaylistRequest.predicate = NSPredicate(format: "id == %@", uuid as CVarArg)
+            fetchPlaylistRequest.predicate = NSPredicate(format: "id == %@", playListId as CVarArg)
             fetchPlaylistRequest.fetchLimit = 1
             
             do {
@@ -120,13 +117,10 @@ final class PlaylistRepository: PlaylistRepositoryProtocol {
         }
     }
     
-    func deleteListPlaylist(with playlistIDs: [String]) async throws {
+    func deleteListPlaylist(with playlistIDs: [UUID]) async throws {
         try await coreDataService.performWithSerialQueue { context in
-            let uuidArray = playlistIDs.map(UUID.init)
-            
             do {
-                for uuid in uuidArray {
-                    guard let uuid = uuid else { continue }
+                for uuid in playlistIDs {
                     
                     let request: NSFetchRequest<PlaylistEntity> = PlaylistEntity.fetchRequest()
                     request.predicate = NSPredicate(format: "id == %@", uuid as CVarArg )
@@ -146,7 +140,7 @@ final class PlaylistRepository: PlaylistRepositoryProtocol {
         }
     }
     
-    func updatePlaylist(by playlistID: UUID, with songIds: [String]) async throws {
+    func updatePlaylist(by playlistID: UUID, with songIds: [UUID]) async throws {
         try await coreDataService.performWithSerialQueue { context in
             
             let fetchPlaylistRequest: NSFetchRequest<PlaylistEntity> = PlaylistEntity.fetchRequest()
@@ -155,7 +149,7 @@ final class PlaylistRepository: PlaylistRepositoryProtocol {
             
             do {
                 if let playlistUpdate = try context.fetch(fetchPlaylistRequest).first {
-                    playlistUpdate.songIDStrings = songIds
+                    playlistUpdate.songUUIDs = songIds
                 }
                 
                 if context.hasChanges {

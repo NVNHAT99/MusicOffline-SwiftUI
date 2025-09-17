@@ -123,17 +123,11 @@ final class PlaylistDetailViewModel: ObservableObject {
     }
     
     func getSongIds() -> [UUID] {
-        if let ids = playlist?.songIDs {
-            return ids.compactMap({ UUID(uuidString: $0) })
-        }
-        return []
+        return playlist?.songIDs ?? []
     }
     
-    func getPlaylistId() -> String {
-        if let id = playlist?.id {
-            return id.uuidString
-        }
-        return String.empty
+    func getPlaylistId() -> UUID {
+        return playlist?.id ?? UUID()
     }
     
     var bindEditCompleted: Binding<Bool> {

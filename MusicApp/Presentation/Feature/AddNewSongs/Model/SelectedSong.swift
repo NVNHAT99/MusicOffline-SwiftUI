@@ -15,4 +15,8 @@ struct SelectedSong: Identifiable, Equatable {
     var songUUIDString: String {
         song.id.uuidString
     }
+
+    var songUUID: UUID {
+        song.id
+    }
 }

@@ -10,7 +10,7 @@ import SwiftUI
 enum LibaryRouter: Routable {
     case addPlaylist
     case gotoPlaylistDetail(_ playlist: Playlist?)
-    case gotoEditPlaylist(_ playlistID: String, _ songIds: [UUID], _ isEditCompleted: Binding<Bool>)
+    case gotoEditPlaylist(_ playlistID: UUID, _ songIds: [UUID], _ isEditCompleted: Binding<Bool>)
     
     var presentationStyle: PresentationStyle {
         switch self {

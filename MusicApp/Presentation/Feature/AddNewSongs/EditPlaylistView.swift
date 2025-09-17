@@ -14,7 +14,7 @@ struct EditPlaylistView: View {
     @Binding var isEditCompleted: Bool
     
     init(viewModel: EditPlaylistViewModel = EditPlaylistViewModel(currenSongIDs: [],
-                                                                  playlistID: String.empty),
+                                                                  playlistID: UUID()),
          router: Router<LibaryRouter>,
          isEditCompleted: Binding<Bool>) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -84,7 +84,7 @@ struct EditPlaylistView: View {
 struct AddNewSongs_Previews: PreviewProvider {
     static var previews: some View {
         EditPlaylistView(viewModel: .init(currenSongIDs: [],
-                                          playlistID: String.empty),
+                                          playlistID: UUID()),
                          router: .init(),
                          isEditCompleted: .constant(false))
     }
