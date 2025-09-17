@@ -124,7 +124,7 @@ public extension Routable {
         hasher.combine(id)
     }
 
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+    static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
     }
 }

@@ -14,12 +14,12 @@ import AVFoundation
 // MARK: - Protocols
 protocol ImageCacheProtocol: AnyObject {
     func get(for urlString: String) async -> Data?
-    func set(_ imageData: Data, for urlString: String) async
-    func remove(for urlString: String) async
-    func clearAll() async
-    func clearMemory() async
-    func clearDisk() async
-    func getCacheSize() async -> (memory: Int, disk: Int)
+    func set(_ imageData: Data, for urlString: String)
+    func remove(for urlString: String)
+    func clearAll()
+    func clearMemory()
+    func clearDisk()
+    func getCacheSize() -> (memory: Int, disk: Int)
 }
 
 protocol ImageCacheManagerDelegate: AnyObject {
@@ -143,9 +143,7 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
 
         // Try memory cache first
         if let cachedData = memoryCache.object(forKey: key as NSString) {
-            accessQueue.async {
-                self.updateAccessOrder(key)
-            }
+            updateAccessOrder(key)
             return cachedData as Data
         }
 
@@ -161,7 +159,7 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
             // Cache doesn't exist, try to extract image from audio file
             if let audioImageData = await extractImageFromAudioFile(urlString) {
                 // Cache the extracted image
-                await set(audioImageData, for: urlString)
+                set(audioImageData, for: urlString)
                 return audioImageData
             } else {
                 return nil
@@ -181,10 +179,8 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
             }
 
             // Cache in memory
-            accessQueue.async {
-                self.memoryCache.setObject(data as NSData, forKey: key as NSString, cost: data.count)
-                self.updateAccessOrder(key)
-            }
+            memoryCache.setObject(data as NSData, forKey: key as NSString, cost: data.count)
+            updateAccessOrder(key)
 
             return data
         } catch {
@@ -195,7 +191,7 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
         }
     }
 
-    func set(_ imageData: Data, for urlString: String) async {
+    func set(_ imageData: Data, for urlString: String) {
         guard !imageData.isEmpty else { return }
 
         let key = generateKey(for: urlString)
@@ -212,9 +208,9 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
 
         do {
             // Check disk space
-            if let currentSize = await getCurrentDiskSize(),
+            if let currentSize = getCurrentDiskSize(),
                currentSize + cost > configuration.diskStorageLimit {
-                await cleanupOldestFiles(requiredSpace: cost)
+                cleanupOldestFilesSync(requiredSpace: cost)
             }
 
             try imageData.write(to: fileURL)
@@ -223,7 +219,7 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
         }
     }
 
-    func remove(for urlString: String) async {
+    func remove(for urlString: String) {
         let key = generateKey(for: urlString)
 
         // Remove from memory
@@ -237,26 +233,26 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
         try? fileManager.removeItem(at: fileURL)
     }
 
-    func clearAll() async {
-        await clearMemory()
-        await clearDisk()
+    func clearAll() {
+        clearMemory()
+        clearDisk()
     }
 
-    func clearMemory() async {
+    func clearMemory() {
         memoryCache.removeAllObjects()
         accessOrder.removeAllObjects()
     }
 
-    func clearDisk() async {
+    func clearDisk() {
         guard configuration.enableDiskCache else { return }
 
         try? fileManager.removeItem(at: diskURL)
         try? fileManager.createDirectory(at: diskURL, withIntermediateDirectories: true)
     }
 
-    func getCacheSize() async -> (memory: Int, disk: Int) {
+    func getCacheSize() -> (memory: Int, disk: Int) {
         let memorySize = getCurrentMemorySize()
-        let diskSize = await getCurrentDiskSize() ?? 0
+        let diskSize = getCurrentDiskSize() ?? 0
 
         return (memorySize, diskSize)
     }
@@ -293,7 +289,7 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
         return accessOrder.count * 1024 // Approximate average image size
     }
 
-    private func getCurrentDiskSize() async -> Int? {
+    private func getCurrentDiskSize() -> Int? {
         guard configuration.enableDiskCache else { return 0 }
 
         guard fileManager.fileExists(atPath: diskURL.path) else { return 0 }
@@ -357,7 +353,7 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
         }
     }
 
-    private func cleanupOldestFiles(requiredSpace: Int) async {
+    private func cleanupOldestFilesSync(requiredSpace: Int) {
         do {
             let resources = try fileManager.contentsOfDirectory(
                 at: diskURL,
@@ -385,11 +381,13 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
         }
     }
 
+    private func cleanupOldestFiles(requiredSpace: Int) async {
+        cleanupOldestFilesSync(requiredSpace: requiredSpace)
+    }
+
     private func handleMemoryWarning() {
         print("🗑️ Memory warning received, clearing memory cache")
-        Task {
-            await clearMemory()
-        }
+        clearMemory()
 
         // Optionally notify delegates
         // delegates.forEach { $0.cacheDidReceiveMemoryWarning(self) }
@@ -410,20 +408,12 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
     }
 
     private func extractArtwork(from asset: AVURLAsset) async throws -> Data? {
-        let arrayMetaData = try await asset.load(.metadata)
-        for metaData in arrayMetaData {
-            if let commonKey = metaData.commonKey?.rawValue, let value = try await metaData.load(.value) {
-                switch commonKey {
-                case AVMetadataKey.commonKeyArtwork.rawValue:
-                    if let data = value as? Data {
-                        return data
-                    }
-                default:
-                    break
-                }
-            }
+        let metadata = try await asset.load(.metadata)
+        guard let item = metadata.first(where: { $0.commonKey?.rawValue == AVMetadataKey.commonKeyArtwork.rawValue }),
+              let data = try await item.load(.dataValue) else {
+            return nil
         }
-        return nil
+        return data
     }
 
     deinit {

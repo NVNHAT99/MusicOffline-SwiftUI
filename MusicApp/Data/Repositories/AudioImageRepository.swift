@@ -24,8 +24,8 @@ final class  AudioImageRepositoryImpl: AudioImageRepositoryProtocol {
         return nil
     }
     
-    func setImageData(_ data: Data, for audioURLString: String) async {
-        await cache.set(data, for: audioURLString)
+    func setImageData(_ data: Data, for audioURLString: String) {
+        cache.set(data, for: audioURLString)
     }
     
     func hasArtwork(for audioURLString: String) async -> Bool {

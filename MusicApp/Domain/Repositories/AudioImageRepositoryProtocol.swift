@@ -9,6 +9,6 @@ import Foundation
 
 public protocol AudioImageRepositoryProtocol {
     func getImageData(for audioURLString: String) async -> Data?
-    func setImageData(_ data: Data, for audioURLString: String) async
+    func setImageData(_ data: Data, for audioURLString: String)
     func hasArtwork(for audioURLString: String) async -> Bool
 }

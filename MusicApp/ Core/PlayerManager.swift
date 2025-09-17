@@ -166,7 +166,7 @@ final class PlayerManager: PlayerManagerProtocol {
     }
 
     func play(song: SongModel) async {
-        await updateState { state in
+        updateState { state in
             state.currentSong = song
             state.isPlaying = true
         }
@@ -180,7 +180,7 @@ final class PlayerManager: PlayerManagerProtocol {
         
         engine.play()
         progressTimerService.start(interval: 1.0, from: self.state.currentTimePlay)
-        await updateState { state in
+        updateState { state in
             state.isPlaying = true
         }
     }
@@ -188,7 +188,7 @@ final class PlayerManager: PlayerManagerProtocol {
     func play(_ playlistId: UUID, songs: [SongModel], songPlay: SongModel) async {
         self.currentPlaylistID = playlistId
         self.playlist = songs
-        await updateState { state in
+        updateState { state in
             state.currentSong = songPlay
         }
         loadAndPlay(song: songPlay)
@@ -199,7 +199,7 @@ final class PlayerManager: PlayerManagerProtocol {
             self.currentPlaylistID = playlistId
             let playlist = try await fetchPlaylistUseCase.execute(with: playlistId.uuidString)
             self.playlist = try await fetchSongUseCase.execute(playlist.songIDs).map({SongMapper.mapToSongModel($0)})
-            await updateState { state in
+            updateState { state in
                 state.currentSong = songPlay
             }
             loadAndPlay(song: songPlay)
@@ -211,7 +211,7 @@ final class PlayerManager: PlayerManagerProtocol {
     func pause() async {
         engine.pause()
         progressTimerService.pause()
-        await updateState { state in
+        updateState { state in
             state.isPlaying = false
         }
     }
@@ -219,7 +219,7 @@ final class PlayerManager: PlayerManagerProtocol {
     func stop() async {
         timerService.cancel()
         engine.stop()
-        await updateState { state in
+        updateState { state in
             state.isPlaying = false
         }
     }
@@ -259,10 +259,10 @@ final class PlayerManager: PlayerManagerProtocol {
     }
 
     func toggleShuffle() async {
-        await updateState { state in
+        updateState { state in
             state.shuffleEnabled.toggle()
         }
-        
+
         if state.shuffleEnabled {
             await regenerateShuffleOrder(anchoringAt: currentIndex)
         } else {
@@ -271,7 +271,7 @@ final class PlayerManager: PlayerManagerProtocol {
     }
 
     func setRepeatMode(_ mode: RepeatMode) async {
-        await updateState { state in
+        updateState { state in
             state.repeatMode = mode
         }
     }
@@ -429,7 +429,7 @@ final class PlayerManager: PlayerManagerProtocol {
     }
     
     // Thread-safe state updates
-    private func updateState(_ update: @escaping (inout PlayerManagerState) -> Void) async {
+    private func updateState(_ update: (inout PlayerManagerState) -> Void) {
         update(&self.state)
     }
 }

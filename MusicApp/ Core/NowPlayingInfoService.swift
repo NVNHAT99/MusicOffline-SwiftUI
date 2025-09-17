@@ -48,23 +48,23 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
                                   isPlaying: Bool) {
         Task {
             var nowPlayingInfo: [String: Any] = [:]
-            
+
             nowPlayingInfo[MPMediaItemPropertyTitle] = song.title
             nowPlayingInfo[MPMediaItemPropertyArtist] = song.artist
-            
+
             let cache = ImageCacheFactory.createDefaultCache()
-            
-            if let data = await cache.get(for: try song.fileURLString()) {
+
+            if let data = await cache.get(for: (try? song.fileURLString()) ?? "") {
                 if let image = UIImage(data: data) {
                     let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
                     nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
                 }
             }
-            
+
             nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = song.duration
             nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
             nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
-            
+
             MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
         }
     }

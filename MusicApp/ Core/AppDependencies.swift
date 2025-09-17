@@ -196,17 +196,13 @@ class AppDependencies {
 
     private func handleMemoryWarning() {
         print("🗑️ Memory warning received in AppDependencies")
-        Task {
-            await imageCacheManager.clearMemory()
-        }
+        imageCacheManager.clearMemory()
     }
 
     func handleAppDidEnterBackground() {
         print("📱 App entered background, optimizing resources")
-        Task {
-            await imageCacheManager.clearMemory()
-            // Add other background optimizations here
-        }
+        imageCacheManager.clearMemory()
+        // Add other background optimizations here
     }
 
     func handleAppWillEnterForeground() {

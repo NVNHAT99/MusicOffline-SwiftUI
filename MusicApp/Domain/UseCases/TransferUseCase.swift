@@ -58,7 +58,7 @@ final class TransferUseCase: TransferUseCaseProtocol {
         // TODO: - need check later like reset context or not
         let songIDs = ["0BAA947F-BC6C-4FCF-9A29-FF4F54817DC7", "invalid", "D2D41DBA-355D-4EED-BB2B-3B82A16B9B18"]
 
-        let uuids = songIDs.compactMap(UUID.init)
+        _ = songIDs.compactMap(UUID.init)
     }
     
 }
