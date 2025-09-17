@@ -16,9 +16,12 @@ struct HomeView: View {
     // MARK: - Properties
     @EnvironmentObject var reloadManager: TabReloadManager
     @StateObject var viewModel: HomeViewModel
+    var onPlaylistTap: (Playlist) -> Void
     
-    init(viewModel: HomeViewModel) {
+    init(viewModel: HomeViewModel,
+         onPlaylistTap: @escaping (Playlist) -> Void) {
         self._viewModel = .init(wrappedValue: viewModel)
+        self.onPlaylistTap = onPlaylistTap
     }
     
     var body: some View {
@@ -100,7 +103,9 @@ struct HomeView: View {
                             title: playlist.name,
                             imageName: "",
                             subTitle: ""
-                        )
+                        ).onTapGesture {
+                            self.onPlaylistTap(playlist)
+                        }
                     }
                     .frame(height: 160)
                 }
@@ -156,7 +161,7 @@ struct HomeView: View {
 
 struct HomeTabView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(viewModel: .init())
+        HomeView(viewModel: .init(), onPlaylistTap: {_ in })
             .background(Color.backgroundColor)
             .environmentObject(TabReloadManager())
     }

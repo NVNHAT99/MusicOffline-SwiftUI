@@ -51,6 +51,7 @@
 		6433E02F2A9DEE7A002BD1D6 /* Image + Modifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433E02E2A9DEE7A002BD1D6 /* Image + Modifier.swift */; };
 		6434F5432A3C0068001620FF /* LibaryViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6434F5422A3C0068001620FF /* LibaryViewState.swift */; };
 		643BB3AF2E793D8E00539C00 /* NowPlayingInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 643BB3AE2E793D8E00539C00 /* NowPlayingInfoService.swift */; };
+		643BB3B32E7A679D00539C00 /* Notification + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 643BB3B22E7A679D00539C00 /* Notification + Ext.swift */; };
 		6442EC982A7E9BDF00D1CC05 /* EditPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6442EC972A7E9BDF00D1CC05 /* EditPlaylistView.swift */; };
 		64464D452A3AF91000D0FBA3 /* LibaryViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64464D442A3AF91000D0FBA3 /* LibaryViewViewModel.swift */; };
 		64464D472A3AF91B00D0FBA3 /* LibaryViewIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64464D462A3AF91B00D0FBA3 /* LibaryViewIntent.swift */; };
@@ -232,6 +233,7 @@
 		6433E02E2A9DEE7A002BD1D6 /* Image + Modifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Image + Modifier.swift"; sourceTree = "<group>"; };
 		6434F5422A3C0068001620FF /* LibaryViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibaryViewState.swift; sourceTree = "<group>"; };
 		643BB3AE2E793D8E00539C00 /* NowPlayingInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingInfoService.swift; sourceTree = "<group>"; };
+		643BB3B22E7A679D00539C00 /* Notification + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification + Ext.swift"; sourceTree = "<group>"; };
 		6442EC972A7E9BDF00D1CC05 /* EditPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPlaylistView.swift; sourceTree = "<group>"; };
 		64464D442A3AF91000D0FBA3 /* LibaryViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibaryViewViewModel.swift; sourceTree = "<group>"; };
 		64464D462A3AF91B00D0FBA3 /* LibaryViewIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibaryViewIntent.swift; sourceTree = "<group>"; };
@@ -883,6 +885,7 @@
 				641875122E32988A006726C3 /* BindingExtension.swift */,
 				641875142E32988A006726C3 /* ViewExtension.swift */,
 				647C04072E5E08BA00A06BD3 /* Double + Ext.swift */,
+				643BB3B22E7A679D00539C00 /* Notification + Ext.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1359,6 +1362,7 @@
 				647C04122E5F5A0700A06BD3 /* HomeRoute.swift in Sources */,
 				6464E1CA2E44FCCB00FDDD43 /* HomeEntity.swift in Sources */,
 				643BB3AF2E793D8E00539C00 /* NowPlayingInfoService.swift in Sources */,
+				643BB3B32E7A679D00539C00 /* Notification + Ext.swift in Sources */,
 				6499C9812A08D9F800D5F1F0 /* UIColor + Ext.swift in Sources */,
 				64C6C2B82E3D28BC003D9193 /* TransferViewState.swift in Sources */,
 				6434F5432A3C0068001620FF /* LibaryViewState.swift in Sources */,

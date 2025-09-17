@@ -115,6 +115,12 @@ struct LibaryView: View {
                 self.handler.send(intent: .loadPlaylist)
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .openPlaylistDetail)) { notif in
+            if let playlist = notif.object as? Playlist {
+                router.popToRoot()
+                router.route(to: .gotoPlaylistDetail(playlist))
+            }
+        }
     }
 }
 

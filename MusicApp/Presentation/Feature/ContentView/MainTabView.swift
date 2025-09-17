@@ -51,10 +51,16 @@ struct MainTabView: View {
             .zIndex(isExpland ? 2 : 1)
             
             TabView(selection: $tabSelection) {
-                HomeView(viewModel: .init())
-                    .animation(.easeInOut(duration: 0.25), value: tabSelection)
-                    .tag(MainTab.home)
-                    .toolbar(.hidden, for: .tabBar)
+                HomeView(viewModel: .init(), onPlaylistTap: { playlist in
+                    tabSelection = .playlist
+                    // Sau 1.5s gửi noti
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        NotificationCenter.default.post(name: .openPlaylistDetail, object: playlist)
+                    }
+                })
+                .animation(.easeInOut(duration: 0.25), value: tabSelection)
+                .tag(MainTab.home)
+                .toolbar(.hidden, for: .tabBar)
                 
                 LibaryView(handler: LibaryViewViewModel())
                     .animation(.easeInOut(duration: 0.25), value: tabSelection)
