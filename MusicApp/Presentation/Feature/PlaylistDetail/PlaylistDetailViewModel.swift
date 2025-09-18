@@ -35,43 +35,66 @@ final class PlaylistDetailViewModel: PlaylistDetailViewModelProtocol {
         self.state = state
         self.fetchSongUseCase = fetchSongUseCase
         self.fetchPlaylistUseCase = fetchPlaylistUseCase
+        Logger.debug("PlaylistDetailViewModel initialized for playlist: \(playlist?.name ?? "Unknown")")
     }
     
     func send(_ intent: PlaylistDetailIntent) {
+        Logger.debug("PlaylistDetailViewModel.send() - Intent: \(intent)")
+
         switch intent {
         case .playSongAt(let song):
+            Logger.info("Playing song: \(song.title)")
             playSong(at: song)
         case .deleteSong(let index):
+            Logger.info("Deleting song at index: \(index)")
             deleteSongAt(index: index)
         case .loadPlaylist:
+            Logger.debug("Loading playlist data")
             self.loadPlaylist()
         default:
+            Logger.warning("Unhandled intent: \(intent)")
             break
         }
     }
     
     private func loadPlaylist() {
         Task {
+            Logger.debug("Loading playlist data")
+
             await MainActor.run {
                 self.state.isLoading = true
             }
-            let playlist = try await fetchPlaylistUseCase.execute(with: self.playlist?.id.uuidString ?? String.empty)
-            let songs = try await fetchSongUseCase.execute(playlist.songIDs).map({ SongMapper.mapToSongModel($0) })
-            self.playlist = playlist
-            await MainActor.run {
-                var newState = state
-                newState.isLoading = false
-                newState.songs = songs
-                self.state = newState
+
+            do {
+                let playlist = try await fetchPlaylistUseCase.execute(with: self.playlist?.id.uuidString ?? String.empty)
+                let songs = try await fetchSongUseCase.execute(playlist.songIDs).map({ SongMapper.mapToSongModel($0) })
+                self.playlist = playlist
+                await MainActor.run {
+                    var newState = state
+                    newState.isLoading = false
+                    newState.songs = songs
+                    self.state = newState
+                }
+                Logger.info("Loaded playlist with \(songs.count) songs")
+            } catch {
+                Logger.error("Failed to load playlist: \(error)")
+                await MainActor.run {
+                    var newState = state
+                    newState.isLoading = false
+                    self.state = newState
+                }
             }
         }
     }
     
     private func playSong(at song: SongModel) {
         guard let playlistId = self.playlist?.id else {
+            Logger.warning("Cannot play song - no playlist ID available")
             return
         }
-        
+
+        Logger.debug("Playing song: \(song.title) from playlist: \(playlistId)")
+
         Task {
             await PlayerManager.shared.play(playlistId, songs: state.songs, songPlay: song)
         }

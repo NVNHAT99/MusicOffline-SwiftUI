@@ -17,14 +17,20 @@ final class FetchSongUseCase : FetchSongUseCaseProtocol {
     
     init(repository: SongRepositoryProtocol = SongRepository()) {
         self.repository = repository
+        Logger.debug("FetchSongUseCase initialized")
     }
     
     func execute(_ songIdArray: [UUID]) async throws -> [Song] {
+        Logger.debug("Fetching \(songIdArray.count) songs")
         let result = try await repository.fetchSongs(songIdArray)
+        Logger.info("Fetched \(result.count) songs")
         return result
     }
     
     func executeGetAll() async throws -> [Song] {
-        return try await repository.fetchAllSongs()
+        Logger.debug("Fetching all songs")
+        let songs = try await repository.fetchAllSongs()
+        Logger.info("Fetched \(songs.count) songs")
+        return songs
     }
 }

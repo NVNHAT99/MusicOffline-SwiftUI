@@ -18,23 +18,37 @@ final class FetchPlaylistUseCase: FetchPlaylistUseCaseProtocol {
     
     init(repository: PlaylistRepositoryProtocol = PlaylistRepository()) {
         self.repository = repository
+        Logger.debug("FetchPlaylistUseCase initialized")
     }
     
     func executeGetAll() async throws -> [Playlist] {
-        try await repository.fetchAllPlayList()
+        Logger.debug("Fetching all playlists")
+        let playlists = try await repository.fetchAllPlayList()
+        Logger.info("Fetched \(playlists.count) playlists")
+        return playlists
     }
     
     func execute(with playlistId: String) async throws -> Playlist {
-        if let playlistUUID = UUID(uuidString: playlistId),
-           let playlist = try await repository.fetchPlaylist(with: playlistUUID) {
-            return playlist
+        Logger.debug("Fetching playlist with ID: \(playlistId)")
+        guard let playlistUUID = UUID(uuidString: playlistId) else {
+            Logger.error("Invalid playlist ID format: \(playlistId)")
+            throw CoreDataError.entityNotFound
         }
-        
-        throw CoreDataError.entityNotFound
+
+        guard let playlist = try await repository.fetchPlaylist(with: playlistUUID) else {
+            Logger.error("Playlist not found with ID: \(playlistId)")
+            throw CoreDataError.entityNotFound
+        }
+
+        Logger.info("Successfully fetched playlist: \(playlist.name)")
+        return playlist
     }
     
     func excute(with playlistIdArray: [String]) async throws -> [Playlist] {
+        Logger.debug("Fetching \(playlistIdArray.count) playlists")
         let playlistUUIDs = playlistIdArray.compactMap({ UUID(uuidString: $0 )})
-        return try await repository.fetchPlaylist(with: playlistUUIDs)
+        let playlists = try await repository.fetchPlaylist(with: playlistUUIDs)
+        Logger.info("Fetched \(playlists.count) playlists from \(playlistIdArray.count) requested")
+        return playlists
     }
 }

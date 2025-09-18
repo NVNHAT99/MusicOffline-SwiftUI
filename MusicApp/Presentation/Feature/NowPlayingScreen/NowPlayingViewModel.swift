@@ -36,6 +36,7 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
     init(playerManager: any PlayerManagerProtocol = PlayerManager.shared) {
         self.playerManager = playerManager
         self.state = .init()
+        Logger.debug("NowPlayingViewModel initialized")
         setupBindings()
     }
     
@@ -67,25 +68,35 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
     }
     
     func send(_ intent: NowPlayingIntent) {
+        Logger.debug("NowPlayingViewModel.send() - Intent: \(intent)")
+
         switch intent {
         case .togglePlay:
+            Logger.debug("Toggling play/pause")
             playPause()
         case .goNext:
+            Logger.debug("Going to next song")
             next()
         case .goPrevious:
+            Logger.debug("Going to previous song")
             previous()
         case .changeShuffMode:
+            Logger.debug("Toggling shuffle mode")
             toggleShuffle()
         case .changeRepeatMode:
+            Logger.debug("Changing repeat mode")
             toggleRepeat()
         case .seekTo(let double):
+            Logger.debug("Seeking to time: \(double)")
             seek(to: double)
         case .setSleepTime(let hour, let minus, let second):
             let value = hour * 60 * 60 + minus * 60 + second
+            Logger.info("Setting sleep timer for \(hour)h \(minus)m \(second)s")
             Task {
                 await self.playerManager.scheduleStop(after: value)
             }
         case .cancelSleepTime:
+            Logger.info("Canceling sleep timer")
             Task {
                 await self.playerManager.cancelScheduleStop()
             }
@@ -93,6 +104,7 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
     }
     // MARK: - Actions
     private func playPause() {
+        Logger.debug("Play/Pause action - Current state: \(state.isPlaying)")
         Task {
             if state.isPlaying {
                 await playerManager.pause()

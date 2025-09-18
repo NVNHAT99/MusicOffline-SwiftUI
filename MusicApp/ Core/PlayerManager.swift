@@ -90,7 +90,8 @@ final class PlayerManager: PlayerManagerProtocol {
         self.progressTimerService = progressTimerService
         subscribeToEngineEvents()
         subscribeToPlaylistEvents()
-        
+
+        Logger.info("PlayerManager initialized")
         initData()
     }
     
@@ -166,6 +167,7 @@ final class PlayerManager: PlayerManagerProtocol {
     }
 
     func play(song: SongModel) async {
+        Logger.info("Playing song: \(song.title)")
         updateState { state in
             state.currentSong = song
             state.isPlaying = true
@@ -174,10 +176,12 @@ final class PlayerManager: PlayerManagerProtocol {
     }
 
     func play() async {
-        if state.currentSong == nil {
+        guard let currentSong = state.currentSong else {
+            Logger.warning("Cannot play - no current song")
             return
         }
-        
+
+        Logger.debug("Resuming playback of: \(currentSong.title)")
         engine.play()
         progressTimerService.start(interval: 1.0, from: self.state.currentTimePlay)
         updateState { state in

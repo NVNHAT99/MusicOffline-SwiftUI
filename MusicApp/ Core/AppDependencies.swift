@@ -40,6 +40,9 @@ class AppDependencies {
         // Setup lifecycle observers
         setupLifecycleObservers()
         self.nowPlayingService.bind(to: makePlayerManager())
+
+        // Log initialization
+        Logger.info("AppDependencies initialized successfully")
     }
 
     // MARK: - Factory Methods

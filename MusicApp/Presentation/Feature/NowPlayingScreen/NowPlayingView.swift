@@ -348,5 +348,7 @@ struct ContentView: View {
 }
 
 #Preview {
+    let dependencies = AppDependencies.shared
     ContentView()
+        .environment(\.appDependencies, dependencies)
 }
