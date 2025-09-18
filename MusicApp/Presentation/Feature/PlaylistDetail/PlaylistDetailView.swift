@@ -8,15 +8,17 @@
 import SwiftUI
 import CoreData
 
-struct PlaylistDetailView: View {
-    
+struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
+
     // MARK: - PROPERTIES WRAPER
-    
-    @StateObject var viewModel: PlaylistDetailViewModel
+
+    @StateObject var viewModel: ViewModel
     @ObservedObject var router: Router<LibaryRouter>
-    
-    init(viewModel: PlaylistDetailViewModel = PlaylistDetailViewModel(playlist: nil),
-         router: Router<LibaryRouter>) {
+
+    init(
+        viewModel: ViewModel,
+        router: Router<LibaryRouter>
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._router = .init(wrappedValue: router)
     }
@@ -94,7 +96,8 @@ struct PlaylistDetailView: View {
 
 struct LibaryDetail_Previews: PreviewProvider {
     static var previews: some View {
-        PlaylistDetailView(viewModel: PlaylistDetailViewModel(playlist: nil),
+        let dependencies = AppDependencies.shared
+        PlaylistDetailView(viewModel: dependencies.makePlaylistDetailViewModel(playlist: nil),
                            router: .init())
     }
 }

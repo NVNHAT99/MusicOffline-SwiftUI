@@ -13,6 +13,7 @@ struct MainTabView: View {
     @StateObject private var viewModel: MainTabViewVM
     @StateObject private var reloadManager: TabReloadManager
     @StateObject var router = Router<MainTabRoute>()
+    @Environment(\.appDependencies) private var dependencies
     
     init(tabSelection: MainTab = .home,
          viewModel: MainTabViewVM = MainTabViewVM(),
@@ -31,7 +32,7 @@ struct MainTabView: View {
             VStack(spacing: 0) {
                 
                 if viewModel.isShowNowPlaying {
-                    NowPlayingView(isExpanded: $isExpland)
+                    NowPlayingView(isExpanded: $isExpland, viewModel: dependencies.makeNowPlayingViewModel())
                         .ignoresSafeArea()
                         .embedded(navigation: .stacks, with: self.router)
                 } else {
@@ -51,7 +52,7 @@ struct MainTabView: View {
             .zIndex(isExpland ? 2 : 1)
             
             TabView(selection: $tabSelection) {
-                HomeView(viewModel: .init(), onPlaylistTap: { playlist in
+                HomeView(viewModel: dependencies.makeHomeViewModel(), onPlaylistTap: { playlist in
                     tabSelection = .playlist
                     // Sau 1.5s gửi noti
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -61,13 +62,13 @@ struct MainTabView: View {
                 .animation(.easeInOut(duration: 0.25), value: tabSelection)
                 .tag(MainTab.home)
                 .toolbar(.hidden, for: .tabBar)
-                
-                LibaryView(handler: LibaryViewViewModel())
+
+                LibaryView(handler: dependencies.makeLibaryViewViewModel())
                     .animation(.easeInOut(duration: 0.25), value: tabSelection)
                     .tag(MainTab.playlist)
                     .toolbar(.hidden, for: .tabBar)
-                
-                SettingView(viewModel:  SettingViewViewModel())
+
+                SettingView(viewModel: dependencies.makeSettingViewViewModel())
                     .animation(.easeInOut(duration: 0.25), value: tabSelection)
                     .tag(MainTab.settings)
                     .toolbar(.hidden, for: .tabBar)
@@ -93,7 +94,8 @@ struct MainTabView: View {
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        MainTabView(viewModel: MainTabViewVM())
+        let dependencies = AppDependencies.shared
+        MainTabView(viewModel: dependencies.makeMainTabViewModel())
     }
 }
 

@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct LibaryView: View {
-    
+struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
+
     @EnvironmentObject var reloadManager: TabReloadManager
-    @StateObject private var handler: LibaryViewViewModel
+    @StateObject private var handler: ViewModel
     @StateObject private var router = Router<LibaryRouter>()
     
-    init (handler: LibaryViewViewModel) {
+    init (handler: ViewModel) {
         self._handler = StateObject(wrappedValue: handler)
     }
     var body: some View {
@@ -126,9 +126,8 @@ struct LibaryView: View {
 
 struct LibaryTabView_Previews: PreviewProvider {
     static var previews: some View {
-        LibaryView(handler: LibaryViewViewModel(state: .init(
-            isLoading: false,
-            playlist: [])))
+        let dependencies = AppDependencies.shared
+        LibaryView(handler: dependencies.makeLibaryViewViewModel())
         .environmentObject(TabReloadManager())
     }
 }

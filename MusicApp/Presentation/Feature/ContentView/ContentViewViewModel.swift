@@ -13,7 +13,12 @@ enum Tab: Int {
     case setting = 3
 }
 
-final class ContentViewViewModel: ObservableObject {
+@MainActor
+protocol ContentViewViewModelProtocol: ObservableObject {
+    var tabItems: [TabItem] { get }
+}
+
+final class ContentViewViewModel: ContentViewViewModelProtocol {
     let tabItems = [TabItem(image: "house", title: ""),
                     TabItem(image: "book", title: ""),
                     TabItem(image: "gearshape", title: ""),

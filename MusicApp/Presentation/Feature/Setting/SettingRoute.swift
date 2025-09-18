@@ -22,7 +22,8 @@ enum SettingRoute: Routable {
         switch self {
         case .transferAudio:
             if let router = router as? Router<SettingRoute> {
-                TransferView(navigationHandler: router)
+                let dependencies = AppDependencies.shared
+                TransferView(viewModel: dependencies.makeTransferViewModel(), navigationHandler: router)
             } else {
                 EmptyView()
             }

@@ -7,11 +7,16 @@
 
 import SwiftUI
 
-struct AddNewPlayListView: View {
+struct AddNewPlayListView<ViewModel: AddNewPlaylistViewModelProtocol>: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var reloadManager: TabReloadManager
-    @StateObject var viewmodel: AddNewPlaylistViewmodel = AddNewPlaylistViewmodel()
+    @StateObject var viewmodel: ViewModel
     let router: Router<LibaryRouter>
+
+    init(viewmodel: ViewModel, router: Router<LibaryRouter>) {
+        self._viewmodel = StateObject(wrappedValue: viewmodel)
+        self.router = router
+    }
     var body: some View {
         ZStack {
             Color.black.opacity(0.8)
@@ -88,7 +93,8 @@ struct AddNewPlayListView: View {
 
 struct AddNewPlayListView_Previews: PreviewProvider {
     static var previews: some View {
-        AddNewPlayListView(viewmodel: AddNewPlaylistViewmodel(),
+        let dependencies = AppDependencies.shared
+        AddNewPlayListView(viewmodel: dependencies.makeAddNewPlaylistViewModel(),
                            router: .init())
     }
 }

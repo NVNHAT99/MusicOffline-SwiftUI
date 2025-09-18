@@ -9,8 +9,17 @@ import Foundation
 import CoreData
 import SwiftUI
 
-final class AddNewPlaylistViewmodel: ObservableObject {
-    
+@MainActor
+protocol AddNewPlaylistViewModelProtocol: ObservableObject {
+    var state: AddNewPlaylistState { get }
+    func send(intent: AddNewPlaylistIntent)
+    func bindingName() -> Binding<String>
+    func bindingHeightOfKeyBoard() -> Binding<CGFloat>
+    var bindingShowToastView: Binding<Bool> { get }
+}
+
+final class AddNewPlaylistViewModel: AddNewPlaylistViewModelProtocol {
+
     // MARK: - properties
     @Published private(set) var state: AddNewPlaylistState
     private let addPlaylistUseCase: AddPlaylistUseCaseProtocol

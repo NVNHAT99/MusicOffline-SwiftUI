@@ -8,8 +8,16 @@ import Foundation
 import Combine
 import SwiftUI
 
-final class TransferViewModel: ObservableObject {
-    
+@MainActor
+protocol TransferViewModelProtocol: ObservableObject {
+    var state: TransferViewState { get }
+    func send(_ intent: TransferViewIntent)
+    func isShowToastView() -> Binding<Bool>
+    func isShowUnSaveDialog() -> Binding<Bool>
+}
+
+final class TransferViewModel: TransferViewModelProtocol {
+
     @Published private(set) var state: TransferViewState
     private var cancelBag: Set<AnyCancellable> = []
     private var isNeedDissmis: Bool = false

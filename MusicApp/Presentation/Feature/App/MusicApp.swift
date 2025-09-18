@@ -9,7 +9,6 @@ import SwiftUI
 
 @main
 struct MusicApp: App {
-    @StateObject var mainTabarViewVM: MainTabViewVM = MainTabViewVM()
     @Environment(\.scenePhase) private var scenePhase
 
     // MARK: - Dependencies
@@ -17,7 +16,7 @@ struct MusicApp: App {
 
     var body: some Scene {
         WindowGroup {
-            SplashView(mainTabViewModel: mainTabarViewVM)
+            SplashView(mainTabViewModel: dependencies.makeMainTabViewModel())
                 .environment(\.appDependencies, dependencies)
                 .environmentObject(dependencies.makePlayerManager())
         }

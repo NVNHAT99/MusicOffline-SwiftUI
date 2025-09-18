@@ -7,8 +7,14 @@
 
 import Foundation
 
-final class EditPlaylistViewModel: ObservableObject {
-    
+@MainActor
+protocol EditPlaylistViewModelProtocol: ObservableObject {
+    var state: EditPlaylistState { get }
+    func send(intent: EditPlaylistIntent)
+}
+
+final class EditPlaylistViewModel: EditPlaylistViewModelProtocol {
+
     // MARK: - PROPERTIES WRAPER
     @Published private(set) var state: EditPlaylistState
     private let updatePlaylistUseCase: UpdatePlaylistUseCaseProtocol

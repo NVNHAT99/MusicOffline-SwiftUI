@@ -219,15 +219,18 @@ class AppDependencies {
 extension AppDependencies {
 
     // MARK: - View Model Factory Methods
+    @MainActor
     func makeHomeViewModel() -> HomeViewModel {
         return HomeViewModel(
+            fetchPlaylistUseCase: makeFetchPlaylistUseCase(),
             playerManager: makePlayerManager()
         )
     }
-
-    func makePlaylistDetailViewModel() -> PlaylistDetailViewModel {
+    
+    @MainActor
+    func makePlaylistDetailViewModel(playlist: Playlist? = nil) -> PlaylistDetailViewModel {
         return PlaylistDetailViewModel(
-            playlist: nil,
+            playlist: playlist,
             fetchSongUseCase: makeFetchSongUseCase(),
             fetchPlaylistUseCase: makeFetchPlaylistUseCase()
         )
@@ -246,6 +249,7 @@ extension AppDependencies {
         )
     }
 
+    @MainActor
     func makeTransferViewModel() -> TransferViewModel {
         return TransferViewModel(
             uploadSongUseCase: makeUploadSongUseCase(),
@@ -261,8 +265,26 @@ extension AppDependencies {
         )
     }
 
+    @MainActor
     func makeSettingViewViewModel() -> SettingViewViewModel {
         return SettingViewViewModel()
+    }
+
+    @MainActor
+    func makeEditPlaylistViewModel(currenSongIDs: [UUID], playlistID: UUID) -> EditPlaylistViewModel {
+        return EditPlaylistViewModel(
+            currenSongIDs: currenSongIDs,
+            playlistID: playlistID,
+            updatePlaylistUseCase: makeUpdatePlaylistUseCase(),
+            fetchSongUseCase: makeFetchSongUseCase()
+        )
+    }
+
+    @MainActor
+    func makeAddNewPlaylistViewModel() -> AddNewPlaylistViewModel {
+        return AddNewPlaylistViewModel(
+            addPlaylistUseCase: makeAddPlaylistUseCase()
+        )
     }
 }
 

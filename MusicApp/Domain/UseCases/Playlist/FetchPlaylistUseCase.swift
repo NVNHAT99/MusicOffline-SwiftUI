@@ -36,7 +36,5 @@ final class FetchPlaylistUseCase: FetchPlaylistUseCaseProtocol {
     func excute(with playlistIdArray: [String]) async throws -> [Playlist] {
         let playlistUUIDs = playlistIdArray.compactMap({ UUID(uuidString: $0 )})
         return try await repository.fetchPlaylist(with: playlistUUIDs)
-        
-        throw CoreDataError.entityNotFound
     }
 }

@@ -10,12 +10,16 @@ import SwiftUI
 struct ContentView: View {
     @State private var tabSelection: Tab
     @ObservedObject private var viewModel: ContentViewViewModel
-    @StateObject var libaryViewHandler: LibaryViewViewModel = LibaryViewViewModel()
+    @StateObject var libaryViewHandler: LibaryViewViewModel
     @StateObject var playVM = PlayViewModel()
-    @StateObject var settingViewVM = SettingViewViewModel()
+    @StateObject var settingViewVM: SettingViewViewModel
+    @Environment(\.appDependencies) private var dependencies
+
     init(tabSelection: Tab = .home, viewModel: ContentViewViewModel) {
         self.tabSelection = tabSelection
         self.viewModel = viewModel
+        self.libaryViewHandler = AppDependencies.shared.makeLibaryViewViewModel()
+        self.settingViewVM = AppDependencies.shared.makeSettingViewViewModel()
     }
     
     var body: some View {
@@ -23,7 +27,7 @@ struct ContentView: View {
             NavigationStack {
                 TabView(selection: $tabSelection) {
                     //top image
-                    HomeView(selectedTab: $tabSelection, viewModel: HomeViewViewModel())
+                    HomeView(viewModel: dependencies.makeHomeViewModel(), onPlaylistTap: { _ in })
                     .ignoresSafeArea(.all)
                     .background(Color.black)
                     .foregroundColor(.white)
@@ -63,7 +67,8 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(viewModel: ContentViewViewModel())
+        let dependencies = AppDependencies.shared
+        ContentView(viewModel: dependencies.makeContentViewViewModel())
     }
 }
 

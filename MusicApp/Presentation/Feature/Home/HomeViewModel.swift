@@ -8,15 +8,21 @@
 import SwiftUI
 import Combine
 
-final class HomeViewModel: ObservableObject {
-    
+@MainActor
+protocol HomeViewModelProtocol: ObservableObject {
+    var state: HomeViewState { get set }
+    func send(_ intent: HomeViewIntent)
+}
+
+final class HomeViewModel: HomeViewModelProtocol {
+
     private let fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol
     private let playerManager: any PlayerManagerProtocol
     @Published var state: HomeViewState
     private var cancellables = Set<AnyCancellable>()
     
-    init(fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol = FetchPlaylistUseCase(),
-         playerManager: any PlayerManagerProtocol = PlayerManager.shared,
+    init(fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol,
+         playerManager: any PlayerManagerProtocol,
          state: HomeViewState = .init()) {
         self.state = state
         self.playerManager = playerManager

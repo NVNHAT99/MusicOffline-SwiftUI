@@ -10,9 +10,17 @@ import SwiftUI
 import CoreData
 
 @MainActor
-final class LibaryViewViewModel: ObservableObject {
+protocol LibaryViewViewModelProtocol: ObservableObject {
+    var state: LibaryViewState { get }
+    func send(intent: LibaryViewIntent)
+    func isCompletedAddPlaylist() -> Binding<Bool>
+    func isShowToastView() -> Binding<Bool>
+    func isLastItem(item: Playlist) -> Bool
+}
+
+final class LibaryViewViewModel: LibaryViewViewModelProtocol {
     // MARK: - PROPERTIES
-    
+
     @Published private(set) var state: LibaryViewState
     private let fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol
     private let deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol

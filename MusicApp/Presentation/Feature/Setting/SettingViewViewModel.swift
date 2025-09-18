@@ -9,7 +9,15 @@ import Foundation
 import Combine
 import SwiftUI
 
-final class SettingViewViewModel: ObservableObject {
+@MainActor
+protocol SettingViewViewModelProtocol: ObservableObject {
+    var state: SettingViewState { get }
+    var pendingUploads: [String] { get set }
+    func send(intent: SettingViewIntent)
+    func isShowToastView() -> Binding<Bool>
+}
+
+final class SettingViewViewModel: SettingViewViewModelProtocol {
     @Published private(set) var state: SettingViewState
     private var cancelBag: Set<AnyCancellable> = []
     let webUploaderUseCase: ManageWebUploaderUseCaseProtocol = ManageWebUploaderUseCase()

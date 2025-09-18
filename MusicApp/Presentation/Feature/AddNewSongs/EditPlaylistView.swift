@@ -7,20 +7,22 @@
 
 import SwiftUI
 
-struct EditPlaylistView: View {
+struct EditPlaylistView<ViewModel: EditPlaylistViewModelProtocol>: View {
     // MARK: - PROPERTIES
-    @StateObject var viewModel: EditPlaylistViewModel
+    @StateObject var viewModel: ViewModel
     @ObservedObject var router: Router<LibaryRouter>
     @Binding var isEditCompleted: Bool
-    
-    init(viewModel: EditPlaylistViewModel = EditPlaylistViewModel(currenSongIDs: [],
-                                                                  playlistID: UUID()),
-         router: Router<LibaryRouter>,
-         isEditCompleted: Binding<Bool>) {
+
+    init(
+        viewModel: ViewModel,
+        router: Router<LibaryRouter>,
+        isEditCompleted: Binding<Bool>
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._router = .init(wrappedValue: router)
         self._isEditCompleted = isEditCompleted
     }
+    
     var body: some View {
         VStack {
             CustomNavigationBar(type: .custom(title: "Selection Songs",
@@ -83,8 +85,9 @@ struct EditPlaylistView: View {
 
 struct AddNewSongs_Previews: PreviewProvider {
     static var previews: some View {
-        EditPlaylistView(viewModel: .init(currenSongIDs: [],
-                                          playlistID: UUID()),
+        let dependencies = AppDependencies.shared
+        EditPlaylistView(viewModel: dependencies.makeEditPlaylistViewModel(currenSongIDs: [],
+                                                         playlistID: UUID()),
                          router: .init(),
                          isEditCompleted: .constant(false))
     }

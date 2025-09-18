@@ -27,17 +27,19 @@ enum LibaryRouter: Routable {
     func view(attach router: any RouterHandling) -> some View {
         switch self {
         case .addPlaylist:
-             AddNewPlaylistBuilder(router: router).build()
+            AddNewPlaylistBuilder(router: router).build()
         case .gotoPlaylistDetail(let playlist):
             if let router = router as? Router<LibaryRouter> {
-                let viewModel = PlaylistDetailViewModel(playlist: playlist)
+                let dependencies = AppDependencies.shared
+                let viewModel = dependencies.makePlaylistDetailViewModel(playlist: playlist)
                 PlaylistDetailView(viewModel: viewModel, router: router)
             } else {
                 EmptyView()
             }
         case .gotoEditPlaylist(let playlistID, let songIds, let isEditCompleted):
             if let router = router as? Router<LibaryRouter> {
-                let viewModel = EditPlaylistViewModel(currenSongIDs: songIds, playlistID: playlistID)
+                let dependencies = AppDependencies.shared
+                let viewModel = dependencies.makeEditPlaylistViewModel(currenSongIDs: songIds, playlistID: playlistID)
                 EditPlaylistView(viewModel: viewModel, router: router, isEditCompleted: isEditCompleted)
             } else {
                 EmptyView()

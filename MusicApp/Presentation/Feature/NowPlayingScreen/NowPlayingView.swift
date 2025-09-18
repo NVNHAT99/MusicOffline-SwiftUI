@@ -8,10 +8,15 @@
 import SwiftUI
 import UIKit
 
-struct NowPlayingView: View {
+struct NowPlayingView<ViewModel: NowPlayingViewModelProtocol>: View {
     @Binding var isExpanded: Bool
-    @StateObject var viewModel = NowPlayingViewModel()
+    @StateObject var viewModel: ViewModel
     @EnvironmentObject var router: Router<MainTabRoute>
+
+    init(isExpanded: Binding<Bool>, viewModel: ViewModel) {
+        self._isExpanded = isExpanded
+        self._viewModel = StateObject(wrappedValue: viewModel)
+    }
     // Constants for layout
     private let miniPlayerHeight: CGFloat = 80
     private let cornerRadius: CGFloat = 12
@@ -336,7 +341,7 @@ struct ContentView: View {
             .background(Color.backgroundColor)
             
             // Overlay the collapsible player
-            NowPlayingView(isExpanded: $isExplanded)
+            NowPlayingView(isExpanded: $isExplanded, viewModel: NowPlayingViewModel())
         }
         .ignoresSafeArea()
     }

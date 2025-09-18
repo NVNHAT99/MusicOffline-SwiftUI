@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct SettingView: View {
+struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
     // MARK: - properties
-    @StateObject var viewModel: SettingViewViewModel = SettingViewViewModel()
+    @StateObject var viewModel: ViewModel
     @StateObject private var router = Router<SettingRoute>()
-    
-    init(viewModel: SettingViewViewModel) {
+
+    init(viewModel: ViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
     var body: some View {
@@ -70,7 +70,8 @@ struct SettingView: View {
 
 struct SettingTabView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingView(viewModel: SettingViewViewModel())
+        let dependencies = AppDependencies.shared
+        SettingView(viewModel: dependencies.makeSettingViewViewModel())
             .background(Color.backgroundColor)
     }
 }

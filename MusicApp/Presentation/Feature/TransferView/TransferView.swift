@@ -7,10 +7,14 @@
 
 import SwiftUI
 
-struct TransferView: View {
-    // TODO: need refacter viewmodel to implement DI
-    @StateObject private var viewModel: TransferViewModel = TransferViewModel()
+struct TransferView<ViewModel: TransferViewModelProtocol>: View {
+    @StateObject private var viewModel: ViewModel
     let navigationHandler: NavigationActionHandler
+
+    init(viewModel: ViewModel, navigationHandler: NavigationActionHandler) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.navigationHandler = navigationHandler
+    }
     
     var body: some View {
         ZStack {
@@ -115,6 +119,7 @@ struct TransferView: View {
 }
 
 #Preview {
-    TransferView(navigationHandler: Router<SettingRoute>())
+    let dependencies = AppDependencies.shared
+    TransferView(viewModel: dependencies.makeTransferViewModel(), navigationHandler: Router<SettingRoute>())
         .background(Color.backgroundColor)
 }

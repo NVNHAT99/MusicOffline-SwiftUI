@@ -9,8 +9,22 @@ import Combine
 import SwiftUI
 
 @MainActor
-final class NowPlayingViewModel: ObservableObject {
-    
+protocol NowPlayingViewModelProtocol: ObservableObject {
+    var state: NowPlayingState { get set }
+    func send(_ intent: NowPlayingIntent)
+    var playButtonIcon: String { get }
+    var shuffleButtonColor: Color { get }
+    var repeatButtonIcon: String { get }
+    var repeatButtonColor: Color { get }
+    var songTitle: String { get }
+    var artistName: String { get }
+    var currentTimeStr: String { get }
+}
+
+
+@MainActor
+final class NowPlayingViewModel: NowPlayingViewModelProtocol {
+
     // MARK: - Published Properties
     @Published var state: NowPlayingState = .init()
     

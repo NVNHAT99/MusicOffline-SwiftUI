@@ -11,14 +11,14 @@ enum HomeSkeletonType {
     case others
     case reccent
 }
-struct HomeView: View {
-    
+struct HomeView<ViewModel: HomeViewModelProtocol>: View {
+
     // MARK: - Properties
     @EnvironmentObject var reloadManager: TabReloadManager
-    @StateObject var viewModel: HomeViewModel
+    @StateObject var viewModel: ViewModel
     var onPlaylistTap: (Playlist) -> Void
-    
-    init(viewModel: HomeViewModel,
+
+    init(viewModel: ViewModel,
          onPlaylistTap: @escaping (Playlist) -> Void) {
         self._viewModel = .init(wrappedValue: viewModel)
         self.onPlaylistTap = onPlaylistTap
@@ -161,7 +161,8 @@ struct HomeView: View {
 
 struct HomeTabView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(viewModel: .init(), onPlaylistTap: {_ in })
+        let dependencies = AppDependencies.shared
+        HomeView(viewModel: dependencies.makeHomeViewModel(), onPlaylistTap: {_ in })
             .background(Color.backgroundColor)
             .environmentObject(TabReloadManager())
     }

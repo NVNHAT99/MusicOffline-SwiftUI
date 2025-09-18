@@ -21,8 +21,9 @@ struct AddNewPlaylistBuilder {
     }
 
     func build() -> some View {
-        
-        return AddNewPlayListView(router: router)
+        let dependencies = AppDependencies.shared
+        let viewModel = dependencies.makeAddNewPlaylistViewModel()
+        return AddNewPlayListView(viewmodel: viewModel, router: router)
     }
     
 

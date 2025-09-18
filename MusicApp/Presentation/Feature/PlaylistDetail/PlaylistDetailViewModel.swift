@@ -9,7 +9,18 @@ import Foundation
 import CoreData
 import SwiftUI
 
-final class PlaylistDetailViewModel: ObservableObject {
+@MainActor
+protocol PlaylistDetailViewModelProtocol: ObservableObject {
+    var state: PlaylistDetailState { get }
+    func send(_ intent: PlaylistDetailIntent)
+    func isShowToastView() -> Binding<Bool>
+    func getTitle() -> String
+    func getSongIds() -> [UUID]
+    func getPlaylistId() -> UUID
+    var bindEditCompleted: Binding<Bool> { get }
+}
+
+final class PlaylistDetailViewModel: PlaylistDetailViewModelProtocol {
     // MARK: - PROPERTIES
     private let fetchSongUseCase: FetchSongUseCaseProtocol
     private let fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol

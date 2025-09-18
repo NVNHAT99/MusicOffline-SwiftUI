@@ -132,7 +132,6 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
                     context.delete(songToDelete)
                     try context.save()
                     return songToDelete.id ?? UUID()
-                    print("✓ Deleted song with url: \(url)")
                 } else {
                     throw CoreDataError.entityNotFound
                 }
