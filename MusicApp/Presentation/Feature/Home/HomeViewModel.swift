@@ -19,14 +19,19 @@ final class HomeViewModel: HomeViewModelProtocol {
     private let fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol
     private let playerManager: any PlayerManagerProtocol
     @Published var state: HomeViewState
+    private let reducer: any HomeStateReducerProtocol
     private var cancellables = Set<AnyCancellable>()
 
-    init(fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol,
-         playerManager: any PlayerManagerProtocol,
-         state: HomeViewState = .init()) {
+    init(
+        fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol,
+        playerManager: any PlayerManagerProtocol,
+        state: HomeViewState = .init(),
+        reducer: any HomeStateReducerProtocol = HomeStateReducerImpl()
+    ) {
         self.state = state
         self.playerManager = playerManager
         self.fetchPlaylistUseCase = fetchPlaylistUseCase
+        self.reducer = reducer
 
         Logger.debug("HomeViewModel initialized")
 
@@ -40,7 +45,7 @@ final class HomeViewModel: HomeViewModelProtocol {
                 self.fetchSongs()
             }.store(in: &cancellables)
     }
-    
+
     func send(_ intent: HomeViewIntent) {
         Logger.debug("HomeViewModel.send() - Intent: \(intent)")
 
@@ -57,16 +62,14 @@ final class HomeViewModel: HomeViewModelProtocol {
             }
         }
     }
-    
+
     private func fetchSongs() {
         Task {
             Logger.debug("Fetching songs for home view")
 
             await MainActor.run {
-                var newState = self.state
-                newState.isLoadingPlaylist = true
-                newState.isLoadingRecentSongs = true
-                self.state = newState
+                state = reducer.reduce(state, with: .setLoadingRecentSongs(true))
+                state = reducer.reduce(state, with: .setLoadingPlaylist(true))
             }
 
             Task {
@@ -78,33 +81,28 @@ final class HomeViewModel: HomeViewModelProtocol {
                     Logger.debug("Recent playlist ID: \(playlistRecentID)")
                     Logger.debug("Mock data count: \(mockData.count)")
                     await MainActor.run {
-                        var newState = self.state
-                        newState.isLoadingPlaylist = false
-                        newState.playlists = recentPlaylist
-                        self.state = newState
+                        state = reducer.reduce(state, with: .setPlaylists(recentPlaylist))
                     }
                     Logger.info("Loaded recent playlist successfully")
                 } catch {
                     Logger.error("Failed to fetch recent playlist: \(error)")
                     await MainActor.run {
-                        var newState = self.state
-                        newState.isLoadingPlaylist = false
-                        self.state = newState
+                        state = reducer.reduce(state, with: .setLoadingPlaylist(false))
                     }
                 }
             }
 
+            // TODO: RecentSongItem not defined - temporarily disabled
+            /*
             Task {
                 Logger.debug("Fetching recent songs")
                 let recentSongs = RecentSongsManager.fetchRecentSongs()
                 await MainActor.run {
-                    var newState = self.state
-                    newState.isLoadingRecentSongs = false
-                    newState.recentSongs = recentSongs
-                    self.state = newState
+                    state = reducer.reduce(state, with: .setRecentSongs(recentSongs))
                 }
                 Logger.info("Loaded \(recentSongs.count) recent songs")
             }
+            */
 
         }
     }

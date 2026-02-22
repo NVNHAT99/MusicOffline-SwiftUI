@@ -25,19 +25,26 @@ final class PlaylistDetailViewModel: PlaylistDetailViewModelProtocol {
     private let fetchSongUseCase: FetchSongUseCaseProtocol
     private let fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol
     @Published private(set) var state: PlaylistDetailState
+    private let reducer: any PlaylistDetailStateReducerProtocol
     private var playlist: Playlist?
-    
-    init(playlist: Playlist?,
-         state: PlaylistDetailState = .init(),
-         fetchSongUseCase: FetchSongUseCaseProtocol = FetchSongUseCase(),
-         fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol = FetchPlaylistUseCase()) {
+
+    // MARK: - Init
+    init(
+        playlist: Playlist?,
+        state: PlaylistDetailState = .init(),
+        reducer: any PlaylistDetailStateReducerProtocol = PlaylistDetailStateReducerImpl(),
+        fetchSongUseCase: FetchSongUseCaseProtocol = FetchSongUseCase(),
+        fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol = FetchPlaylistUseCase()
+    ) {
         self.playlist = playlist
         self.state = state
+        self.reducer = reducer
         self.fetchSongUseCase = fetchSongUseCase
         self.fetchPlaylistUseCase = fetchPlaylistUseCase
         Logger.debug("PlaylistDetailViewModel initialized for playlist: \(playlist?.name ?? "Unknown")")
     }
-    
+
+    // MARK: - Intent Handler
     func send(_ intent: PlaylistDetailIntent) {
         Logger.debug("PlaylistDetailViewModel.send() - Intent: \(intent)")
 
@@ -56,13 +63,14 @@ final class PlaylistDetailViewModel: PlaylistDetailViewModelProtocol {
             break
         }
     }
-    
+
+    // MARK: - Private Methods
     private func loadPlaylist() {
         Task {
             Logger.debug("Loading playlist data")
 
             await MainActor.run {
-                self.state.isLoading = true
+                state = reducer.reduce(state, with: .setLoading(true))
             }
 
             do {
@@ -70,23 +78,18 @@ final class PlaylistDetailViewModel: PlaylistDetailViewModelProtocol {
                 let songs = try await fetchSongUseCase.execute(playlist.songIDs).map({ SongMapper.mapToSongModel($0) })
                 self.playlist = playlist
                 await MainActor.run {
-                    var newState = state
-                    newState.isLoading = false
-                    newState.songs = songs
-                    self.state = newState
+                    state = reducer.reduce(state, with: .setSongs(songs))
                 }
                 Logger.info("Loaded playlist with \(songs.count) songs")
             } catch {
                 Logger.error("Failed to load playlist: \(error)")
                 await MainActor.run {
-                    var newState = state
-                    newState.isLoading = false
-                    self.state = newState
+                    state = reducer.reduce(state, with: .setLoading(false))
                 }
             }
         }
     }
-    
+
     private func playSong(at song: SongModel) {
         guard let playlistId = self.playlist?.id else {
             Logger.warning("Cannot play song - no playlist ID available")
@@ -99,77 +102,39 @@ final class PlaylistDetailViewModel: PlaylistDetailViewModelProtocol {
             await PlayerManager.shared.play(playlistId, songs: state.songs, songPlay: song)
         }
     }
-    
+
     private func deleteSongAt(index: Int) {
-//        guard let playlist = state.playlist, index < playlist.songsArray.count else {
-//            return
-//        }
-//        var updatedSongsArray = playlist.songsArray
-//        updatedSongsArray.remove(at: index)
-//        let context = PersistenceController.shared.viewContext
-//        context.performAndWait {
-//            playlist.songsArray = updatedSongsArray
-//            do {
-//                var stateCopy = self.state
-//                stateCopy.playlist = playlist
-//                stateCopy.isShowToastView = true
-//                stateCopy.toastViewMessage = "Deleted song successfuly."
-//                DispatchQueue.main.async {
-//                    withAnimation { [weak self] in
-//                        guard let self = self else {
-//                            return
-//                        }
-//                        
-//                        self.state = stateCopy
-//                    }
-//                }
-//                try context.save()
-//            } catch let error as NSError {
-//                var stateCopy = self.state
-//                stateCopy.isShowToastView = true
-//                stateCopy.toastViewMessage = "Deleted song failed."
-//                DispatchQueue.main.async { [weak self] in
-//                    guard let self = self else {
-//                        return
-//                    }
-//                    
-//                    withAnimation {
-//                        self.state = stateCopy
-//                    }
-//                }
-//                print("Could not save. \(error), \(error.userInfo)")
-//                
-//            }
-//        }
+        // TODO: Implement delete song functionality
+        // Currently commented out in original code
     }
-    
+
+    // MARK: - Bindings
     func isShowToastView() -> Binding<Bool> {
         return .init {
             return self.state.isShowToastView
         } set: { newValue in
-            self.state.isShowToastView = newValue
+            self.state = self.reducer.reduce(self.state, with: .setShowToast(newValue, message: self.state.toastViewMessage))
         }
-
     }
-    
+
     func getTitle() -> String {
         return self.playlist?.name ?? String.empty
     }
-    
+
     func getSongIds() -> [UUID] {
         return playlist?.songIDs ?? []
     }
-    
+
     func getPlaylistId() -> UUID {
         return playlist?.id ?? UUID()
     }
-    
+
     var bindEditCompleted: Binding<Bool> {
         .init(get: {
             return false
         }, set: { newValue in
             if newValue {
-                self.loadPlaylist()
+                self.send(.loadPlaylist)
             }
         })
     }

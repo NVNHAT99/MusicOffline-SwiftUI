@@ -10,7 +10,7 @@ import SwiftUI
 struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
     // MARK: - properties
     @StateObject var viewModel: ViewModel
-    @StateObject private var router = Router<SettingRoute>()
+    @StateObject private var router = Router<AppRoute>()
 
     init(viewModel: ViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -64,14 +64,15 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
             }
         }
         .background(Color.backgroundColor)
-        .embedded(navigation: .stacks, with: self.router)
+        .withRouting(router: self.router)
     }
 }
 
 struct SettingTabView_Previews: PreviewProvider {
     static var previews: some View {
-        let dependencies = AppDependencies.shared
-        SettingView(viewModel: dependencies.makeSettingViewViewModel())
+        // Preview using DIContainer (if available) or manual initialization
+        let viewModel = SettingViewViewModel()
+        return SettingView(viewModel: viewModel)
             .background(Color.backgroundColor)
     }
 }

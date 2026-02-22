@@ -19,25 +19,30 @@ protocol TransferViewModelProtocol: ObservableObject {
 final class TransferViewModel: TransferViewModelProtocol {
 
     @Published private(set) var state: TransferViewState
+    private let reducer: any TransferStateReducerProtocol
     private var cancelBag: Set<AnyCancellable> = []
     private var isNeedDissmis: Bool = false
     private let webUploaderUseCase: ManageWebUploaderUseCaseProtocol
     private let uploadSongUseCase: UploadSongUseCaseProtocol
     private let transferUseCase: TransferUseCaseProtocol
-    
-    init(state: TransferViewState = .init(),
-         webUploaderUseCase: ManageWebUploaderUseCaseProtocol = ManageWebUploaderUseCase(),
-         uploadSongUseCase: UploadSongUseCaseProtocol = UploadSongUseCase(),
-         transferUseCase: TransferUseCaseProtocol = TransferUseCase()) {
+
+    init(
+        state: TransferViewState = .init(),
+        reducer: any TransferStateReducerProtocol = TransferStateReducerImpl(),
+        webUploaderUseCase: ManageWebUploaderUseCaseProtocol = ManageWebUploaderUseCase(),
+        uploadSongUseCase: UploadSongUseCaseProtocol = UploadSongUseCase(),
+        transferUseCase: TransferUseCaseProtocol = TransferUseCase()
+    ) {
         self.state = state
+        self.reducer = reducer
         self.webUploaderUseCase = webUploaderUseCase
         self.uploadSongUseCase = uploadSongUseCase
         self.transferUseCase = transferUseCase
         bindViewModel()
     }
-    
+
     private func bindViewModel() {
-        
+
         // Track uploaded files
         uploadSongUseCase.uploadedFilePublisher
             .sink { [weak self] path in
@@ -46,7 +51,7 @@ final class TransferViewModel: TransferViewModelProtocol {
                 }
             }
             .store(in: &cancelBag)
-        
+
         // Handle web uploader state changes
         webUploaderUseCase.statePublisher
             .receive(on: DispatchQueue.main)
@@ -54,7 +59,7 @@ final class TransferViewModel: TransferViewModelProtocol {
                 self?.handleWebUploaderState(result)
             }
             .store(in: &cancelBag)
-        
+
         // Track deleted files
         uploadSongUseCase.deletedFilePublisher
             .sink { [weak self] path in
@@ -64,7 +69,7 @@ final class TransferViewModel: TransferViewModelProtocol {
                 }
             }
             .store(in: &cancelBag)
-        
+
         // Track updated file paths
         uploadSongUseCase.updatePathFilePublisher
             .sink { [weak self] (oldPath, newPath) in
@@ -74,63 +79,49 @@ final class TransferViewModel: TransferViewModelProtocol {
             }
             .store(in: &cancelBag)
     }
-    
+
     private func handleWebUploaderState(_ result: WebLoaderResult) {
         switch result {
         case .startSuccess(ipAddress: let ipAddress):
             withAnimation {
-                var newState = self.state
-                newState.ipAdress = ipAddress
-                newState.isServerOn = true
-                self.state = newState
+                state = reducer.reduce(state, with: .setServerOn(true, ipAddress: ipAddress))
             }
         case .stopSucesss:
             withAnimation {
-                var newState = self.state
-                newState.ipAdress = nil
-                newState.isServerOn = false
-                self.state = newState
+                state = reducer.reduce(state, with: .setServerOn(false, ipAddress: nil))
             }
         case .startFailed:
-            var newState = self.state
-            newState.isShowToastView = true
-            newState.messageToastView = "Start server failed"
-            self.state = newState
+            state = reducer.reduce(state, with: .setShowToast(true, message: "Start server failed"))
         case .stopFailed:
-            var newState = self.state
-            newState.isShowToastView = true
-            newState.messageToastView = "Stop server failed"
-            self.state = newState
+            state = reducer.reduce(state, with: .setShowToast(true, message: "Stop server failed"))
         case .alreadyRuning:
             // TODO: Handle already running
             break
         }
     }
-    
+
     func isShowToastView() -> Binding<Bool> {
         return .init {
             return self.state.isShowToastView
         } set: { newValue in
-            self.state.isShowToastView = newValue
+            self.state = self.reducer.reduce(self.state, with: .setShowToast(newValue, message: self.state.messageToastView))
         }
-        
     }
-    
+
     func isShowUnSaveDialog() -> Binding<Bool> {
         return .init {
             return self.state.isShowForceSaveDialog
         } set: { newValue in
-            self.state.isShowForceSaveDialog = newValue
+            self.state = self.reducer.reduce(self.state, with: .setShowForceSaveDialog(newValue))
         }
-        
     }
-    
+
     private func handleBackActionWithPendingChanges() async {
         await MainActor.run {
-            self.state.isShowForceSaveDialog = true
+            self.state = self.reducer.reduce(self.state, with: .setShowForceSaveDialog(true))
         }
     }
-    
+
     func send(_ intent: TransferViewIntent) {
         switch intent {
         case .toggleServer:
@@ -139,23 +130,20 @@ final class TransferViewModel: TransferViewModelProtocol {
             } else {
                 webUploaderUseCase.start()
             }
-            
+
         case .handleBackAction(let navigationHandler):
             if transferUseCase.isAllTaskDone() {
                 webUploaderUseCase.stop()
                 Task {
                     await MainActor.run {
-                        navigationHandler.dismissView()
+                        navigationHandler.dismiss()
                     }
                 }
             } else {
                 Task {
                     await MainActor.run {
-                        var newStatte = self.state
-                        newStatte.showLoading = false
-                        newStatte.isShowToastView = true
-                        newStatte.messageToastView = "Your changes are still being saved. Please wait a moment."
-                        self.state = newStatte
+                        state = reducer.reduce(state, with: .setShowLoading(false))
+                        state = reducer.reduce(state, with: .setShowToast(true, message: "Your changes are still being saved. Please wait a moment."))
                     }
                 }
             }

@@ -22,19 +22,26 @@ final class LibaryViewViewModel: LibaryViewViewModelProtocol {
     // MARK: - PROPERTIES
 
     @Published private(set) var state: LibaryViewState
+    private let reducer: any LibaryStateReducerProtocol
     private let fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol
     private let deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol
 
-    init(state: LibaryViewState = LibaryViewState(isLoading: false,
+    // MARK: - Init
+    init(
+        state: LibaryViewState = LibaryViewState(isLoading: false,
                                                   playlist: []),
-         fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol = FetchPlaylistUseCase(),
-         deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol = DeletetPlaylistUseCase()) {
+        reducer: any LibaryStateReducerProtocol = LibaryStateReducerImpl(),
+        fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol = FetchPlaylistUseCase(),
+        deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol = DeletetPlaylistUseCase()
+    ) {
         self.state = state
+        self.reducer = reducer
         self.fetchPlaylistaUseCase = fetchPlaylistaUseCase
         self.deletePlaylistUseCase = deletePlaylistUseCase
         Logger.debug("LibaryViewViewModel initialized")
     }
-    
+
+    // MARK: - Intent Handler
     func send(intent: LibaryViewIntent) {
         Logger.debug("LibaryViewViewModel.send() - Intent: \(intent)")
 
@@ -47,63 +54,61 @@ final class LibaryViewViewModel: LibaryViewViewModelProtocol {
             deletePlaylist(playlist: playlist)
         }
     }
-    
-    
+
+    // MARK: - Private Methods
     private func deletePlaylist(playlist: Playlist) {
         Task {
             do {
                 Logger.debug("Executing delete playlist operation for ID: \(playlist.id)")
                 try await deletePlaylistUseCase.execute(by: playlist.id)
-                self.state.playlist = self.state.playlist.filter({ $0 != playlist})
+                await MainActor.run {
+                    state = reducer.reduce(state, with: .removePlaylist(playlist))
+                }
                 Logger.info("Playlist deleted successfully: \(playlist.name)")
             } catch {
                 Logger.error("Failed to delete playlist \(playlist.name): \(error)")
             }
         }
     }
-    
+
     private func loadPlaylists(isFromDeleted: Bool = false) {
         Task {
             Logger.debug("Loading playlists...")
             await MainActor.run {
-                self.state.isLoading = true
+                state = reducer.reduce(state, with: .setLoading(true))
             }
 
             do {
                 let playlists = try await fetchPlaylistaUseCase.executeGetAll()
                 await MainActor.run {
-                    var newState = self.state
-                    newState.isLoading = false
-                    newState.playlist = playlists
-                    self.state = newState
+                    state = reducer.reduce(state, with: .setPlaylists(playlists))
                 }
                 Logger.info("Loaded \(playlists.count) playlists successfully")
             } catch {
                 await MainActor.run {
-                    var newState = self.state
-                    newState.isLoading = false
-                    self.state = newState
+                    state = reducer.reduce(state, with: .setLoading(false))
                 }
                 Logger.error("Failed to load playlists: \(error)")
             }
         }
     }
-    
+
+    // MARK: - Bindings
     func isCompletedAddPlaylist() -> Binding<Bool> {
         return Binding<Bool>(
             get: { false },
             set: { _ in self.send(intent: .loadPlaylist) }
         )
     }
-    
+
     func isShowToastView() -> Binding<Bool> {
         return .init {
             return self.state.isShowToastView
         } set: { newValue in
-            self.state.isShowToastView = newValue
+            self.state = self.reducer.reduce(self.state, with: .setShowToast(newValue, message: self.state.toastViewMessage))
         }
     }
-    
+
     func isLastItem(item: Playlist) -> Bool {
         return self.state.playlist.last == item
     }

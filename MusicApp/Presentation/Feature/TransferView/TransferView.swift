@@ -9,9 +9,9 @@ import SwiftUI
 
 struct TransferView<ViewModel: TransferViewModelProtocol>: View {
     @StateObject private var viewModel: ViewModel
-    let navigationHandler: NavigationActionHandler
+    let navigationHandler: Router<AppRoute>
 
-    init(viewModel: ViewModel, navigationHandler: NavigationActionHandler) {
+    init(viewModel: ViewModel, navigationHandler: Router<AppRoute>) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.navigationHandler = navigationHandler
     }
@@ -120,6 +120,6 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
 
 #Preview {
     let dependencies = AppDependencies.shared
-    TransferView(viewModel: dependencies.makeTransferViewModel(), navigationHandler: Router<SettingRoute>())
+    TransferView(viewModel: dependencies.makeTransferViewModel(), navigationHandler: Router<AppRoute>())
         .background(Color.backgroundColor)
 }

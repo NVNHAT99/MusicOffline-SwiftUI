@@ -10,14 +10,14 @@ import SwiftUI
 
 @MainActor
 struct AddNewPlaylistBuilder {
-    let router: Router<LibaryRouter>
+    let router: Router<AppRoute>
 
-    init(router: any RouterHandling) {
-        guard let router = router as? Router<LibaryRouter> else {
-            self.router = .init()
-            return
+    init(router: any BaseRouterProtocol) {
+        if let router = router as? Router<AppRoute> {
+            self.router = router
+        } else {
+            self.router = Router()
         }
-        self.router = router
     }
 
     func build() -> some View {
@@ -25,6 +25,6 @@ struct AddNewPlaylistBuilder {
         let viewModel = dependencies.makeAddNewPlaylistViewModel()
         return AddNewPlayListView(viewmodel: viewModel, router: router)
     }
-    
+
 
 }

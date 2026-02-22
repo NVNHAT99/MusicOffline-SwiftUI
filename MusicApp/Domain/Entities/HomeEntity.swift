@@ -11,5 +11,4 @@ public struct HomeEntity {
     public let albums: [Album]
     public let playlists: [Playlist]
     public let recentSongs: [Song]
-    
 }

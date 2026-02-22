@@ -6,12 +6,12 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
 
-    @EnvironmentObject var reloadManager: TabReloadManager
     @StateObject private var handler: ViewModel
-    @StateObject private var router = Router<LibaryRouter>()
+    @StateObject private var router = Router<AppRoute>()
     
     init (handler: ViewModel) {
         self._handler = StateObject(wrappedValue: handler)
@@ -55,7 +55,7 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
                                         self.handler.send(intent: .deletePlaylist(item))
                                     },
                                                      ontapItem: {
-                                        self.router.route(to: .gotoPlaylistDetail(item))
+                                        self.router.route(to: .playlistDetail(id: item.id))
                                     })
                                     
                                     if !self.handler.isLastItem(item: item) {
@@ -87,9 +87,7 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
                         Spacer()
 
                         Button {
-                            router.route(to: .addPlaylist, dismissCompletion: {
-                                self.handler.send(intent: .loadPlaylist)
-                            })
+                            router.route(to: .addNewPlaylist)
                         } label: {
                             Image(systemName: "plus")
                                 .resizable()
@@ -108,17 +106,11 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
                 }
 
         }) // zstack
-        .embedded(navigation: .stacks,
-                  with: router)
-        .onChange(of: reloadManager.resetTab) { _, newValue in
-            if newValue.contains(.playlist) {
-                self.handler.send(intent: .loadPlaylist)
-            }
-        }
+        .withRouting(router: router)
         .onReceive(NotificationCenter.default.publisher(for: .openPlaylistDetail)) { notif in
             if let playlist = notif.object as? Playlist {
                 router.popToRoot()
-                router.route(to: .gotoPlaylistDetail(playlist))
+                router.route(to: .playlistDetail(id: playlist.id))
             }
         }
     }
@@ -126,8 +118,18 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
 
 struct LibaryTabView_Previews: PreviewProvider {
     static var previews: some View {
-        let dependencies = AppDependencies.shared
-        LibaryView(handler: dependencies.makeLibaryViewViewModel())
-        .environmentObject(TabReloadManager())
+        let container = DIContainer(
+            appState: AppState.shared,
+            useCases: DIContainer.UseCases.create(
+                songRepository: SongRepository(coreData: CoreDataManager.shared),
+                playlistRepository: PlaylistRepository(coreDataService: CoreDataManager.shared),
+                songMetadataRepository: SongMetadataRepository(),
+                webServerService: WebServerGCDService.shared,
+                coreDataManager: CoreDataManager.shared
+            ),
+            services: DIContainer.Services.createDefault()
+        )
+        let viewModel = container.makeLibaryViewViewModel()
+        return LibaryView(handler: viewModel)
     }
 }

@@ -11,7 +11,7 @@ import UIKit
 struct NowPlayingView<ViewModel: NowPlayingViewModelProtocol>: View {
     @Binding var isExpanded: Bool
     @StateObject var viewModel: ViewModel
-    @EnvironmentObject var router: Router<MainTabRoute>
+    @EnvironmentObject var router: Router<AppRoute>
 
     init(isExpanded: Binding<Bool>, viewModel: ViewModel) {
         self._isExpanded = isExpanded
@@ -156,22 +156,7 @@ struct NowPlayingView<ViewModel: NowPlayingViewModelProtocol>: View {
                     }),
                                                       right: .init(icon: "gearshape.fill",
                                                                    action: {
-                        router.route(to: .showMenuBottomSheet({
-                            Task { @MainActor in
-                                viewModel.send(.cancelSleepTime)
-                                router.dismiss()
-                            }
-                        }, {
-                            Task { @MainActor in
-                                router.dismiss()
-                                try? await Task.sleep(nanoseconds: 50_000_000) // 0.05s
-                                router.route(to: .setSleepTime({ hours, minute, second in
-                                    Task {
-                                        await viewModel.send(.setSleepTime(hours, minute, second))
-                                    }
-                                }))
-                            }
-                        }))
+                        router.route(to: .timerMenuSheet)
                     })))
                     
                     Spacer()

@@ -9,17 +9,19 @@ import SwiftUI
 
 struct AddNewPlayListView<ViewModel: AddNewPlaylistViewModelProtocol>: View {
     // MARK: - PROPERTIES
-    @EnvironmentObject var reloadManager: TabReloadManager
     @StateObject var viewmodel: ViewModel
-    let router: Router<LibaryRouter>
+    let router: Router<AppRoute>
 
-    init(viewmodel: ViewModel, router: Router<LibaryRouter>) {
+    init(viewmodel: ViewModel, router: Router<AppRoute>) {
         self._viewmodel = StateObject(wrappedValue: viewmodel)
         self.router = router
     }
     var body: some View {
         ZStack {
-            Color.black.opacity(0.8)
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .contentShape(Rectangle())
+                
             GeometryReader { proxyVStack in
                 VStack (spacing: 0) {
                     ZStack(alignment: .leading) {
@@ -45,7 +47,6 @@ struct AddNewPlayListView<ViewModel: AddNewPlaylistViewModelProtocol>: View {
                     Button {
                         if !viewmodel.state.playlistName.isEmpty {
                             viewmodel.send(intent: .addNewLibary(onCompleted: {
-                                self.reloadManager.resetTab = [.home]
                                 self.router.dismiss()
                             }))
                         }
@@ -84,6 +85,7 @@ struct AddNewPlayListView<ViewModel: AddNewPlaylistViewModelProtocol>: View {
             }
         } // ZSTACK
         .ignoresSafeArea()
+        .presentationBackground(.clear)
         .onTapGesture {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             router.dismiss()

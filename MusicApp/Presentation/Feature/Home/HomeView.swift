@@ -14,10 +14,9 @@ enum HomeSkeletonType {
 struct HomeView<ViewModel: HomeViewModelProtocol>: View {
 
     // MARK: - Properties
-    @EnvironmentObject var reloadManager: TabReloadManager
     @StateObject var viewModel: ViewModel
     var onPlaylistTap: (Playlist) -> Void
-
+    
     init(viewModel: ViewModel,
          onPlaylistTap: @escaping (Playlist) -> Void) {
         self._viewModel = .init(wrappedValue: viewModel)
@@ -29,16 +28,16 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
             VStack {
                 VStack {
                     Text("Recently Played Playlists")
-                       .font(.system(size: 24, weight: .semibold, design: .rounded))
-                       .foregroundStyle(.white)
-                       .frame(maxWidth: .infinity, alignment: .leading)
+                        .font(.system(size: 24, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     self.playlistSection()
                 }
                 
                 // recent play
                 
                 VStack {
-                     Text("Recently Played Songs")
+                    Text("Recently Played Songs")
                         .font(.system(size: 24, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -55,11 +54,6 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
         .padding(.top, 54)
         .scrollContentBackground(.hidden) // 👈 Ẩn background
         .background(Color.backgroundColor)
-        .onChange(of: reloadManager.resetTab) { _, newValue in
-            if newValue.contains(.home) {
-                self.viewModel.send(.fetchData)
-            }
-        }
     }
     
     @ViewBuilder
@@ -116,46 +110,50 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
     
     @ViewBuilder
     private func recentSongsSection() -> some View {
-        if viewModel.state.isLoadingRecentSongs {
-            skeletonView(with: .reccent)
-        } else if viewModel.state.recentSongs.isEmpty {
-            // code này ở đây thì gây ra hiện tượng trên, thay bằng empty view thì không bị
-            Text("There are no recently played songs.")
-                .foregroundColor(.gray)
-                .frame(height: 160)
-        } else {
-            LazyVStack(spacing: 16) {
-                ForEach(viewModel.state.recentSongs) { recenSong in
-                    SongItemView(song: recenSong.song,
-                                 onTapPlayAction: {
-                        viewModel.send(.play(recenSong))
-                    })
-                }
-            }
-        }
+        // TODO: RecentSongItem not defined - temporarily disabled
+        EmptyView()
+        /*
+         if viewModel.state.isLoadingRecentSongs {
+         skeletonView(with: .reccent)
+         } else if viewModel.state.recentSongs.isEmpty {
+         // code này ở đây thì gây ra hiện tượng trên, thay bằng empty view thì không bị
+         Text("There are no recently played songs.")
+         .foregroundColor(.gray)
+         .frame(height: 160)
+         } else {
+         LazyVStack(spacing: 16) {
+         ForEach(viewModel.state.recentSongs) { recenSong in
+         SongItemView(song: recenSong.song,
+         onTapPlayAction: {
+         viewModel.send(.play(recenSong))
+         })
+         }
+         }
+         }
+         */
     }
-    
-    @ViewBuilder
-    private func skeletonView(with type: HomeSkeletonType = .others) -> some View {
-        if type == .reccent {
-            ScrollView(.vertical) {
-                LazyVStack(spacing: 8) {
-                    ForEach(0..<3) { _ in
-                        SongSkeletonItemView()
-                    }
+}
+
+@ViewBuilder
+private func skeletonView(with type: HomeSkeletonType = .others) -> some View {
+    if type == .reccent {
+        ScrollView(.vertical) {
+            LazyVStack(spacing: 8) {
+                ForEach(0..<3) { _ in
+                    SongSkeletonItemView()
                 }
             }
-            .scrollIndicators(.hidden)
-        } else {
-            ScrollView(.horizontal) {
-                LazyHStack(spacing: 16) {
-                    ForEach(0..<3) { _ in
-                        HomeCardSkeletonView()
-                    }
-                }
-            }
-            .scrollIndicators(.hidden)
         }
+        .scrollIndicators(.hidden)
+    } else {
+        ScrollView(.horizontal) {
+            LazyHStack(spacing: 16) {
+                ForEach(0..<3) { _ in
+                    HomeCardSkeletonView()
+                }
+            }
+        }
+        .scrollIndicators(.hidden)
     }
 }
 
@@ -164,6 +162,5 @@ struct HomeTabView_Previews: PreviewProvider {
         let dependencies = AppDependencies.shared
         HomeView(viewModel: dependencies.makeHomeViewModel(), onPlaylistTap: {_ in })
             .background(Color.backgroundColor)
-            .environmentObject(TabReloadManager())
     }
 }

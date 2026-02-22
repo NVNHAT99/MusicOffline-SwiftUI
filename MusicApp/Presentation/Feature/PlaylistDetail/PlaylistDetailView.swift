@@ -13,11 +13,11 @@ struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
     // MARK: - PROPERTIES WRAPER
 
     @StateObject var viewModel: ViewModel
-    @ObservedObject var router: Router<LibaryRouter>
+    @ObservedObject var router: Router<AppRoute>
 
     init(
         viewModel: ViewModel,
-        router: Router<LibaryRouter>
+        router: Router<AppRoute>
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._router = .init(wrappedValue: router)
@@ -29,13 +29,11 @@ struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
                 type: .custom(title: viewModel.getTitle(),
                               left: .init(icon: "chevron.left",
                                           action: {
-                                              router.pop()
+                                              router.dismiss()
                                           }),
                               right: .init(title: "Edit",
                                            action: {
-                                               router.route(to: .gotoEditPlaylist(viewModel.getPlaylistId(),
-                                                                                  viewModel.getSongIds(),
-                                                                                  viewModel.bindEditCompleted))
+                                               router.route(to: .editPlaylist(playlistId: viewModel.getPlaylistId()))
                                            }))) // Custom NavigationBar
             .frame(height: 50)
             

@@ -246,12 +246,6 @@ extension AppDependencies {
         )
     }
 
-    func makeMainTabViewModel() -> MainTabViewVM {
-        return MainTabViewVM(
-            playerManager: makePlayerManager()
-        )
-    }
-
     @MainActor
     func makeTransferViewModel() -> TransferViewModel {
         return TransferViewModel(

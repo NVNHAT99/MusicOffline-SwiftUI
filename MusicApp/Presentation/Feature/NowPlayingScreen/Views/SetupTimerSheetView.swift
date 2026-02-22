@@ -8,13 +8,17 @@
 import SwiftUI
 
 struct SetupTimerSheetView: View {
-    let cancelAction: @Sendable () -> Void
-    let naviToTimerPicker: @Sendable () -> Void
+    @ObservedObject var viewModel: TimerMenuViewModel
+
+    init(viewModel: TimerMenuViewModel) {
+        self.viewModel = viewModel
+    }
+
     var body: some View {
         VStack(spacing: 0) {
-            
+
             Button {
-                naviToTimerPicker()
+                viewModel.navigateToPicker()
             } label: {
                 Text("Set Sleep Time")
                     .frame(maxWidth: .infinity)
@@ -25,7 +29,7 @@ struct SetupTimerSheetView: View {
             Divider()
 
             Button {
-                cancelAction()
+                viewModel.cancelSleepTime()
             } label: {
                 Text("Cancel Sleep Time")
                     .frame(maxWidth: .infinity)
@@ -41,5 +45,6 @@ struct SetupTimerSheetView: View {
 }
 
 #Preview {
-    SetupTimerSheetView(cancelAction: {}, naviToTimerPicker: {})
+    let viewModel = TimerMenuViewModel()
+    return SetupTimerSheetView(viewModel: viewModel)
 }

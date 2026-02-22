@@ -1,0 +1,20 @@
+//
+//  NowPlayingStateAction.swift
+//  MusicApp
+//
+//  Created by Claude
+//
+
+import Foundation
+
+/// Actions that can transform the NowPlaying state
+enum NowPlayingStateAction {
+    case setCurrentSong(SongModel?)
+    case setIsPlaying(Bool)
+    case setShuffleEnabled(Bool)
+    case setRepeatMode(RepeatMode)
+    case setCurrentTime(Double)
+    case setDuration(Double)
+    case setIsDragging(Bool)
+    case updateFromPlayerState(PlayerManagerState)
+}

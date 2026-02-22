@@ -3,6 +3,7 @@
 //  MusicApp
 //
 //  Created by Nhat on 9/25/23.
+//  Refactored with Reducer pattern by Claude
 //
 
 import Foundation
@@ -17,129 +18,149 @@ protocol SettingViewViewModelProtocol: ObservableObject {
     func isShowToastView() -> Binding<Bool>
 }
 
+/// SettingViewModel with Reducer pattern following EasyFax architecture
+/// State updates are handled by the reducer, making state changes predictable and traceable
 final class SettingViewViewModel: SettingViewViewModelProtocol {
     @Published private(set) var state: SettingViewState
     private var cancelBag: Set<AnyCancellable> = []
-    let webUploaderUseCase: ManageWebUploaderUseCaseProtocol = ManageWebUploaderUseCase()
-    let uploadSongUseCase: UploadSongUseCaseProtocol = UploadSongUseCase()
-    let addSongUseCase: AddSongUseCaseProtocol = AddSongUseCase()
-    
+
+    // MARK: - Dependencies
+    private let reducer: any SettingStateReducerProtocol
+    let webUploaderUseCase: ManageWebUploaderUseCaseProtocol
+    let uploadSongUseCase: UploadSongUseCaseProtocol
+    let addSongUseCase: AddSongUseCaseProtocol
+
     var pendingUploads: [String] = []
-    
-    init(state: SettingViewState = .init()) {
+
+    // MARK: - Initialization
+    init(
+        state: SettingViewState = .init(),
+        reducer: (any SettingStateReducerProtocol)? = nil,
+        webUploaderUseCase: ManageWebUploaderUseCaseProtocol = ManageWebUploaderUseCase(),
+        uploadSongUseCase: UploadSongUseCaseProtocol = UploadSongUseCase(),
+        addSongUseCase: AddSongUseCaseProtocol = AddSongUseCase()
+    ) {
         self.state = state
-        
+        self.reducer = reducer ?? SettingStateReducerImpl()
+        self.webUploaderUseCase = webUploaderUseCase
+        self.uploadSongUseCase = uploadSongUseCase
+        self.addSongUseCase = addSongUseCase
+
+        setupBindings()
+    }
+
+    // MARK: - Setup
+    private func setupBindings() {
+        // Web uploader state binding
         webUploaderUseCase.statePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
-                
-                guard let self = self else {
-                    return
-                }
-                
+                guard let self = self else { return }
+
                 switch result {
                 case .startSuccess(let ipAddress):
                     withAnimation {
-                        var coppyState = self.state
-                        coppyState.ipAdress = ipAddress
-                        coppyState.isServerOn = true
-                        self.state = coppyState
+                        self.state = self.reducer.reduce(self.state, with: .setServerOn(true, ipAddress: ipAddress))
                     }
+                    Logger.info("Server started successfully at \(ipAddress)")
+
                 case .stopSucesss:
                     withAnimation {
-                        self.state.isServerOn = false
+                        self.state = self.reducer.reduce(self.state, with: .setServerOn(false, ipAddress: nil))
                     }
+                    Logger.info("Server stopped successfully")
+
                 case .startFailed:
                     withAnimation {
-                        var coppyState = self.state
-                        coppyState.isShowToastView = true
-                        coppyState.messageToastView = "Start server is failed!"
-                        self.state = coppyState
+                        self.state = self.reducer.reduce(self.state, with: .setShowToast(true, message: "Start server failed!"))
                     }
+                    Logger.error("Failed to start server")
+
                 case .stopFailed:
-                    var coppyState = self.state
-                    coppyState.isShowToastView = true
-                    coppyState.messageToastView = "Disconnect server is failed!"
-                    self.state = coppyState
+                    withAnimation {
+                        self.state = self.reducer.reduce(self.state, with: .setShowToast(true, message: "Disconnect server failed!"))
+                    }
+                    Logger.error("Failed to stop server")
+
                 case .alreadyRuning:
-                    break
+                    Logger.warning("Server already running")
                 }
             }
             .store(in: &cancelBag)
-        
+
+        // Upload file binding
         uploadSongUseCase.uploadedFilePublisher
             .sink { [weak self] path in
-                guard let self = self else {
-                    return
-                }
-                
+                guard let self = self else { return }
                 self.pendingUploads.append(path)
+                Logger.debug("File uploaded: \(path)")
             }
             .store(in: &cancelBag)
     }
-    
+
+    // MARK: - Intent Handling
     func send(intent: SettingViewIntent) {
+        Logger.debug("SettingViewModel.send() - Intent: \(intent)")
+
         switch intent {
         case .deleteAllSongs:
             deleteAllSongs()
+
         case .toggleServer:
             if state.isServerOn {
                 stopServer()
             } else {
                 startServer()
             }
+
         case .completedUploadSongs:
-            if self.pendingUploads.count > 0 {
-                Task {
-                    do {
-                        try await self.addSongUseCase.executeList(from: self.pendingUploads)
-                        self.pendingUploads = []
-                    } catch {
-                        print("add tat ca bai hat that bai: \(error)")
-                    }
-                }
+            handleCompletedUploads()
+        }
+    }
+
+    // MARK: - Private Methods
+    private func startServer() {
+        Logger.debug("Starting web server...")
+        webUploaderUseCase.start()
+    }
+
+    private func stopServer() {
+        Logger.debug("Stopping web server...")
+        webUploaderUseCase.stop()
+    }
+
+    private func deleteAllSongs() {
+        // TODO: Implement delete all songs functionality
+        Logger.warning("Delete all songs not implemented")
+        // State update would be:
+        // state = reducer.reduce(state, with: .setShowToast(true, message: "Deleted All Songs Success!"))
+    }
+
+    private func handleCompletedUploads() {
+        guard pendingUploads.count > 0 else { return }
+
+        Task {
+            Logger.info("Processing \(pendingUploads.count) uploaded files")
+
+            do {
+                try await addSongUseCase.executeList(from: pendingUploads)
+                pendingUploads = []
+
+                Logger.info("Successfully added all uploaded songs")
+            } catch {
+                Logger.error("Failed to add uploaded songs: \(error)")
             }
         }
     }
-    
-    private func startServer() {
-        webUploaderUseCase.start()
-    }
-    
-    private func deleteAllSongs() {
-        
-//        DocumentFileManager.shared.removeAllFile { [weak self] result in
-//            guard let self = self else {
-//                return
-//            }
-//            var copyState = self.state
-//            switch result {
-//            case .success:
-//                copyState.messageToastView = "Deleted All Songs Success!"
-//                copyState.isShowToastView = true
-//            case .failure:
-//                copyState.messageToastView = "Deleted All Songs Failed!"
-//                copyState.isShowToastView = true
-//            }
-//            
-//            DispatchQueue.main.async {
-//                withAnimation {
-//                    self.state = copyState
-//                }
-//            }
-//        }
-    }
-    
-    private func stopServer() {
-        webUploaderUseCase.stop()
-    }
-    
+
+    // MARK: - Bindings
     func isShowToastView() -> Binding<Bool> {
         return .init {
             return self.state.isShowToastView
         } set: { newValue in
-            DispatchQueue.main.async {
-                self.state.isShowToastView = false
+            if !newValue {
+                // Use reducer to update state
+                self.state = self.reducer.reduce(self.state, with: .setShowToast(false, message: ""))
             }
         }
     }

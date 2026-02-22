@@ -10,12 +10,12 @@ import SwiftUI
 struct EditPlaylistView<ViewModel: EditPlaylistViewModelProtocol>: View {
     // MARK: - PROPERTIES
     @StateObject var viewModel: ViewModel
-    @ObservedObject var router: Router<LibaryRouter>
+    @ObservedObject var router: Router<AppRoute>
     @Binding var isEditCompleted: Bool
 
     init(
         viewModel: ViewModel,
-        router: Router<LibaryRouter>,
+        router: Router<AppRoute>,
         isEditCompleted: Binding<Bool>
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -28,7 +28,7 @@ struct EditPlaylistView<ViewModel: EditPlaylistViewModelProtocol>: View {
             CustomNavigationBar(type: .custom(title: "Selection Songs",
                                               left: .init(icon: "chevron.left",
                                                           action: {
-                self.router.pop()
+                self.router.dismiss()
             }),
                                               right: .init(title: "Save",
                                                            action: {
@@ -77,7 +77,7 @@ struct EditPlaylistView<ViewModel: EditPlaylistViewModelProtocol>: View {
         .onChange(of: self.viewModel.state.isSavePlaylistSuccess) { _, newValue in
             if newValue {
                 self.isEditCompleted = true
-                self.router.pop()
+                self.router.dismiss()
             }
         }
     }

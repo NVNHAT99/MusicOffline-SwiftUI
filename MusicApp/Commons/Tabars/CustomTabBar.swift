@@ -253,7 +253,8 @@ struct CustomTabBar<T: Hashable>: View {
     }
 }
 
-// MARK: - Demo View
+// MARK: - Demo View (Commented out - requires MainTab import)
+/*
 struct ContentView2: View {
     @State private var selectedTab: MainTab = .home
     @State private var tabBarType: TabBarType = .floating
@@ -307,3 +308,4 @@ struct ContentView2: View {
 #Preview {
     ContentView2()
 }
+*/

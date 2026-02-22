@@ -27,19 +27,24 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
 
     // MARK: - Published Properties
     @Published var state: NowPlayingState = .init()
-    
+
     // MARK: - Dependencies
     private let playerManager: any PlayerManagerProtocol
+    private let reducer: any NowPlayingStateReducerProtocol
     private var cancellables = Set<AnyCancellable>()
-    
+
     // MARK: - Init
-    init(playerManager: any PlayerManagerProtocol = PlayerManager.shared) {
+    init(
+        playerManager: any PlayerManagerProtocol = PlayerManager.shared,
+        reducer: any NowPlayingStateReducerProtocol = NowPlayingStateReducerImpl()
+    ) {
         self.playerManager = playerManager
+        self.reducer = reducer
         self.state = .init()
         Logger.debug("NowPlayingViewModel initialized")
         setupBindings()
     }
-    
+
     // MARK: - Setup
     private func setupBindings() {
         // Observe PlayerManager state changes
@@ -49,24 +54,15 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
                 self?.updateFromPlayerState(state)
             }
             .store(in: &cancellables)
-        
+
         // Initial updater
         updateFromPlayerState(playerManager.state)
     }
-    
-    private func updateFromPlayerState(_ state: PlayerManagerState) {
-        var newState: NowPlayingState = self.state
-        newState.currentSong = state.currentSong
-        newState.isPlaying = state.isPlaying
-        newState.shuffleEnabled = state.shuffleEnabled
-        newState.repeatMode = state.repeatMode
-        if !self.state.isDraging {
-            newState.currentTime = state.currentTimePlay
-        }
-        newState.duration = state.currentSong?.duration ?? 0
-        self.state = newState
+
+    private func updateFromPlayerState(_ playerState: PlayerManagerState) {
+        state = reducer.reduce(state, with: .updateFromPlayerState(playerState))
     }
-    
+
     func send(_ intent: NowPlayingIntent) {
         Logger.debug("NowPlayingViewModel.send() - Intent: \(intent)")
 
@@ -102,6 +98,7 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
             }
         }
     }
+
     // MARK: - Actions
     private func playPause() {
         Logger.debug("Play/Pause action - Current state: \(state.isPlaying)")
@@ -113,25 +110,25 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
             }
         }
     }
-    
+
     private func next() {
         Task {
             await playerManager.next()
         }
     }
-    
+
     private func previous() {
         Task {
             await playerManager.previous()
         }
     }
-    
+
     private func toggleShuffle() {
         Task {
             await playerManager.toggleShuffle()
         }
     }
-    
+
     private func toggleRepeat() {
         Task {
             switch state.repeatMode {
@@ -144,20 +141,20 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
             }
         }
     }
-    
+
     private func seek(to time: Double) {
         playerManager.seek(to: time)
     }
-    
+
     // MARK: - Computed Properties
     var playButtonIcon: String {
         return state.isPlaying ? "pause.circle.fill" : "play.circle.fill"
     }
-    
+
     var shuffleButtonColor: Color {
         return state.shuffleEnabled ? .white : .gray
     }
-    
+
     var repeatButtonIcon: String {
         switch state.repeatMode {
         case .none:
@@ -168,19 +165,19 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
             return "repeat"
         }
     }
-    
+
     var repeatButtonColor: Color {
         return state.repeatMode != .none ? .white : .gray
     }
-    
+
     var songTitle: String {
         return state.currentSong?.title ?? "Unknown"
     }
-    
+
     var artistName: String {
         return state.currentSong?.artist ?? "Unknown Artist"
     }
-    
+
     var currentTimeStr: String {
         return state.currentTime.toTimeString()
     }

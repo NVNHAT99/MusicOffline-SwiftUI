@@ -10,23 +10,24 @@ import SwiftUI
 typealias TimerPickerSaveAction = @Sendable (Double, Double, Double) -> Void
 
 struct TimerPickerView: View {
-    @State var hour: Int = 0
-    @State var minute: Int = 0
-    @State var second: Int = 0
-    
-    let saveAction: @Sendable (Double, Double, Double) -> Void
-    let backAction: @Sendable () -> Void
+    @StateObject private var viewModel: TimerPickerViewModel
+
+    init(viewModel: TimerPickerViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+    }
+
     var body: some View {
-        
         VStack {
             CustomNavigationBar(type: .backButton(title: nil, tintColor: .white,
                                                   action: {
-                backAction()
+                Task { @MainActor in
+                    viewModel.back()
+                }
             }))
             Spacer()
             HStack(spacing: 0) {
-                
-                Picker("hours", selection: $hour) {
+
+                Picker("hours", selection: $viewModel.hours) {
                     ForEach(0..<24, id: \.self) {
                         Text("\($0)")
                             .foregroundStyle(.white)
@@ -34,10 +35,10 @@ struct TimerPickerView: View {
                 }
                 .frame(width: 80)
                 .clipped()
-                
+
                 Text("Hours")
-                
-                Picker("minus", selection: $minute) {
+
+                Picker("minus", selection: $viewModel.minutes) {
                     ForEach(0..<60, id: \.self) {
                         Text("\($0)")
                             .foregroundStyle(.white)
@@ -45,11 +46,11 @@ struct TimerPickerView: View {
                 }
                 .frame(width: 80)
                 .clipped()
-                
+
                 Text("Mins")
-                
-                
-                Picker("Second", selection: $second) {
+
+
+                Picker("Second", selection: $viewModel.seconds) {
                     ForEach(0..<60, id: \.self) {
                         Text("\($0)")
                             .foregroundStyle(.white)
@@ -57,18 +58,17 @@ struct TimerPickerView: View {
                 }
                 .frame(width: 80)
                 .clipped()
-                
-                
+
+
                 Text("Secs")
             }
             .frame(maxWidth: .infinity)
             .pickerStyle(.wheel)
             .foregroundStyle(.white)
             .padding(.bottom, 16)
-            
+
             Button {
-                saveAction(Double(hour), Double(minute), Double(second))
-                backAction()
+                viewModel.save()
             } label: {
                 Text("Save")
                     .foregroundStyle(.white)
@@ -86,6 +86,9 @@ struct TimerPickerView: View {
 
 
 #Preview {
-    TimerPickerView(saveAction: {_,_,_ in }, backAction: {})
+    let viewModel = TimerPickerViewModel()
+    viewModel.onBack = {}
+    viewModel.onSave = { _, _, _ in }
+    return TimerPickerView(viewModel: viewModel)
         .background(Color.backgroundColor)
 }

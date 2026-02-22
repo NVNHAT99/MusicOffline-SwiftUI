@@ -9,6 +9,6 @@ import Foundation
 
 enum TransferViewIntent {
     case toggleServer
-    case handleBackAction(NavigationActionHandler)
+    case handleBackAction(Router<AppRoute>)
     case copyIPAdress
 }
