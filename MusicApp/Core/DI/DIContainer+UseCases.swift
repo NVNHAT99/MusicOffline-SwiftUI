@@ -1,0 +1,109 @@
+import Foundation
+
+// MARK: - DIContainer.UseCases
+extension DIContainer {
+
+    public struct UseCases {
+        // MARK: - Song
+        let fetchSongUseCase: FetchSongUseCaseProtocol
+        let addSongUseCase: AddSongUseCaseProtocol
+        let updateSongUseCase: UpdateSongUseCaseProtocol
+        let deleteSongUseCase: DeleteSongUseCaseProtocol
+        let songMetadataRepository: SongMetadataRepositoryProtocol
+        let completedUploadSongUseCase: CompletedUploadSongUseCaseProtocol
+
+        // MARK: - Playlist
+        let fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol
+        let addPlaylistUseCase: AddPlaylistUseCaseProtocol
+        let updatePlaylistUseCase: UpdatePlaylistUseCaseProtocol
+        let deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol
+
+        // MARK: - Composite
+        let fetchHomeDataUseCase: FetchHomeDataUseCaseProtocol
+        let transferUseCase: TransferUseCaseProtocol
+
+        // MARK: - Upload
+        let uploadSongUseCase: UploadSongUseCaseProtocol
+        let manageWebUploaderUseCase: ManageWebUploaderUseCaseProtocol
+
+        init(
+            fetchSongUseCase: FetchSongUseCaseProtocol,
+            addSongUseCase: AddSongUseCaseProtocol,
+            updateSongUseCase: UpdateSongUseCaseProtocol,
+            deleteSongUseCase: DeleteSongUseCaseProtocol,
+            songMetadataRepository: SongMetadataRepositoryProtocol,
+            completedUploadSongUseCase: CompletedUploadSongUseCaseProtocol,
+            fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol,
+            addPlaylistUseCase: AddPlaylistUseCaseProtocol,
+            updatePlaylistUseCase: UpdatePlaylistUseCaseProtocol,
+            deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol,
+            fetchHomeDataUseCase: FetchHomeDataUseCaseProtocol,
+            transferUseCase: TransferUseCaseProtocol,
+            uploadSongUseCase: UploadSongUseCaseProtocol,
+            manageWebUploaderUseCase: ManageWebUploaderUseCaseProtocol
+        ) {
+            self.fetchSongUseCase = fetchSongUseCase
+            self.addSongUseCase = addSongUseCase
+            self.updateSongUseCase = updateSongUseCase
+            self.deleteSongUseCase = deleteSongUseCase
+            self.songMetadataRepository = songMetadataRepository
+            self.completedUploadSongUseCase = completedUploadSongUseCase
+            self.fetchPlaylistUseCase = fetchPlaylistUseCase
+            self.addPlaylistUseCase = addPlaylistUseCase
+            self.updatePlaylistUseCase = updatePlaylistUseCase
+            self.deletePlaylistUseCase = deletePlaylistUseCase
+            self.fetchHomeDataUseCase = fetchHomeDataUseCase
+            self.transferUseCase = transferUseCase
+            self.uploadSongUseCase = uploadSongUseCase
+            self.manageWebUploaderUseCase = manageWebUploaderUseCase
+        }
+
+        static func create(
+            songRepository: SongRepositoryProtocol,
+            playlistRepository: PlaylistRepositoryProtocol,
+            songMetadataRepository: SongMetadataRepositoryProtocol,
+            webServerService: WebServerGCDServiceProtocol,
+            coreDataManager: CoreDataProtocol
+        ) -> UseCases {
+            let fetchSong = FetchSongUseCase(repository: songRepository)
+            let addSong = AddSongUseCase(repository: songRepository)
+            let updateSong = UpdateSongUseCase(songRepository: songRepository)
+            let deleteSong = DeleteSongUseCase(repository: songRepository)
+            let completedUpload = CompletedUploadSongUseCase(
+                repository: songRepository,
+                songMetadataRepository: songMetadataRepository
+            )
+            let fetchPlaylist = FetchPlaylistUseCase(repository: playlistRepository)
+            let addPlaylist = AddPlaylistUseCase(repository: playlistRepository)
+            let updatePlaylist = UpdatePlaylistUseCase(repository: playlistRepository)
+            let deletePlaylist = DeletetPlaylistUseCase(repository: playlistRepository)
+            let fetchHome = FetchHomeDataUseCase(fetchSongUseCase: fetchSong, fetchPlaylistUseCase: fetchPlaylist)
+            let transfer = TransferUseCase(
+                addSongUseCase: addSong,
+                updateSongUseCase: updateSong,
+                deleteSongUseCase: deleteSong,
+                coreDataService: coreDataManager,
+                repository: playlistRepository
+            )
+            let uploadSong = UploadSongUseCase(service: webServerService)
+            let manageUploader = ManageWebUploaderUseCase(service: webServerService)
+
+            return UseCases(
+                fetchSongUseCase: fetchSong,
+                addSongUseCase: addSong,
+                updateSongUseCase: updateSong,
+                deleteSongUseCase: deleteSong,
+                songMetadataRepository: songMetadataRepository,
+                completedUploadSongUseCase: completedUpload,
+                fetchPlaylistUseCase: fetchPlaylist,
+                addPlaylistUseCase: addPlaylist,
+                updatePlaylistUseCase: updatePlaylist,
+                deletePlaylistUseCase: deletePlaylist,
+                fetchHomeDataUseCase: fetchHome,
+                transferUseCase: transfer,
+                uploadSongUseCase: uploadSong,
+                manageWebUploaderUseCase: manageUploader
+            )
+        }
+    }
+}

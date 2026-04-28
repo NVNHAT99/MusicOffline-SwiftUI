@@ -8,41 +8,7 @@
 import Foundation
 import Combine
 
-enum RepeatMode {
-    case none
-    case one
-    case all
-}
-
-protocol PlayerManagerProtocol: ObservableObject {
-    
-    var state: PlayerManagerState { get }
-    var statePublisher: Published<PlayerManagerState>.Publisher { get }
-    var refreshHomePubliser: AnyPublisher<Void, Never> { get }
-    // Controls
-    func setCurrentPlaylist(id: UUID) async
-    func play(_ playlistId: UUID, songs: [SongModel], songPlay: SongModel) async
-    func play(_ playlistId: UUID, songPlay: SongModel) async
-    func play(song: SongModel) async
-    func play() async
-    func pause() async
-    func stop() async
-    func next() async
-    func previous() async
-    func toggleShuffle() async
-    func setRepeatMode(_ mode: RepeatMode) async
-    func scheduleStop(after seconds: TimeInterval) async
-    func cancelScheduleStop() async
-    func seek(to duration: Double)
-}
-
-struct PlayerManagerState {
-    var currentSong: SongModel?
-    var isPlaying: Bool = false
-    var repeatMode: RepeatMode = .none
-    var shuffleEnabled: Bool = false
-    var currentTimePlay: TimeInterval = 0
-}
+// Types extracted to PlayerManagerTypes.swift
 
 final class PlayerManager: PlayerManagerProtocol {
     

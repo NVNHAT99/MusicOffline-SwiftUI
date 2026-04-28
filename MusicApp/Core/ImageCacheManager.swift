@@ -11,46 +11,8 @@ import Combine
 import UIKit
 import AVFoundation
 
-// MARK: - Protocols
-protocol ImageCacheProtocol: AnyObject {
-    func get(for urlString: String) async -> Data?
-    func set(_ imageData: Data, for urlString: String)
-    func remove(for urlString: String)
-    func clearAll()
-    func clearMemory()
-    func clearDisk()
-    func getCacheSize() -> (memory: Int, disk: Int)
-}
-
-protocol ImageCacheManagerDelegate: AnyObject {
-    func cacheDidReceiveMemoryWarning()
-    func cacheDidReceiveMemoryWarning(_ cache: ImageCacheProtocol)
-}
-
-// MARK: - Cache Configuration
-struct ImageCacheConfiguration {
-    let memoryCountLimit: Int
-    let memoryTotalCostLimit: Int
-    let diskStorageLimit: Int
-    let cacheExpiryDays: Int
-    let enableDiskCache: Bool
-
-    static let `default` = ImageCacheConfiguration(
-        memoryCountLimit: 150,
-        memoryTotalCostLimit: 100 * 1024 * 1024, // 100MB
-        diskStorageLimit: 500 * 1024 * 1024,     // 500MB
-        cacheExpiryDays: 30,
-        enableDiskCache: true
-    )
-
-    static let lightweight = ImageCacheConfiguration(
-        memoryCountLimit: 50,
-        memoryTotalCostLimit: 25 * 1024 * 1024,  // 25MB
-        diskStorageLimit: 100 * 1024 * 1024,     // 100MB
-        cacheExpiryDays: 7,
-        enableDiskCache: true
-    )
-}
+// Protocols + config extracted to ImageCacheProtocol.swift
+// Factory extracted to ImageCacheFactory.swift
 
 // MARK: - Image Cache Manager
 final class ImageCacheManager: NSObject, ImageCacheProtocol {
@@ -424,37 +386,9 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
 // MARK: - NSCacheDelegate
 extension ImageCacheManager: NSCacheDelegate {
     func cache(_ cache: NSCache<AnyObject, AnyObject>, willEvictObject obj: Any) {
-        // Handle eviction if needed
         if let key = accessOrder.firstObject as? String {
             accessOrder.remove(key)
         }
     }
 }
-
-// MARK: - Cache Factory
-enum ImageCacheFactory {
-    static func createDefaultCache() -> ImageCacheManager {
-        return ImageCacheManager(configuration: .default)
-    }
-
-    static func createLightweightCache() -> ImageCacheManager {
-        return ImageCacheManager(configuration: .lightweight)
-    }
-
-    static func createCustomCache(
-        memoryCountLimit: Int = 150,
-        memoryTotalCostLimit: Int = 100 * 1024 * 1024,
-        diskStorageLimit: Int = 500 * 1024 * 1024,
-        cacheExpiryDays: Int = 30,
-        enableDiskCache: Bool = true
-    ) -> ImageCacheManager {
-        let config = ImageCacheConfiguration(
-            memoryCountLimit: memoryCountLimit,
-            memoryTotalCostLimit: memoryTotalCostLimit,
-            diskStorageLimit: diskStorageLimit,
-            cacheExpiryDays: cacheExpiryDays,
-            enableDiskCache: enableDiskCache
-        )
-        return ImageCacheManager(configuration: config)
-    }
-}
+// Factory extracted to ImageCacheFactory.swift
