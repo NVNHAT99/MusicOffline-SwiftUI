@@ -119,7 +119,8 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
 }
 
 #Preview {
-    let dependencies = AppDependencies.shared
-    TransferView(viewModel: dependencies.makeTransferViewModel(), navigationHandler: Router<AppRoute>())
+    let container = DIContainer.preview
+    TransferView(viewModel: container.makeTransferViewModel(), navigationHandler: Router<AppRoute>())
+        .environmentObject(container)
         .background(Color.backgroundColor)
 }

@@ -95,8 +95,9 @@ struct AddNewPlayListView<ViewModel: AddNewPlaylistViewModelProtocol>: View {
 
 struct AddNewPlayListView_Previews: PreviewProvider {
     static var previews: some View {
-        let dependencies = AppDependencies.shared
-        AddNewPlayListView(viewmodel: dependencies.makeAddNewPlaylistViewModel(),
+        let container = DIContainer.preview
+        AddNewPlayListView(viewmodel: container.makeAddNewPlaylistViewModel(),
                            router: .init())
+        .environmentObject(container)
     }
 }

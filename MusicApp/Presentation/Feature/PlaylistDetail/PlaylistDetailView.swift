@@ -94,9 +94,10 @@ struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
 
 struct LibaryDetail_Previews: PreviewProvider {
     static var previews: some View {
-        let dependencies = AppDependencies.shared
-        PlaylistDetailView(viewModel: dependencies.makePlaylistDetailViewModel(playlist: nil),
+        let container = DIContainer.preview
+        PlaylistDetailView(viewModel: container.makePlaylistDetailViewModel(playlist: nil),
                            router: .init())
+        .environmentObject(container)
     }
 }
 

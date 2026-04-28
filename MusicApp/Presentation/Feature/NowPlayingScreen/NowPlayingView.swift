@@ -333,7 +333,8 @@ struct ContentView: View {
 }
 
 #Preview {
-    let dependencies = AppDependencies.shared
-    ContentView()
-        .environment(\.appDependencies, dependencies)
+    let container = DIContainer.preview
+    NowPlayingView(isExpanded: .constant(true), viewModel: container.makeNowPlayingViewModel())
+        .environmentObject(container)
+        .environmentObject(Router<AppRoute>())
 }

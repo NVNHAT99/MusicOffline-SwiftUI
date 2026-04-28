@@ -159,8 +159,9 @@ private func skeletonView(with type: HomeSkeletonType = .others) -> some View {
 
 struct HomeTabView_Previews: PreviewProvider {
     static var previews: some View {
-        let dependencies = AppDependencies.shared
-        HomeView(viewModel: dependencies.makeHomeViewModel(), onPlaylistTap: {_ in })
+        let container = DIContainer.preview
+        HomeView(viewModel: container.makeHomeViewModel(), onPlaylistTap: { _ in })
+            .environmentObject(container)
             .background(Color.backgroundColor)
     }
 }

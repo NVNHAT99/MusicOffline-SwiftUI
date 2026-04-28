@@ -102,7 +102,11 @@ extension AppEnvironment {
         )
         Logger.debug("✅ SystemEventsHandler created")
 
-        // 8. Create AppEnvironment
+        // 8. Bind NowPlayingInfoService to PlayerManager
+        services.nowPlayingInfoService.bind(to: PlayerManager.shared)
+        Logger.debug("✅ NowPlayingInfoService bound to PlayerManager")
+
+        // 9. Create AppEnvironment
         let environment = AppEnvironment(
             diContainer: diContainer,
             systemEventsHandler: systemEventsHandler,

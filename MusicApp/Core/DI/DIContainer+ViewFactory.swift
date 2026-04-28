@@ -123,9 +123,13 @@ extension DIContainer {
 
     @MainActor
     private func makeEditPlaylistView(playlistId: UUID, router: any BaseRouterProtocol) -> some View {
-        // TODO: Implement with proper data
-        EmptyView()
-            .environmentObject(router as? Router<AppRoute> ?? appRouter(for: router))
+        let viewModel = makeEditPlaylistViewModel(playlistId: playlistId)
+        return EditPlaylistView(
+            viewModel: viewModel,
+            router: appRouter(for: router),
+            isEditCompleted: .constant(false)
+        )
+        .environmentObject(appRouter(for: router))
     }
 
     // MARK: - Timer Views
@@ -177,12 +181,11 @@ extension DIContainer {
     // MARK: - Helper
     @MainActor
     private func appRouter(for router: any BaseRouterProtocol) -> Router<AppRoute> {
-        // Cast or get router from DIContainer
-        return Router<AppRoute>()
+        return (router as? Router<AppRoute>) ?? Router<AppRoute>()
     }
 }
 
-// MARK: - ViewModel Factory Methods (from AppDependencies)
+// MARK: - ViewModel Factory Methods
 extension DIContainer {
 
     // MARK: - Home
@@ -246,6 +249,17 @@ extension DIContainer {
     func makeAddNewPlaylistViewModel() -> AddNewPlaylistViewModel {
         return AddNewPlaylistViewModel(
             addPlaylistUseCase: useCases.addPlaylistUseCase
+        )
+    }
+
+    // MARK: - Edit Playlist
+    @MainActor
+    func makeEditPlaylistViewModel(playlistId: UUID, currentSongIDs: [UUID] = []) -> EditPlaylistViewModel {
+        return EditPlaylistViewModel(
+            currenSongIDs: currentSongIDs,
+            playlistID: playlistId,
+            updatePlaylistUseCase: useCases.updatePlaylistUseCase,
+            fetchSongUseCase: useCases.fetchSongUseCase
         )
     }
 }

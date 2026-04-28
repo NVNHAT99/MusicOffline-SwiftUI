@@ -115,7 +115,6 @@
 		6453E75F2E5CC1F80017754E /* UpdatePlaylistUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6453E75E2E5CC1F80017754E /* UpdatePlaylistUseCase.swift */; };
 		6453E7612E5CC6C60017754E /* SongMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6453E7602E5CC6C60017754E /* SongMapper.swift */; };
 		6453E7642E5CC6F10017754E /* SongModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6453E7632E5CC6F10017754E /* SongModel.swift */; };
-		645E4BA72F4944E100D80A81 /* AppDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 645E4B992F4944E100D80A81 /* AppDependencies.swift */; };
 		645E4BA82F4944E100D80A81 /* Library.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 645E4B9F2F4944E100D80A81 /* Library.xcdatamodel */; };
 		645E4BA92F4944E100D80A81 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 645E4B9E2F4944E100D80A81 /* ImageCacheManager.swift */; };
 		645E4BAA2F4944E100D80A81 /* UserDataDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 645E4BA42F4944E100D80A81 /* UserDataDefault.swift */; };
@@ -326,7 +325,6 @@
 		645E4B912F4944E100D80A81 /* DIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIContainer.swift; sourceTree = "<group>"; };
 		645E4B922F4944E100D80A81 /* DIContainer+ViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DIContainer+ViewFactory.swift"; sourceTree = "<group>"; };
 		645E4B942F4944E100D80A81 /* UseCasesFixesSummary.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = UseCasesFixesSummary.md; sourceTree = "<group>"; };
-		645E4B992F4944E100D80A81 /* AppDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDependencies.swift; sourceTree = "<group>"; };
 		645E4B9A2F4944E100D80A81 /* AudioEngineService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngineService.swift; sourceTree = "<group>"; };
 		645E4B9B2F4944E100D80A81 /* DocumentFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentFileManager.swift; sourceTree = "<group>"; };
 		645E4B9C2F4944E100D80A81 /* GCDTimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCDTimerService.swift; sourceTree = "<group>"; };
@@ -914,7 +912,6 @@
 				645E4B932F4944E100D80A81 /* DI */,
 				645E4B952F4944E100D80A81 /* Legacy */,
 				645E4B982F4944E100D80A81 /* Router */,
-				645E4B992F4944E100D80A81 /* AppDependencies.swift */,
 				645E4B9A2F4944E100D80A81 /* AudioEngineService.swift */,
 				645E4B9B2F4944E100D80A81 /* DocumentFileManager.swift */,
 				645E4B9C2F4944E100D80A81 /* GCDTimerService.swift */,
@@ -1544,7 +1541,6 @@
 				64C6C2A62E3B5A6D003D9193 /* UploadSongUseCase.swift in Sources */,
 				6464E1DF2E465B1900FDDD43 /* SongMetadataRepository.swift in Sources */,
 				641875182E32988A006726C3 /* Utilities.swift in Sources */,
-				645E4BA72F4944E100D80A81 /* AppDependencies.swift in Sources */,
 				645E4BA82F4944E100D80A81 /* Library.xcdatamodel in Sources */,
 				645E4BA92F4944E100D80A81 /* ImageCacheManager.swift in Sources */,
 				645E4BAA2F4944E100D80A81 /* UserDataDefault.swift in Sources */,

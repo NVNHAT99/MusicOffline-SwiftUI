@@ -85,10 +85,12 @@ struct EditPlaylistView<ViewModel: EditPlaylistViewModelProtocol>: View {
 
 struct AddNewSongs_Previews: PreviewProvider {
     static var previews: some View {
-        let dependencies = AppDependencies.shared
-        EditPlaylistView(viewModel: dependencies.makeEditPlaylistViewModel(currenSongIDs: [],
-                                                         playlistID: UUID()),
-                         router: .init(),
-                         isEditCompleted: .constant(false))
+        let container = DIContainer.preview
+        EditPlaylistView(
+            viewModel: container.makeEditPlaylistViewModel(playlistId: UUID()),
+            router: .init(),
+            isEditCompleted: .constant(false)
+        )
+        .environmentObject(container)
     }
 }

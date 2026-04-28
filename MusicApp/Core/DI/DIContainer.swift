@@ -210,6 +210,29 @@ extension DIContainer {
     }
 }
 
+// MARK: - Preview Helper
+extension DIContainer {
+    /// Convenience container for SwiftUI previews using real local services
+    static var preview: DIContainer {
+        let coreData = CoreDataManager.shared
+        let webServer = WebServerGCDService.shared
+        let songRepo = SongRepository(coreData: coreData)
+        let playlistRepo = PlaylistRepository(coreDataService: coreData)
+        let metaRepo = SongMetadataRepository()
+        return DIContainer(
+            appState: AppState.shared,
+            useCases: DIContainer.UseCases.create(
+                songRepository: songRepo,
+                playlistRepository: playlistRepo,
+                songMetadataRepository: metaRepo,
+                webServerService: webServer,
+                coreDataManager: coreData
+            ),
+            services: DIContainer.Services.createDefault()
+        )
+    }
+}
+
 // MARK: - SwiftUI Environment Key
 struct DIContainerKey: EnvironmentKey {
     static let defaultValue: DIContainer? = nil
