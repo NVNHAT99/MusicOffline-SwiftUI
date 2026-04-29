@@ -34,6 +34,8 @@ final class AddPlaylistUseCase: AddPlaylistUseCaseProtocol {
             throw AddPlaylistError.playListNameExtisted
         }
 
-        try await repository.addPlaylist(with: .init(id: UUID(), name: trimmed, songIDs: []))
+        let newID = UUID()
+        try await repository.addPlaylist(with: .init(id: newID, name: trimmed, songIDs: []))
+        PlaylistEventCenter.shared.subject.send(.added(newID))
     }
 }

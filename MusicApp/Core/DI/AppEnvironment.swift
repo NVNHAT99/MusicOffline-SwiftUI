@@ -91,8 +91,9 @@ extension AppEnvironment {
         )
         Logger.debug("✅ DIContainer created")
 
-        // 6. Create Router
+        // 6. Create Router with DIContainer as factory
         let appRouter = Router<AppRoute>()
+        appRouter.factory = diContainer
         Logger.debug("✅ Router created")
 
         // 7. Create SystemEventsHandler

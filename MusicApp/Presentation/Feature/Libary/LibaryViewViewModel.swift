@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import CoreData
+import Combine
 
 @MainActor
 protocol LibaryViewViewModelProtocol: ObservableObject {
@@ -25,6 +26,7 @@ final class LibaryViewViewModel: LibaryViewViewModelProtocol {
     private let reducer: any LibaryStateReducerProtocol
     private let fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol
     private let deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
     init(
@@ -39,6 +41,21 @@ final class LibaryViewViewModel: LibaryViewViewModelProtocol {
         self.fetchPlaylistaUseCase = fetchPlaylistaUseCase
         self.deletePlaylistUseCase = deletePlaylistUseCase
         Logger.debug("LibaryViewViewModel initialized")
+        subscribeToPlaylistEvents()
+    }
+
+    private func subscribeToPlaylistEvents() {
+        PlaylistEventCenter.shared.subject
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                switch event {
+                case .added, .deleted:
+                    self?.loadPlaylists()
+                case .updated:
+                    break
+                }
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Intent Handler
@@ -79,7 +96,7 @@ final class LibaryViewViewModel: LibaryViewViewModelProtocol {
             }
 
             do {
-                let playlists = try await fetchPlaylistaUseCase.executeGetAll()
+                let playlists = try await fetchPlaylistaUseCase.executeGetAll(sortBy: .nameAscending)
                 await MainActor.run {
                     state = reducer.reduce(state, with: .setPlaylists(playlists))
                 }

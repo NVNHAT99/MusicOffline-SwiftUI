@@ -53,7 +53,7 @@ struct MainTabView: View {
         .ignoresSafeArea(.all, edges: .bottom)
         .environmentObject(router)
         .onAppear {
-            // Cache safe area inset on appear
+            router.factory = container
             updateSafeArea()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in

@@ -28,7 +28,7 @@ public class Router<Route: Routable>: BaseRouterProtocol {
     public var presentingRouter: BaseRouterProtocol?
 
     // MARK: - ViewFactory
-    private weak var factory: (any ViewFactory)?
+    weak var factory: (any ViewFactory)?
 
     // MARK: - Initialization
     public init(

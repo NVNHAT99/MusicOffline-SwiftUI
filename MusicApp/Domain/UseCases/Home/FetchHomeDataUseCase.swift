@@ -31,7 +31,7 @@ final class FetchHomeDataUseCase: FetchHomeDataUseCaseProtocol {
         let albums = dictionaryAlbums.map { (albumTitle, songs) in
             Album(id: albumTitle, title: albumTitle, songs: songs)
         }
-        let playlists = try await fetchPlaylistUseCase.executeGetAll()
+        let playlists = try await fetchPlaylistUseCase.executeGetAll(sortBy: .nameAscending)
         
         return .init(albums: albums, playlists: playlists, recentSongs: [])
     }

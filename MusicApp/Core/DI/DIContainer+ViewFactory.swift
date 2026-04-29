@@ -101,8 +101,9 @@ extension DIContainer {
     // MARK: - Detail Views
     @MainActor
     private func makePlaylistDetailView(id: UUID, router: any BaseRouterProtocol) -> some View {
-        // TODO: Fetch playlist by ID
-        let viewModel = makePlaylistDetailViewModel(playlist: nil)
+        // Pass a stub playlist with just the ID — ViewModel fetches full data in loadPlaylist()
+        let stub = Playlist(id: id, name: "", songIDs: [])
+        let viewModel = makePlaylistDetailViewModel(playlist: stub)
         return PlaylistDetailView(viewModel: viewModel, router: appRouter(for: router))
             .environmentObject(router as? Router<AppRoute> ?? appRouter(for: router))
     }

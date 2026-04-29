@@ -10,6 +10,8 @@ struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
 
     @StateObject var viewModel: ViewModel
     @ObservedObject var router: Router<AppRoute>
+    @StateObject private var localRouter = Router<AppRoute>()
+    @EnvironmentObject private var container: DIContainer
 
     init(viewModel: ViewModel, router: Router<AppRoute>) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -17,50 +19,66 @@ struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            CustomNavigationBar(
-                type: .custom(
-                    title: viewModel.getTitle(),
-                    left: .init(icon: "chevron.left", action: { router.dismiss() }),
-                    right: .init(title: viewModel.state.isEditMode ? "Done" : "Edit", action: {
-                        viewModel.send(.toggleEditMode)
-                    })
+        ZStack(alignment: .leading) {
+            VStack(alignment: .leading) {
+                CustomNavigationBar(
+                    type: .custom(
+                        title: viewModel.getTitle(),
+                        left: .init(icon: "chevron.left", action: { router.dismiss() }),
+                        right: .init(title: viewModel.state.isEditMode ? "Done" : "Edit", action: {
+                            viewModel.send(.toggleEditMode)
+                        })
+                    )
                 )
-            )
-            .frame(height: 50)
+                .frame(height: 50)
 
-            // Sort + bulk-delete toolbar
-            if !viewModel.state.songs.isEmpty {
-                HStack {
-                    sortMenuButton()
-                    Spacer()
-                    if viewModel.state.isEditMode && !viewModel.state.selectedSongIDs.isEmpty {
-                        Button(action: { viewModel.send(.bulkDelete) }) {
-                            Label("Delete (\(viewModel.state.selectedSongIDs.count))", systemImage: "trash")
-                                .foregroundColor(.red)
-                                .font(.subheadline)
+                // Sort + bulk-delete toolbar (only when songs exist)
+                if !viewModel.state.songs.isEmpty {
+                    HStack {
+                        sortMenuButton()
+                        Spacer()
+                        if viewModel.state.isEditMode && !viewModel.state.selectedSongIDs.isEmpty {
+                            Button(action: { viewModel.send(.bulkDelete) }) {
+                                Label("Delete (\(viewModel.state.selectedSongIDs.count))", systemImage: "trash")
+                                    .foregroundColor(.red)
+                                    .font(.subheadline)
+                            }
                         }
                     }
-                    Button(action: {
-                        router.route(to: .editPlaylist(playlistId: viewModel.getPlaylistId()))
-                    }) {
-                        Image(systemName: "plus")
-                            .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 4)
+                }
+
+                VStack {
+                    if viewModel.state.isLoading {
+                        ProgressView()
+                    } else {
+                        playlistSection()
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 4)
+                Spacer()
             }
 
+            // Floating + button (always visible, bottom-right)
             VStack {
-                if viewModel.state.isLoading {
-                    ProgressView()
-                } else {
-                    playlistSection()
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button {
+                        localRouter.route(to: .editPlaylist(playlistId: viewModel.getPlaylistId()))
+                    } label: {
+                        Image(systemName: "plus")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .background(Circle().fill(Color.cyan).shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3))
+                    }
+                    .padding()
                 }
             }
-            .padding(.horizontal, 16)
-            Spacer()
         }
         .navigationBarHidden(true)
         .background(Color.backgroundColor)
@@ -75,7 +93,19 @@ struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
                 .padding(.bottom, 16)
             }
         }
-        .onAppear { viewModel.send(.loadPlaylist) }
+        .fullScreenCover(item: $localRouter.presentedFullScreenView) { route in
+            localRouter.view(for: route)
+        }
+        .onChange(of: localRouter.presentedFullScreenView) { _, newValue in
+            // Reload when EditPlaylist dismisses
+            if newValue == nil {
+                viewModel.send(.loadPlaylist)
+            }
+        }
+        .onAppear {
+            localRouter.factory = container
+            viewModel.send(.loadPlaylist)
+        }
     }
 
     @ViewBuilder

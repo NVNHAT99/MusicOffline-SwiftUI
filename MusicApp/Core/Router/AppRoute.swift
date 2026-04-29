@@ -39,8 +39,11 @@ public enum AppRoute: Routable {
         case .setting:
             return .fullScreen
 
-        case .playlistDetail, .addNewPlaylist, .editPlaylist:
-            return .navigationLink
+        case .playlistDetail, .editPlaylist:
+            return .fullScreen
+
+        case .addNewPlaylist:
+            return .fullScreen
 
         case .nowPlaying:
             return .fullScreen

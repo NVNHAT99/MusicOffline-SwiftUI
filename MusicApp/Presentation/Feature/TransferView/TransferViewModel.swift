@@ -149,6 +149,7 @@ final class TransferViewModel: TransferViewModelProtocol {
             }
         case .copyIPAdress:
             UIPasteboard.general.string = state.ipAdress
+            state = reducer.reduce(state, with: .setShowToast(true, message: "URL copied to clipboard"))
         }
     }
 }

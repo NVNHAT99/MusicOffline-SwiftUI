@@ -21,11 +21,7 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
             Color.backgroundColor
                 .ignoresSafeArea()
             VStack {
-                CustomNavigationBar(type: .backButton(title: nil,
-                                                      tintColor: .white,
-                                                      action: {
-                    viewModel.send(.handleBackAction(self.navigationHandler))
-                }))
+                CustomNavigationBar(type: .large(title: "Transfer"))
                 
                 
                 .foregroundStyle(.white)

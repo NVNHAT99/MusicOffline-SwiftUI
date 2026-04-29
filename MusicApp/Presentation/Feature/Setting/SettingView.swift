@@ -11,6 +11,7 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
     // MARK: - properties
     @StateObject var viewModel: ViewModel
     @StateObject private var router = Router<AppRoute>()
+    @EnvironmentObject private var container: DIContainer
 
     init(viewModel: ViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -65,6 +66,7 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
         }
         .background(Color.backgroundColor)
         .withRouting(router: self.router)
+        .onAppear { router.factory = container }
     }
 }
 

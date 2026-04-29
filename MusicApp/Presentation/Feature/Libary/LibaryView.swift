@@ -11,10 +11,12 @@ import CoreData
 struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
 
     @StateObject private var handler: ViewModel
-    @StateObject private var router = Router<AppRoute>()
-    
-    init (handler: ViewModel) {
+    @StateObject private var router: Router<AppRoute>
+    @EnvironmentObject private var container: DIContainer
+
+    init(handler: ViewModel) {
         self._handler = StateObject(wrappedValue: handler)
+        self._router = StateObject(wrappedValue: Router<AppRoute>())
     }
     var body: some View {
         ZStack(alignment: .leading, content: {
@@ -107,6 +109,10 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
 
         }) // zstack
         .withRouting(router: router)
+        .onAppear {
+            router.factory = container
+            handler.send(intent: .loadPlaylist)
+        }
         .onReceive(NotificationCenter.default.publisher(for: .openPlaylistDetail)) { notif in
             if let playlist = notif.object as? Playlist {
                 router.popToRoot()

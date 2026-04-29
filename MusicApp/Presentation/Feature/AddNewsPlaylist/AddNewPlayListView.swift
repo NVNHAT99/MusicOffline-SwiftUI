@@ -18,82 +18,74 @@ struct AddNewPlayListView<ViewModel: AddNewPlaylistViewModelProtocol>: View {
     }
     var body: some View {
         ZStack {
-            Color.black.opacity(0.4)
+            // Dimmed background — works with fullScreenCover
+            Color.black.opacity(0.5)
                 .ignoresSafeArea()
-                .contentShape(Rectangle())
-                
-            GeometryReader { proxyVStack in
-                VStack (spacing: 0) {
-                    ZStack(alignment: .leading) {
-                        // this view make text field change place holder color
-                        // if the new of version of swiftUI have this modifer so you could change
-                        if viewmodel.state.playlistName.isEmpty {
-                            Text("Enter playlist name here")
-                                .foregroundColor(.white.opacity(0.6))
-                            .padding(24)
-                        }
-                        
-                        TextField("", text: viewmodel.bindingName())
-                            .frame(alignment: .center)
-                            .padding(24)
-                            .cornerRadius(12)
-                            .shadow(radius: 4)
-                            .foregroundColor(.white)
-                    }
-
-                    
-                    if let nameError = viewmodel.state.nameError {
-                        Text(nameError)
-                            .foregroundColor(.red)
-                            .font(.caption)
-                            .padding(.horizontal, 24)
-                    }
-                    Spacer()
-                        .frame(height: 10)
-                    Button {
-                        viewmodel.send(intent: .addNewLibary(onCompleted: {
-                            self.router.dismiss()
-                        }))
-                    } label: {
-                        Text("Create")
-                            .foregroundColor(.white)
-                            .fontWeight(.bold)
-                            .frame(width: 200, height: 40)
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 24)
-                                .stroke(Color.gray, lineWidth: 2)
-                            }
-                            
-                    }
-                    .background(Color.gray)
-                    .cornerRadius(24)
-                    .shadow(radius: 2)
-                    Spacer()
-                        .frame(height: 20)
+                .onTapGesture {
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    router.dismiss()
                 }
-                .background(Color.backgroundColor)
-                .cornerRadius(12)
-                .shadow(radius: 4)
-                .onTapGesture {}
+
+            VStack(spacing: 0) {
+                ZStack(alignment: .leading) {
+                    if viewmodel.state.playlistName.isEmpty {
+                        Text("Enter playlist name here")
+                            .foregroundColor(.white.opacity(0.6))
+                            .padding(24)
+                    }
+                    TextField("", text: viewmodel.bindingName())
+                        .padding(24)
+                        .foregroundColor(.white)
+                }
+
+                if let nameError = viewmodel.state.nameError {
+                    Text(nameError)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.horizontal, 24)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                Spacer().frame(height: 10)
+
+                Button {
+                    viewmodel.send(intent: .addNewLibary(onCompleted: {
+                        router.dismiss()
+                    }))
+                } label: {
+                    Text("Create")
+                        .foregroundColor(.white)
+                        .fontWeight(.bold)
+                        .frame(width: 200, height: 40)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 24)
+                                .stroke(Color.gray, lineWidth: 2)
+                        }
+                }
+                .background(Color.gray)
+                .cornerRadius(24)
+                .shadow(radius: 2)
+
+                Spacer().frame(height: 20)
             }
-            .frame(height: 200)
+            .background(Color.backgroundColor)
+            .cornerRadius(12)
+            .shadow(radius: 4)
             .padding(.horizontal, 24)
-            
+            .onTapGesture {} // absorb taps so they don't hit the dimmed BG dismiss
+
             if viewmodel.state.isShowToastView {
                 VStack {
                     Spacer()
-                    ToastView(isShowView: viewmodel.bindingShowToastView, message: viewmodel.state.toastViewMessage, timeShowView: .seconds(2))
+                    ToastView(isShowView: viewmodel.bindingShowToastView,
+                              message: viewmodel.state.toastViewMessage,
+                              timeShowView: .seconds(2))
                         .frame(height: 60)
                         .padding(.bottom, 16)
                 }
             }
-        } // ZSTACK
-        .ignoresSafeArea()
-        .presentationBackground(.clear)
-        .onTapGesture {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-            router.dismiss()
         }
+        .ignoresSafeArea()
     }
 }
 

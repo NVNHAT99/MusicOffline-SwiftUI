@@ -77,7 +77,7 @@ final class HomeViewModel: HomeViewModelProtocol {
                     Logger.debug("Fetching recent playlist")
                     let playlistRecentID = RecentSongsManager.fetchRecentPlaylists()
                     let recentPlaylist = try await fetchPlaylistUseCase.excute(with: playlistRecentID)
-                    let mockData = try await fetchPlaylistUseCase.executeGetAll()
+                    let mockData = try await fetchPlaylistUseCase.executeGetAll(sortBy: .nameAscending)
                     Logger.debug("Recent playlist ID: \(playlistRecentID)")
                     Logger.debug("Mock data count: \(mockData.count)")
                     await MainActor.run {
