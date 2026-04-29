@@ -17,6 +17,8 @@ extension DIContainer {
         let addPlaylistUseCase: AddPlaylistUseCaseProtocol
         let updatePlaylistUseCase: UpdatePlaylistUseCaseProtocol
         let deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol
+        let reorderPlaylistSongsUseCase: ReorderPlaylistSongsUseCaseProtocol
+        let importSongFromFilesUseCase: ImportSongFromFilesUseCaseProtocol
 
         // MARK: - Composite
         let fetchHomeDataUseCase: FetchHomeDataUseCaseProtocol
@@ -37,6 +39,8 @@ extension DIContainer {
             addPlaylistUseCase: AddPlaylistUseCaseProtocol,
             updatePlaylistUseCase: UpdatePlaylistUseCaseProtocol,
             deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol,
+            reorderPlaylistSongsUseCase: ReorderPlaylistSongsUseCaseProtocol,
+            importSongFromFilesUseCase: ImportSongFromFilesUseCaseProtocol,
             fetchHomeDataUseCase: FetchHomeDataUseCaseProtocol,
             transferUseCase: TransferUseCaseProtocol,
             uploadSongUseCase: UploadSongUseCaseProtocol,
@@ -52,6 +56,8 @@ extension DIContainer {
             self.addPlaylistUseCase = addPlaylistUseCase
             self.updatePlaylistUseCase = updatePlaylistUseCase
             self.deletePlaylistUseCase = deletePlaylistUseCase
+            self.reorderPlaylistSongsUseCase = reorderPlaylistSongsUseCase
+            self.importSongFromFilesUseCase = importSongFromFilesUseCase
             self.fetchHomeDataUseCase = fetchHomeDataUseCase
             self.transferUseCase = transferUseCase
             self.uploadSongUseCase = uploadSongUseCase
@@ -77,6 +83,8 @@ extension DIContainer {
             let addPlaylist = AddPlaylistUseCase(repository: playlistRepository)
             let updatePlaylist = UpdatePlaylistUseCase(repository: playlistRepository)
             let deletePlaylist = DeletetPlaylistUseCase(repository: playlistRepository)
+            let reorderSongs = ReorderPlaylistSongsUseCase(repository: playlistRepository)
+            let importSong = ImportSongFromFilesUseCase(addSongUseCase: addSong)
             let fetchHome = FetchHomeDataUseCase(fetchSongUseCase: fetchSong, fetchPlaylistUseCase: fetchPlaylist)
             let transfer = TransferUseCase(
                 addSongUseCase: addSong,
@@ -99,6 +107,8 @@ extension DIContainer {
                 addPlaylistUseCase: addPlaylist,
                 updatePlaylistUseCase: updatePlaylist,
                 deletePlaylistUseCase: deletePlaylist,
+                reorderPlaylistSongsUseCase: reorderSongs,
+                importSongFromFilesUseCase: importSong,
                 fetchHomeDataUseCase: fetchHome,
                 transferUseCase: transfer,
                 uploadSongUseCase: uploadSong,

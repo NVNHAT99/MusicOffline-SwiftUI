@@ -47,15 +47,26 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
 
     // MARK: - Setup
     private func setupBindings() {
-        // Observe PlayerManager state changes
         playerManager.statePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                self?.updateFromPlayerState(state)
+            .sink { [weak self] playerState in
+                self?.updateFromPlayerState(playerState)
             }
             .store(in: &cancellables)
 
-        // Initial updater
+        playerManager.missingFilePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] title in
+                guard let self else { return }
+                state = reducer.reduce(state, with: .setErrorMessage("File not found: \(title)"))
+                // Auto-clear after 3s
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 3_000_000_000)
+                    self.state = self.reducer.reduce(self.state, with: .setErrorMessage(nil))
+                }
+            }
+            .store(in: &cancellables)
+
         updateFromPlayerState(playerManager.state)
     }
 
@@ -85,6 +96,9 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
         case .seekTo(let double):
             Logger.debug("Seeking to time: \(double)")
             seek(to: double)
+        case .seekDragging(let double):
+            state = reducer.reduce(state, with: .setCurrentTime(double))
+            state = reducer.reduce(state, with: .setIsDragging(true))
         case .setSleepTime(let hour, let minus, let second):
             let value = hour * 60 * 60 + minus * 60 + second
             Logger.info("Setting sleep timer for \(hour)h \(minus)m \(second)s")
@@ -143,6 +157,7 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
     }
 
     private func seek(to time: Double) {
+        state = reducer.reduce(state, with: .setIsDragging(false))
         playerManager.seek(to: time)
     }
 

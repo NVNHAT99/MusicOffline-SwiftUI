@@ -16,17 +16,46 @@ final class PlaylistRepository: PlaylistRepositoryProtocol {
         self.coreDataService = coreDataService
     }
     
-    func fetchAllPlayList() async throws -> [Playlist] {
+    func fetchAllPlayList(sortBy: PlaylistSortOption = .nameAscending) async throws -> [Playlist] {
         return try await coreDataService.performWithSerialQueue { context in
-            let fetchReqeust: NSFetchRequest<PlaylistEntity> = PlaylistEntity.fetchRequest()
-            fetchReqeust.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-            
+            let fetchRequest: NSFetchRequest<PlaylistEntity> = PlaylistEntity.fetchRequest()
+            switch sortBy {
+            case .nameAscending:
+                fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+            case .dateCreated:
+                fetchRequest.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+            case .songCount:
+                fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+            }
+
             do {
-                let listPlaylist = try context.fetch(fetchReqeust)
-                let result = listPlaylist.compactMap({ PlaylistEntityMapper.mapToPlayList($0) })
+                let listPlaylist = try context.fetch(fetchRequest)
+                var result = listPlaylist.compactMap({ PlaylistEntityMapper.mapToPlayList($0) })
+                if sortBy == .songCount {
+                    result.sort { $0.songIDs.count > $1.songIDs.count }
+                }
                 return result
             } catch {
                 throw CoreDataError.deleteFailed(error)
+            }
+        }
+    }
+
+    func updateSongOrder(playlistId: UUID, orderedSongIDs: [UUID]) async throws {
+        try await coreDataService.performWithSerialQueue { context in
+            let fetchRequest: NSFetchRequest<PlaylistEntity> = PlaylistEntity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id == %@", playlistId as CVarArg)
+            fetchRequest.fetchLimit = 1
+
+            do {
+                if let playlist = try context.fetch(fetchRequest).first {
+                    playlist.songUUIDs = orderedSongIDs
+                }
+                if context.hasChanges {
+                    try context.save()
+                }
+            } catch {
+                throw CoreDataError.saveFailed(error)
             }
         }
     }

@@ -13,4 +13,5 @@ struct AddNewPlaylistState {
     var completedAddPlaylist: Bool = false
     var playlistName: String = String.empty
     var heightOfKeyboard: CGFloat = 0.0
+    var nameError: String? = nil
 }

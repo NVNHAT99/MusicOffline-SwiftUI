@@ -232,8 +232,15 @@ extension DIContainer {
         return PlaylistDetailViewModel(
             playlist: playlist,
             fetchSongUseCase: useCases.fetchSongUseCase,
-            fetchPlaylistUseCase: useCases.fetchPlaylistUseCase
+            fetchPlaylistUseCase: useCases.fetchPlaylistUseCase,
+            updatePlaylistUseCase: useCases.updatePlaylistUseCase,
+            reorderSongsUseCase: useCases.reorderPlaylistSongsUseCase
         )
+    }
+
+    @MainActor
+    func makeImportSongViewModel() -> ImportSongViewModel {
+        return ImportSongViewModel(importUseCase: useCases.importSongFromFilesUseCase)
     }
 
     // MARK: - Now Playing

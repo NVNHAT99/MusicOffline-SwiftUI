@@ -31,6 +31,9 @@ final class AddNewPlaylistStateReducerImpl: AddNewPlaylistStateReducerProtocol {
 
         case .setCompletedAddPlaylist(let completed):
             newState.completedAddPlaylist = completed
+
+        case .setNameError(let error):
+            newState.nameError = error
         }
 
         return newState

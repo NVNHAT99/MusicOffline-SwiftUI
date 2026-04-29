@@ -15,6 +15,7 @@ enum AudioEngineEvent {
 
 protocol AudioEngineProtocol: AnyObject {
     var isPlaying: Bool { get }
+    var currentTime: TimeInterval { get }
     var currentURL: URL? { get }
     var eventPublisher: AnyPublisher<AudioEngineEvent, Never> { get }
 
@@ -49,6 +50,7 @@ final class AVAudioPlayerEngineService: NSObject, AudioEngineProtocol {
     }
 
     var isPlaying: Bool { player?.isPlaying ?? false }
+    var currentTime: TimeInterval { player?.currentTime ?? 0 }
     
     func configureSessionIfNeeded() throws {
         let session = AVAudioSession.sharedInstance()

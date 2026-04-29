@@ -8,7 +8,7 @@
 import Foundation
 
 protocol FetchPlaylistUseCaseProtocol {
-    func executeGetAll() async throws -> [Playlist]
+    func executeGetAll(sortBy: PlaylistSortOption) async throws -> [Playlist]
     func execute(with playlistId: String) async throws -> Playlist
     func excute(with playlistIdArray: [String]) async throws -> [Playlist]
 }
@@ -21,9 +21,9 @@ final class FetchPlaylistUseCase: FetchPlaylistUseCaseProtocol {
         Logger.debug("FetchPlaylistUseCase initialized")
     }
     
-    func executeGetAll() async throws -> [Playlist] {
+    func executeGetAll(sortBy: PlaylistSortOption = .nameAscending) async throws -> [Playlist] {
         Logger.debug("Fetching all playlists")
-        let playlists = try await repository.fetchAllPlayList()
+        let playlists = try await repository.fetchAllPlayList(sortBy: sortBy)
         Logger.info("Fetched \(playlists.count) playlists")
         return playlists
     }

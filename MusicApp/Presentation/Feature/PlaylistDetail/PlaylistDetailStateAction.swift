@@ -12,4 +12,8 @@ enum PlaylistDetailStateAction {
     case setLoading(Bool)
     case setSongs([SongModel])
     case setShowToast(Bool, message: String)
+    case setEditMode(Bool)
+    case toggleSongSelection(UUID)
+    case clearSelection
+    case setSortOption(PlaylistSortOption)
 }

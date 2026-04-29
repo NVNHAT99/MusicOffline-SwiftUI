@@ -12,4 +12,7 @@ struct PlaylistDetailState {
     var songs: [SongModel] = []
     var toastViewMessage: String = String.empty
     var isShowToastView: Bool = false
+    var sortOption: PlaylistSortOption = .nameAscending
+    var isEditMode: Bool = false
+    var selectedSongIDs: Set<UUID> = []
 }

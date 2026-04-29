@@ -13,4 +13,5 @@ enum AddNewPlaylistStateAction {
     case setHeightOfKeyboard(CGFloat)
     case setShowToast(Bool, message: String)
     case setCompletedAddPlaylist(Bool)
+    case setNameError(String?)
 }

@@ -31,6 +31,20 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
             }
             .scrollIndicators(.hidden)
         }
+        .overlay(alignment: .bottom) {
+            if let errorMsg = viewModel.state.errorMessage {
+                Text(errorMsg)
+                    .font(AppFont.callout())
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(Color.red.opacity(0.85))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .padding(.bottom, 24)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .animation(.easeInOut, value: viewModel.state.errorMessage)
+            }
+        }
     }
 
     // MARK: - Navigation Bar

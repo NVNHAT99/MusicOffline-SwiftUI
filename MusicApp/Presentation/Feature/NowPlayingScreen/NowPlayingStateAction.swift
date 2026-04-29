@@ -16,5 +16,6 @@ enum NowPlayingStateAction {
     case setCurrentTime(Double)
     case setDuration(Double)
     case setIsDragging(Bool)
+    case setErrorMessage(String?)
     case updateFromPlayerState(PlayerManagerState)
 }

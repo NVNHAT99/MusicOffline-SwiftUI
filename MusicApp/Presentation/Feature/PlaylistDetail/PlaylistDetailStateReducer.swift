@@ -29,6 +29,23 @@ final class PlaylistDetailStateReducerImpl: PlaylistDetailStateReducerProtocol {
         case .setShowToast(let show, let message):
             newState.isShowToastView = show
             newState.toastViewMessage = message
+
+        case .setEditMode(let editing):
+            newState.isEditMode = editing
+            if !editing { newState.selectedSongIDs = [] }
+
+        case .toggleSongSelection(let id):
+            if newState.selectedSongIDs.contains(id) {
+                newState.selectedSongIDs.remove(id)
+            } else {
+                newState.selectedSongIDs.insert(id)
+            }
+
+        case .clearSelection:
+            newState.selectedSongIDs = []
+
+        case .setSortOption(let option):
+            newState.sortOption = option
         }
 
         return newState

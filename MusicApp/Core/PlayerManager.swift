@@ -37,6 +37,12 @@ final class PlayerManager: PlayerManagerProtocol {
     var refreshHomePubliser: AnyPublisher<Void, Never> {
         refreshHomeSubject.eraseToAnyPublisher()
     }
+
+    private let missingFileSubject = PassthroughSubject<String, Never>()
+    /// Publishes song title when file is missing/unreadable
+    var missingFilePublisher: AnyPublisher<String, Never> {
+        missingFileSubject.eraseToAnyPublisher()
+    }
     
     // MARK: - Private state
     private var cancellables = Set<AnyCancellable>()
@@ -58,9 +64,16 @@ final class PlayerManager: PlayerManagerProtocol {
         subscribeToPlaylistEvents()
 
         Logger.info("PlayerManager initialized")
+        loadPersistedSettings()
         initData()
     }
     
+    private func loadPersistedSettings() {
+        state.shuffleEnabled = UserDefaults.standard.bool(forKey: "shuffleEnabled")
+        let rawRepeat = UserDefaults.standard.integer(forKey: "repeatMode")
+        state.repeatMode = RepeatMode(rawValue: rawRepeat) ?? .none
+    }
+
     private func initData() {
         if let playlistID = UUID(uuidString: RecentSongsManager.fetchCurrentPlaylist() ?? "") {
             Task {
@@ -232,6 +245,7 @@ final class PlayerManager: PlayerManagerProtocol {
         updateState { state in
             state.shuffleEnabled.toggle()
         }
+        UserDefaults.standard.set(state.shuffleEnabled, forKey: "shuffleEnabled")
 
         if state.shuffleEnabled {
             await regenerateShuffleOrder(anchoringAt: currentIndex)
@@ -244,6 +258,7 @@ final class PlayerManager: PlayerManagerProtocol {
         updateState { state in
             state.repeatMode = mode
         }
+        UserDefaults.standard.set(mode.rawValue, forKey: "repeatMode") // Int rawValue
     }
 
     func scheduleStop(after seconds: TimeInterval) async {
@@ -269,7 +284,11 @@ final class PlayerManager: PlayerManagerProtocol {
     func seek(to duration: Double) {
         engine.seek(to: duration)
         self.state.currentTimePlay = duration
-        progressTimerService.start(interval: 1.0, from: duration)
+        progressTimerService.seek(to: duration)
+        // Resume timer if playing
+        if state.isPlaying {
+            progressTimerService.resume()
+        }
     }
 
     // MARK: - Helpers
@@ -334,11 +353,17 @@ final class PlayerManager: PlayerManagerProtocol {
     }
 
     private func loadAndPlay(song: SongModel) {
+        let path = song.urlStr ?? ""
+        guard !path.isEmpty, FileManager.default.fileExists(atPath: path) else {
+            Logger.error("Song file missing: \(path)")
+            missingFileSubject.send(song.title)
+            Task { await next() }
+            return
+        }
+
         do {
-            let url = URL(fileURLWithPath: song.urlStr ?? "")
-            print("🎵 Loading from: \(url.absoluteString)")
+            let url = URL(fileURLWithPath: path)
             try engine.load(url: url)
-            // lưu bài hát hiện tại vào user default
             RecentSongsManager.add(song, in: self.currentPlaylistID?.uuidString)
             RecentSongsManager.saveCurrentPlaylist(id: self.currentPlaylistID?.uuidString ?? "")
             RecentSongsManager.addRecentPlaylist(id: self.currentPlaylistID?.uuidString ?? String.empty)
@@ -347,7 +372,9 @@ final class PlayerManager: PlayerManagerProtocol {
             self.state.isPlaying = true
             progressTimerService.start(interval: 1, from: 0)
         } catch {
-            print("⚠️ Error loading song: \(error)")
+            Logger.error("Error loading song: \(error)")
+            missingFileSubject.send(song.title)
+            Task { await next() }
         }
     }
     
@@ -363,17 +390,29 @@ final class PlayerManager: PlayerManagerProtocol {
     }
 
     private func handleSongFinished() async {
-        print("bài hát đã hết")
         progressTimerService.stop()
         self.state.isPlaying = false
-        
+
         switch state.repeatMode {
         case .one:
             if let s = state.currentSong {
                 await play(song: s)
             }
-        case .all, .none:
+        case .all:
             await next()
+        case .none:
+            let hasNext = computeNextLinearIndex() != nil
+            if hasNext {
+                await next()
+            } else {
+                // End of playlist — reset to beginning, stay paused
+                self.state.currentTimePlay = 0
+                progressTimerService.seek(to: 0)
+                if let first = playlist.first {
+                    self.state.currentSong = first
+                    loadSong(song: first)
+                }
+            }
         }
     }
     
@@ -383,8 +422,12 @@ final class PlayerManager: PlayerManagerProtocol {
             let newSongs = try await fetchSongUseCase.execute(playlist.songIDs)
             self.playlist = newSongs.map({ SongMapper.mapToSongModel($0) })
             self.currentPlaylistID = id
+            // Regenerate shuffle order if shuffle is active (playlist may have changed)
+            if state.shuffleEnabled {
+                await regenerateShuffleOrder(anchoringAt: currentIndex)
+            }
         } catch {
-            print("Error reloading playlist: \(error)")
+            Logger.error("Error reloading playlist: \(error)")
         }
     }
     

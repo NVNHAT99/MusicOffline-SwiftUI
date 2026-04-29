@@ -46,21 +46,39 @@ final class AddNewPlaylistViewModel: AddNewPlaylistViewModelProtocol {
 
     // MARK: - Private Methods
     private func addNewPlaylist(onCompleted: @escaping () -> Void) {
+        // Client-side validation before hitting the use case
+        let trimmed = state.playlistName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            state = reducer.reduce(state, with: .setNameError("Playlist name cannot be empty"))
+            return
+        }
+        if trimmed.count > 50 {
+            state = reducer.reduce(state, with: .setNameError("Name must be 50 characters or fewer"))
+            return
+        }
+        state = reducer.reduce(state, with: .setNameError(nil))
+
         Task {
             do {
-                try await addPlaylistUseCase.execute(with: state.playlistName)
+                try await addPlaylistUseCase.execute(with: trimmed)
                 await MainActor.run {
                     state = reducer.reduce(state, with: .setCompletedAddPlaylist(true))
                     onCompleted()
                 }
-            } catch {
-                if let error = error as? AddPlaylistError {
-                    await MainActor.run {
-                        switch error {
-                        case .playListNameExtisted:
-                            state = reducer.reduce(state, with: .setShowToast(true, message: "This playlist already exists. Please choose a different name."))
-                        }
+            } catch let error as AddPlaylistError {
+                await MainActor.run {
+                    switch error {
+                    case .playListNameExtisted:
+                        state = reducer.reduce(state, with: .setNameError("A playlist with this name already exists"))
+                    case .nameEmpty:
+                        state = reducer.reduce(state, with: .setNameError("Playlist name cannot be empty"))
+                    case .nameTooLong:
+                        state = reducer.reduce(state, with: .setNameError("Name must be 50 characters or fewer"))
                     }
+                }
+            } catch {
+                await MainActor.run {
+                    state = reducer.reduce(state, with: .setShowToast(true, message: "Failed to create playlist"))
                 }
             }
         }

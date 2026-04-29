@@ -42,14 +42,18 @@ struct AddNewPlayListView<ViewModel: AddNewPlaylistViewModelProtocol>: View {
                     }
 
                     
+                    if let nameError = viewmodel.state.nameError {
+                        Text(nameError)
+                            .foregroundColor(.red)
+                            .font(.caption)
+                            .padding(.horizontal, 24)
+                    }
                     Spacer()
                         .frame(height: 10)
                     Button {
-                        if !viewmodel.state.playlistName.isEmpty {
-                            viewmodel.send(intent: .addNewLibary(onCompleted: {
-                                self.router.dismiss()
-                            }))
-                        }
+                        viewmodel.send(intent: .addNewLibary(onCompleted: {
+                            self.router.dismiss()
+                        }))
                     } label: {
                         Text("Create")
                             .foregroundColor(.white)

@@ -2,10 +2,10 @@ import Foundation
 import Combine
 
 // MARK: - RepeatMode
-enum RepeatMode {
-    case none
-    case one
-    case all
+enum RepeatMode: Int {
+    case none = 0
+    case one = 1
+    case all = 2
 }
 
 // MARK: - PlayerManagerState
@@ -22,6 +22,7 @@ protocol PlayerManagerProtocol: ObservableObject {
     var state: PlayerManagerState { get }
     var statePublisher: Published<PlayerManagerState>.Publisher { get }
     var refreshHomePubliser: AnyPublisher<Void, Never> { get }
+    var missingFilePublisher: AnyPublisher<String, Never> { get }
 
     func setCurrentPlaylist(id: UUID) async
     func play(_ playlistId: UUID, songs: [SongModel], songPlay: SongModel) async

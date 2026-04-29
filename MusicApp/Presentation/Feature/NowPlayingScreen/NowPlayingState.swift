@@ -13,4 +13,5 @@ struct NowPlayingState {
     var currentTime: Double = 0
     var duration: Double = 100
     var isDraging: Bool = false
+    var errorMessage: String? = nil
 }

@@ -27,6 +27,7 @@ final class UpdatePlaylistUseCase: UpdatePlaylistUseCaseProtocol {
     }
     
     func removeDeleteSong(from path: String) async throws {
-        
+        guard let songId = UUID(uuidString: path) else { return }
+        try await repository.removeDeleteSong(from: songId)
     }
 }

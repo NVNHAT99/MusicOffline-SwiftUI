@@ -14,7 +14,8 @@ enum NowPlayingIntent {
     case changeShuffMode
     case changeRepeatMode
     case seekTo(Double)
-    // hour minus second
+    case seekDragging(Double)   // visual-only update during drag, no engine call
+    // hour minute second
     case setSleepTime(Double, Double, Double)
     case cancelSleepTime
 }

@@ -40,6 +40,9 @@ final class NowPlayingStateReducerImpl: NowPlayingStateReducerProtocol {
         case .setIsDragging(let dragging):
             newState.isDraging = dragging
 
+        case .setErrorMessage(let message):
+            newState.errorMessage = message
+
         case .updateFromPlayerState(let playerState):
             newState.currentSong = playerState.currentSong
             newState.isPlaying = playerState.isPlaying
