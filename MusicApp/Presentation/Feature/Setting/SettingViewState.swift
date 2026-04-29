@@ -13,4 +13,8 @@ struct SettingViewState {
     var isServerOn: Bool = false
     var messageToastView: String = String.empty
     var isShowToastView: Bool = false
+    var appVersion: String = ""
+    var selectedLanguageDisplay: String = "English"
+    var isShowDeleteConfirm: Bool = false
+    var isShowShareSheet: Bool = false
 }

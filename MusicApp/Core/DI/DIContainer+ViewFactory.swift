@@ -223,7 +223,8 @@ extension DIContainer {
             state: .init(),
             webUploaderUseCase: useCases.manageWebUploaderUseCase,
             uploadSongUseCase: useCases.uploadSongUseCase,
-            addSongUseCase: useCases.addSongUseCase
+            addSongUseCase: useCases.addSongUseCase,
+            deleteSongUseCase: useCases.deleteSongUseCase
         )
     }
 

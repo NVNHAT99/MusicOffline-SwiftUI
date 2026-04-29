@@ -28,6 +28,15 @@ final class SettingStateReducerImpl: SettingStateReducerProtocol {
 
         case .setTimerOn(let isOn):
             newState.isTimerOn = isOn
+
+        case .setShowDeleteConfirm(let show):
+            newState.isShowDeleteConfirm = show
+
+        case .setShowShareSheet(let show):
+            newState.isShowShareSheet = show
+
+        case .setLanguageDisplay(let lang):
+            newState.selectedLanguageDisplay = lang
         }
 
         return newState

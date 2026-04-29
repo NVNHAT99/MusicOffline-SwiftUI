@@ -12,4 +12,7 @@ enum SettingStateAction {
     case setServerOn(Bool, ipAddress: String?)
     case setShowToast(Bool, message: String)
     case setTimerOn(Bool)
+    case setShowDeleteConfirm(Bool)
+    case setShowShareSheet(Bool)
+    case setLanguageDisplay(String)
 }

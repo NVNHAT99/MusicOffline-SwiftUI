@@ -2,13 +2,10 @@
 //  SettingTabView.swift
 //  MusicApp
 //
-//  Created by Nhat on 5/18/23.
-//
 
 import SwiftUI
 
 struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
-    // MARK: - properties
     @StateObject var viewModel: ViewModel
     @StateObject private var router = Router<AppRoute>()
     @EnvironmentObject private var container: DIContainer
@@ -16,63 +13,113 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
     init(viewModel: ViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
+
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             CustomNavigationBar(type: .large(title: "Setting"))
                 .frame(height: 70)
                 .foregroundColor(.white)
                 .padding(.leading, 26)
                 .padding(.top, Helper.shared.safeAreaInsets?.top)
-            
-            GeometryReader { proxy in
-                List {
-                    Section {
-                        Button {
-                            self.router.route(to: .transferAudio)
-                        } label: {
-                            Text("Transfer Mp3 files")
-                                .fontWeight(.bold)
-                        }
 
-                        
-                    }
-                    .listRowBackground(Color.headerBackground)
-                    
-                    
-                    Section {
-                        Button {
-                            viewModel.send(intent: .deleteAllSongs)
-                        } label: {
-                            Text("Delete all songs")
-                        }
-
-                    }
-                    .listRowBackground(Color.headerBackground)
-                }
-                .listStyle(.insetGrouped)
-                .foregroundColor(.white)
-                .modifier(ListBackgroundModifier())
+            List {
+                generalSection()
+                aboutSection()
+                dangerSection()
             }
-            
+            .listStyle(.insetGrouped)
+            .foregroundColor(.white)
+            .modifier(ListBackgroundModifier())
         }
         .ignoresSafeArea(.all)
-        
+        .background(Color.backgroundColor)
+        .withRouting(router: self.router)
+        .onAppear { router.factory = container }
+        // Delete confirmation alert
+        .alert("Delete All Songs", isPresented: Binding(
+            get: { viewModel.state.isShowDeleteConfirm },
+            set: { _ in viewModel.send(intent: .cancelDeleteAllSongs) }
+        )) {
+            Button("Delete", role: .destructive) { viewModel.send(intent: .confirmDeleteAllSongs) }
+            Button("Cancel", role: .cancel) { viewModel.send(intent: .cancelDeleteAllSongs) }
+        } message: {
+            Text("This will permanently delete all songs from the app. This action cannot be undone.")
+        }
+        // Share sheet
+        .sheet(isPresented: Binding(
+            get: { viewModel.state.isShowShareSheet },
+            set: { if !$0 { viewModel.send(intent: .cancelShareSheet) } }
+        )) {
+            ShareSheet(items: [SettingConstants.shareURL])
+        }
         .overlay(alignment: .bottom) {
             if viewModel.state.isShowToastView {
-                ToastView(isShowView: viewModel.isShowToastView(), message: viewModel.state.messageToastView, timeShowView: .seconds(2))
+                ToastView(isShowView: viewModel.isShowToastView(),
+                          message: viewModel.state.messageToastView,
+                          timeShowView: .seconds(2))
                     .frame(height: 40)
                     .padding(.bottom, 16)
             }
         }
-        .background(Color.backgroundColor)
-        .withRouting(router: self.router)
-        .onAppear { router.factory = container }
+    }
+
+    // MARK: - Sections
+
+    @ViewBuilder
+    private func generalSection() -> some View {
+        Section(header: Text("General").foregroundColor(.gray)) {
+            SettingRowView(title: "Transfer MP3 Files") {
+                router.route(to: .transferAudio)
+            }
+            SettingRowView(
+                title: "Language",
+                subtitle: viewModel.state.selectedLanguageDisplay,
+                showChevron: false,
+                titleColor: .gray,
+                action: nil
+            )
+        }
+        .listRowBackground(Color.headerBackground)
+    }
+
+    @ViewBuilder
+    private func aboutSection() -> some View {
+        Section(header: Text("About").foregroundColor(.gray)) {
+            SettingRowView(title: "Rate App") {
+                viewModel.send(intent: .rateApp)
+            }
+            SettingRowView(title: "Share App") {
+                viewModel.send(intent: .shareApp)
+            }
+            SettingRowView(title: "Privacy Policy") {
+                viewModel.send(intent: .openPrivacy)
+            }
+            SettingRowView(title: "Terms of Use") {
+                viewModel.send(intent: .openTerms)
+            }
+            SettingRowView(
+                title: "Version",
+                subtitle: viewModel.state.appVersion,
+                showChevron: false,
+                action: nil
+            )
+        }
+        .listRowBackground(Color.headerBackground)
+    }
+
+    @ViewBuilder
+    private func dangerSection() -> some View {
+        Section(header: Text("Danger Zone").foregroundColor(.red.opacity(0.8))) {
+            SettingRowView(title: "Delete All Songs", showChevron: false, titleColor: .red) {
+                viewModel.send(intent: .deleteAllSongs)
+            }
+        }
+        .listRowBackground(Color.headerBackground)
     }
 }
 
 struct SettingTabView_Previews: PreviewProvider {
     static var previews: some View {
-        // Preview using DIContainer (if available) or manual initialization
         let viewModel = SettingViewViewModel()
         return SettingView(viewModel: viewModel)
             .background(Color.backgroundColor)

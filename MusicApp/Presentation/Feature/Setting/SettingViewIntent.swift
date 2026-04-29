@@ -11,4 +11,15 @@ enum SettingViewIntent {
     case deleteAllSongs
     case toggleServer
     case completedUploadSongs
+    // About
+    case rateApp
+    case shareApp
+    case cancelShareSheet
+    case openPrivacy
+    case openTerms
+    // General
+    case showLanguagePicker
+    // Delete confirmation
+    case confirmDeleteAllSongs
+    case cancelDeleteAllSongs
 }

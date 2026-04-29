@@ -29,6 +29,7 @@ final class SettingViewViewModel: SettingViewViewModelProtocol {
     let webUploaderUseCase: ManageWebUploaderUseCaseProtocol
     let uploadSongUseCase: UploadSongUseCaseProtocol
     let addSongUseCase: AddSongUseCaseProtocol
+    private let deleteSongUseCase: DeleteSongUseCaseProtocol
 
     var pendingUploads: [String] = []
 
@@ -38,13 +39,20 @@ final class SettingViewViewModel: SettingViewViewModelProtocol {
         reducer: (any SettingStateReducerProtocol)? = nil,
         webUploaderUseCase: ManageWebUploaderUseCaseProtocol = ManageWebUploaderUseCase(),
         uploadSongUseCase: UploadSongUseCaseProtocol = UploadSongUseCase(),
-        addSongUseCase: AddSongUseCaseProtocol = AddSongUseCase()
+        addSongUseCase: AddSongUseCaseProtocol = AddSongUseCase(),
+        deleteSongUseCase: DeleteSongUseCaseProtocol = DeleteSongUseCase()
     ) {
         self.state = state
         self.reducer = reducer ?? SettingStateReducerImpl()
         self.webUploaderUseCase = webUploaderUseCase
         self.uploadSongUseCase = uploadSongUseCase
         self.addSongUseCase = addSongUseCase
+        self.deleteSongUseCase = deleteSongUseCase
+
+        // Populate app version from bundle
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+        self.state.appVersion = "\(version) (\(build))"
 
         setupBindings()
     }
@@ -104,17 +112,37 @@ final class SettingViewViewModel: SettingViewViewModelProtocol {
 
         switch intent {
         case .deleteAllSongs:
+            state = reducer.reduce(state, with: .setShowDeleteConfirm(true))
+
+        case .confirmDeleteAllSongs:
             deleteAllSongs()
 
+        case .cancelDeleteAllSongs:
+            state = reducer.reduce(state, with: .setShowDeleteConfirm(false))
+
         case .toggleServer:
-            if state.isServerOn {
-                stopServer()
-            } else {
-                startServer()
-            }
+            if state.isServerOn { stopServer() } else { startServer() }
 
         case .completedUploadSongs:
             handleCompletedUploads()
+
+        case .rateApp:
+            RateAppHelper.requestReview()
+
+        case .shareApp:
+            state = reducer.reduce(state, with: .setShowShareSheet(true))
+
+        case .cancelShareSheet:
+            state = reducer.reduce(state, with: .setShowShareSheet(false))
+
+        case .openPrivacy:
+            UIApplication.shared.open(SettingConstants.privacyURL)
+
+        case .openTerms:
+            UIApplication.shared.open(SettingConstants.termsURL)
+
+        case .showLanguagePicker:
+            Logger.debug("Language picker — will be wired in Phase 3")
         }
     }
 
@@ -130,10 +158,20 @@ final class SettingViewViewModel: SettingViewViewModelProtocol {
     }
 
     private func deleteAllSongs() {
-        // TODO: Implement delete all songs functionality
-        Logger.warning("Delete all songs not implemented")
-        // State update would be:
-        // state = reducer.reduce(state, with: .setShowToast(true, message: "Deleted All Songs Success!"))
+        state = reducer.reduce(state, with: .setShowDeleteConfirm(false))
+        Task {
+            do {
+                try await deleteSongUseCase.executeDeleteAll()
+                await MainActor.run {
+                    state = reducer.reduce(state, with: .setShowToast(true, message: "All songs deleted"))
+                }
+            } catch {
+                Logger.error("Failed to delete all songs: \(error)")
+                await MainActor.run {
+                    state = reducer.reduce(state, with: .setShowToast(true, message: "Failed to delete songs"))
+                }
+            }
+        }
     }
 
     private func handleCompletedUploads() {
