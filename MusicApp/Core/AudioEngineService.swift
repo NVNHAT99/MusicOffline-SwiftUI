@@ -1,10 +1,3 @@
-//
-//  AudioEngineService.swift
-//  MusicApp
-//
-//  Created by Nhat Nguyen on 8/26/25.
-//
-
 import Foundation
 import AVFoundation
 import Combine
@@ -16,6 +9,7 @@ enum AudioEngineEvent {
 protocol AudioEngineProtocol: AnyObject {
     var isPlaying: Bool { get }
     var currentTime: TimeInterval { get }
+    var duration: TimeInterval { get }
     var currentURL: URL? { get }
     var eventPublisher: AnyPublisher<AudioEngineEvent, Never> { get }
 
@@ -27,77 +21,204 @@ protocol AudioEngineProtocol: AnyObject {
     func seek(to duration: Double)
 }
 
+final class AVAudioPlayerEngineService: AudioEngineProtocol {
 
-final class AVAudioPlayerEngineService: NSObject, AudioEngineProtocol {
-    
-    static let shared = AVAudioPlayerEngineService()
-    private override init() {
-        super .init()
-        do {
-            try configureSessionIfNeeded()
-        } catch {
-            print(error)
-        }
-    }
+    static let shared = AVAudioPlayerEngineService(eqService: EQService.shared)
 
-    private var player: AVAudioPlayer?
+    private let engine      = AVAudioEngine()
+    private let playerNode  = AVAudioPlayerNode()
+    private let eqService: EQServiceProtocol
+
+    private var audioFile: AVAudioFile?
     private(set) var currentURL: URL?
 
-    // MARK: - Combine
+    // Frame tracking for seek
+    private var seekOffsetFrames: AVAudioFramePosition = 0
+    private var sampleRate: Double = 44100
+
     private let eventSubject = PassthroughSubject<AudioEngineEvent, Never>()
     var eventPublisher: AnyPublisher<AudioEngineEvent, Never> {
         eventSubject.eraseToAnyPublisher()
     }
 
-    var isPlaying: Bool { player?.isPlaying ?? false }
-    var currentTime: TimeInterval { player?.currentTime ?? 0 }
-    
+    var isPlaying: Bool { playerNode.isPlaying }
+
+    var currentTime: TimeInterval {
+        guard let nodeTime = playerNode.lastRenderTime,
+              let playerTime = playerNode.playerTime(forNodeTime: nodeTime) else {
+            return Double(seekOffsetFrames) / sampleRate
+        }
+        return Double(seekOffsetFrames + playerTime.sampleTime) / sampleRate
+    }
+
+    var duration: TimeInterval {
+        guard let file = audioFile else { return 0 }
+        return Double(file.length) / file.processingFormat.sampleRate
+    }
+
+    init(eqService: EQServiceProtocol) {
+        self.eqService = eqService
+        buildGraph()
+        observeNotifications()
+        do { try configureSessionIfNeeded() } catch { Logger.error("AudioSession setup failed: \(error)") }
+    }
+
+    // MARK: - Graph
+
+    private func buildGraph() {
+        engine.attach(playerNode)
+        engine.attach(eqService.eqNode)
+        engine.connect(playerNode, to: eqService.eqNode, format: nil)
+        engine.connect(eqService.eqNode, to: engine.mainMixerNode, format: nil)
+    }
+
+    private func startEngineIfNeeded() throws {
+        guard !engine.isRunning else { return }
+        try engine.start()
+    }
+
+    // MARK: - Protocol
+
     func configureSessionIfNeeded() throws {
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.playback, mode: .default, options: [])
         try session.setActive(true, options: [])
     }
-    
+
     func load(url: URL) throws {
         guard url.isFileURL else {
             throw NSError(domain: "AudioEngine", code: -1,
                           userInfo: [NSLocalizedDescriptionKey: "URL must be a file URL"])
         }
-        currentURL = url
-        player = try AVAudioPlayer(contentsOf: url)
-        player?.delegate = self
-        player?.prepareToPlay()
+        playerNode.stop()
+        let file = try AVAudioFile(forReading: url)
+        audioFile       = file
+        currentURL      = url
+        sampleRate      = file.processingFormat.sampleRate
+        seekOffsetFrames = 0
+
+        // Reconnect with the file's native format to avoid SRC artifacts
+        engine.disconnectNodeInput(eqService.eqNode)
+        engine.disconnectNodeOutput(playerNode)
+        engine.connect(playerNode, to: eqService.eqNode, format: file.processingFormat)
+        engine.connect(eqService.eqNode, to: engine.mainMixerNode, format: file.processingFormat)
+
+        try startEngineIfNeeded()
+        scheduleFile(from: 0)
     }
-    
+
     func play() {
-        player?.play()
+        guard audioFile != nil else { return }
+        try? startEngineIfNeeded()
+        playerNode.play()
     }
-    
+
     func pause() {
-        player?.pause()
+        playerNode.pause()
     }
-    
+
     func stop() {
-        player?.stop()
-        player?.currentTime = 0
+        playerNode.stop()
+        seekOffsetFrames = 0
     }
-    
-    func seek(to duration: Double) {
-        guard let player else { return }
-        
-        // Clamp để tránh crash khi duration vượt ngoài range
-        let clampedTime = max(0, min(duration, player.duration))
-        player.currentTime = clampedTime
-        
-        // Nếu đang play thì tiếp tục play từ chỗ mới
-        if isPlaying {
-            player.play()
+
+    func seek(to time: Double) {
+        guard let file = audioFile else { return }
+        let wasPlaying = isPlaying
+        playerNode.stop()
+
+        let targetFrame = AVAudioFramePosition(time * sampleRate)
+        let clampedFrame = max(0, min(targetFrame, file.length - 1))
+        seekOffsetFrames = clampedFrame
+        scheduleFile(from: clampedFrame)
+
+        if wasPlaying {
+            playerNode.play()
         }
     }
-}
 
-extension AVAudioPlayerEngineService: AVAudioPlayerDelegate {
-    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        eventSubject.send(.finished(flag))
+    // MARK: - Helpers
+
+    private func scheduleFile(from startFrame: AVAudioFramePosition) {
+        guard let file = audioFile else { return }
+        let remaining = AVAudioFrameCount(file.length - startFrame)
+        guard remaining > 0 else { return }
+
+        playerNode.scheduleSegment(
+            file,
+            startingFrame: startFrame,
+            frameCount: remaining,
+            at: nil,
+            completionCallbackType: .dataPlayedBack
+        ) { [weak self] _ in
+            DispatchQueue.main.async {
+                // Only fire finished if we're near the real end (not a seek)
+                guard let self, !self.playerNode.isPlaying else { return }
+                self.eventSubject.send(.finished(true))
+            }
+        }
+    }
+
+    // MARK: - Notifications
+
+    private func observeNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleInterruption),
+            name: AVAudioSession.interruptionNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleRouteChange),
+            name: AVAudioSession.routeChangeNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleMediaServicesReset),
+            name: AVAudioSession.mediaServicesWereResetNotification,
+            object: nil
+        )
+    }
+
+    @objc private func handleInterruption(_ notification: Notification) {
+        guard let info = notification.userInfo,
+              let typeValue = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
+
+        switch type {
+        case .began:
+            pause()
+        case .ended:
+            let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
+            let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+            if options.contains(.shouldResume) {
+                try? configureSessionIfNeeded()
+                play()
+            }
+        @unknown default:
+            break
+        }
+    }
+
+    @objc private func handleRouteChange(_ notification: Notification) {
+        guard let info = notification.userInfo,
+              let reasonValue = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue) else { return }
+
+        if reason == .oldDeviceUnavailable {
+            pause()
+            eventSubject.send(.finished(false))
+        }
+    }
+
+    @objc private func handleMediaServicesReset(_ notification: Notification) {
+        engine.stop()
+        buildGraph()
+        try? configureSessionIfNeeded()
+        if let url = currentURL {
+            try? load(url: url)
+        }
     }
 }

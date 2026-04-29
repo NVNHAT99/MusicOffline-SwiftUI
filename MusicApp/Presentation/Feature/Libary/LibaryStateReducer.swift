@@ -35,6 +35,12 @@ final class LibaryStateReducerImpl: LibaryStateReducerProtocol {
 
         case .removePlaylist(let playlist):
             newState.playlist.removeAll { $0.id == playlist.id }
+
+        case .setSmartPlaylists(let smartPlaylists):
+            newState.smartPlaylists = smartPlaylists
+
+        case .removeSmartPlaylist(let pl):
+            newState.smartPlaylists.removeAll { $0.id == pl.id }
         }
 
         return newState

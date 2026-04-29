@@ -18,4 +18,8 @@ enum NowPlayingStateAction {
     case setIsDragging(Bool)
     case setErrorMessage(String?)
     case updateFromPlayerState(PlayerManagerState)
+    // Lyrics
+    case setLyrics([LyricsLine])
+    case setActiveLyricIndex(Int?)
+    case setShowLyrics(Bool)
 }

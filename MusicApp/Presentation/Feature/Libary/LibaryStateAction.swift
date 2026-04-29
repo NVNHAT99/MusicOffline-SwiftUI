@@ -11,7 +11,9 @@ import Foundation
 enum LibaryStateAction {
     case setLoading(Bool)
     case setPlaylists([Playlist])
+    case setSmartPlaylists([SmartPlaylist])
     case setShowToast(Bool, message: String)
     case setShowAddPlaylist(Bool)
     case removePlaylist(Playlist)
+    case removeSmartPlaylist(SmartPlaylist)
 }

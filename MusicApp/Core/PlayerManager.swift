@@ -21,7 +21,7 @@ final class PlayerManager: PlayerManagerProtocol {
     )
 
     // MARK: - Dependencies
-    private let engine: AVAudioPlayerEngineService
+    private let engine: AudioEngineProtocol
     private let timerService: TimerServiceProtocol
     private let progressTimerService: ProgressTimerServiceProtocol
     private let fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol
@@ -50,7 +50,7 @@ final class PlayerManager: PlayerManagerProtocol {
     private var playlist: [SongModel] = []
     private var currentPlaylistID: UUID?
     // MARK: - Init
-    private init(engine: AVAudioPlayerEngineService,
+    private init(engine: AudioEngineProtocol,
                  timerService: TimerServiceProtocol,
                  progressTimerService: ProgressTimerServiceProtocol,
                  fetchPlaylistUseCase: FetchPlaylistUseCaseProtocol,

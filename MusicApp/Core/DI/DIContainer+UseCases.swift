@@ -20,6 +20,15 @@ extension DIContainer {
         let reorderPlaylistSongsUseCase: ReorderPlaylistSongsUseCaseProtocol
         let importSongFromFilesUseCase: ImportSongFromFilesUseCaseProtocol
 
+        // MARK: - Lyrics
+        let lyricsRepository: LyricsRepositoryProtocol
+        let fetchLyricsUseCase: FetchLyricsUseCaseProtocol
+
+        // MARK: - Smart Playlist
+        let smartPlaylistRepository: SmartPlaylistRepositoryProtocol
+        let saveSmartPlaylistUseCase: SaveSmartPlaylistUseCaseProtocol
+        let smartPlaylistUseCase: SmartPlaylistUseCase
+
         // MARK: - Composite
         let fetchHomeDataUseCase: FetchHomeDataUseCaseProtocol
         let transferUseCase: TransferUseCaseProtocol
@@ -44,7 +53,12 @@ extension DIContainer {
             fetchHomeDataUseCase: FetchHomeDataUseCaseProtocol,
             transferUseCase: TransferUseCaseProtocol,
             uploadSongUseCase: UploadSongUseCaseProtocol,
-            manageWebUploaderUseCase: ManageWebUploaderUseCaseProtocol
+            manageWebUploaderUseCase: ManageWebUploaderUseCaseProtocol,
+            lyricsRepository: LyricsRepositoryProtocol,
+            fetchLyricsUseCase: FetchLyricsUseCaseProtocol,
+            smartPlaylistRepository: SmartPlaylistRepositoryProtocol,
+            saveSmartPlaylistUseCase: SaveSmartPlaylistUseCaseProtocol,
+            smartPlaylistUseCase: SmartPlaylistUseCase
         ) {
             self.fetchSongUseCase = fetchSongUseCase
             self.addSongUseCase = addSongUseCase
@@ -62,6 +76,11 @@ extension DIContainer {
             self.transferUseCase = transferUseCase
             self.uploadSongUseCase = uploadSongUseCase
             self.manageWebUploaderUseCase = manageWebUploaderUseCase
+            self.lyricsRepository = lyricsRepository
+            self.fetchLyricsUseCase = fetchLyricsUseCase
+            self.smartPlaylistRepository = smartPlaylistRepository
+            self.saveSmartPlaylistUseCase = saveSmartPlaylistUseCase
+            self.smartPlaylistUseCase = smartPlaylistUseCase
         }
 
         static func create(
@@ -84,7 +103,12 @@ extension DIContainer {
             let updatePlaylist = UpdatePlaylistUseCase(repository: playlistRepository)
             let deletePlaylist = DeletetPlaylistUseCase(repository: playlistRepository)
             let reorderSongs = ReorderPlaylistSongsUseCase(repository: playlistRepository)
-            let importSong = ImportSongFromFilesUseCase(addSongUseCase: addSong)
+            let lyricsRepo = LyricsRepository()
+            let fetchLyrics = FetchLyricsUseCase(repository: lyricsRepo)
+            let importSong = ImportSongFromFilesUseCase(addSongUseCase: addSong, lyricsRepository: lyricsRepo)
+            let smartPlaylistRepo = SmartPlaylistRepository(coreData: coreDataManager)
+            let saveSmartPlaylist = SaveSmartPlaylistUseCase(repository: smartPlaylistRepo)
+            let smartPlaylist = SmartPlaylistUseCase(coreData: coreDataManager)
             let fetchHome = FetchHomeDataUseCase(fetchSongUseCase: fetchSong, fetchPlaylistUseCase: fetchPlaylist)
             let transfer = TransferUseCase(
                 addSongUseCase: addSong,
@@ -112,7 +136,12 @@ extension DIContainer {
                 fetchHomeDataUseCase: fetchHome,
                 transferUseCase: transfer,
                 uploadSongUseCase: uploadSong,
-                manageWebUploaderUseCase: manageUploader
+                manageWebUploaderUseCase: manageUploader,
+                lyricsRepository: lyricsRepo,
+                fetchLyricsUseCase: fetchLyrics,
+                smartPlaylistRepository: smartPlaylistRepo,
+                saveSmartPlaylistUseCase: saveSmartPlaylist,
+                smartPlaylistUseCase: smartPlaylist
             )
         }
     }

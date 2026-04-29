@@ -71,6 +71,9 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
             SettingRowView(title: "Transfer MP3 Files") {
                 router.route(to: .transferAudio)
             }
+            SettingRowView(title: "Equalizer") {
+                router.route(to: .equalizer)
+            }
             SettingRowView(
                 title: "Language",
                 subtitle: viewModel.state.selectedLanguageDisplay,

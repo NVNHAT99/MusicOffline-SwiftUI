@@ -14,4 +14,9 @@ struct NowPlayingState {
     var duration: Double = 100
     var isDraging: Bool = false
     var errorMessage: String? = nil
+
+    // Lyrics
+    var lyrics: [LyricsLine] = []
+    var activeLyricIndex: Int? = nil
+    var showLyrics: Bool = false
 }

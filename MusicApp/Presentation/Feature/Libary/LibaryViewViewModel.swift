@@ -17,6 +17,7 @@ protocol LibaryViewViewModelProtocol: ObservableObject {
     func isCompletedAddPlaylist() -> Binding<Bool>
     func isShowToastView() -> Binding<Bool>
     func isLastItem(item: Playlist) -> Bool
+    func isLastSmartPlaylist(item: SmartPlaylist) -> Bool
 }
 
 final class LibaryViewViewModel: LibaryViewViewModelProtocol {
@@ -26,20 +27,22 @@ final class LibaryViewViewModel: LibaryViewViewModelProtocol {
     private let reducer: any LibaryStateReducerProtocol
     private let fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol
     private let deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol
+    private let saveSmartPlaylistUseCase: SaveSmartPlaylistUseCaseProtocol?
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
     init(
-        state: LibaryViewState = LibaryViewState(isLoading: false,
-                                                  playlist: []),
+        state: LibaryViewState = LibaryViewState(isLoading: false, playlist: []),
         reducer: any LibaryStateReducerProtocol = LibaryStateReducerImpl(),
         fetchPlaylistaUseCase: FetchPlaylistUseCaseProtocol = FetchPlaylistUseCase(),
-        deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol = DeletetPlaylistUseCase()
+        deletePlaylistUseCase: DeletetPlaylistUseCaseProtocol = DeletetPlaylistUseCase(),
+        saveSmartPlaylistUseCase: SaveSmartPlaylistUseCaseProtocol? = nil
     ) {
         self.state = state
         self.reducer = reducer
         self.fetchPlaylistaUseCase = fetchPlaylistaUseCase
         self.deletePlaylistUseCase = deletePlaylistUseCase
+        self.saveSmartPlaylistUseCase = saveSmartPlaylistUseCase
         Logger.debug("LibaryViewViewModel initialized")
         subscribeToPlaylistEvents()
     }
@@ -69,6 +72,10 @@ final class LibaryViewViewModel: LibaryViewViewModelProtocol {
         case .deletePlaylist(let playlist):
             Logger.info("Deleting playlist: \(playlist.name)")
             deletePlaylist(playlist: playlist)
+        case .loadSmartPlaylists:
+            loadSmartPlaylists()
+        case .deleteSmartPlaylist(let pl):
+            deleteSmartPlaylist(pl)
         }
     }
 
@@ -128,5 +135,21 @@ final class LibaryViewViewModel: LibaryViewViewModelProtocol {
 
     func isLastItem(item: Playlist) -> Bool {
         return self.state.playlist.last == item
+    }
+
+    func isLastSmartPlaylist(item: SmartPlaylist) -> Bool {
+        return self.state.smartPlaylists.last?.id == item.id
+    }
+
+    // MARK: - Smart Playlist
+    private func loadSmartPlaylists() {
+        guard let useCase = saveSmartPlaylistUseCase else { return }
+        let playlists = (try? useCase.fetchAll()) ?? []
+        state = reducer.reduce(state, with: .setSmartPlaylists(playlists))
+    }
+
+    private func deleteSmartPlaylist(_ playlist: SmartPlaylist) {
+        try? saveSmartPlaylistUseCase?.delete(id: playlist.id)
+        state = reducer.reduce(state, with: .removeSmartPlaylist(playlist))
     }
 }

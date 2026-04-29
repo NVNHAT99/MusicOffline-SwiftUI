@@ -31,15 +31,19 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
     // MARK: - Dependencies
     private let playerManager: any PlayerManagerProtocol
     private let reducer: any NowPlayingStateReducerProtocol
+    private let fetchLyricsUseCase: FetchLyricsUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
+    private var lastLyricsSongStem: String? = nil
 
     // MARK: - Init
     init(
         playerManager: any PlayerManagerProtocol = PlayerManager.shared,
-        reducer: any NowPlayingStateReducerProtocol = NowPlayingStateReducerImpl()
+        reducer: any NowPlayingStateReducerProtocol = NowPlayingStateReducerImpl(),
+        fetchLyricsUseCase: FetchLyricsUseCaseProtocol = FetchLyricsUseCase(repository: LyricsRepository())
     ) {
         self.playerManager = playerManager
         self.reducer = reducer
+        self.fetchLyricsUseCase = fetchLyricsUseCase
         self.state = .init()
         Logger.debug("NowPlayingViewModel initialized")
         setupBindings()
@@ -72,6 +76,18 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
 
     private func updateFromPlayerState(_ playerState: PlayerManagerState) {
         state = reducer.reduce(state, with: .updateFromPlayerState(playerState))
+        // Fetch lyrics when song changes
+        let newStem: String? = playerState.currentSong.flatMap { song -> String? in
+            guard let urlStr = song.urlStr, !urlStr.isEmpty else { return nil }
+            let stem = URL(fileURLWithPath: urlStr).deletingPathExtension().lastPathComponent
+            return stem.isEmpty ? nil : stem
+        }
+        if newStem != lastLyricsSongStem {
+            lastLyricsSongStem = newStem
+            let stem = newStem ?? ""
+            let lines = stem.isEmpty ? [] : fetchLyricsUseCase.execute(stem: stem)
+            state = reducer.reduce(state, with: .setLyrics(lines))
+        }
     }
 
     func send(_ intent: NowPlayingIntent) {
@@ -110,6 +126,12 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
             Task {
                 await self.playerManager.cancelScheduleStop()
             }
+
+        case .toggleLyrics:
+            state = reducer.reduce(state, with: .setShowLyrics(!state.showLyrics))
+
+        case .lyricsLoaded(let lines):
+            state = reducer.reduce(state, with: .setLyrics(lines))
         }
     }
 

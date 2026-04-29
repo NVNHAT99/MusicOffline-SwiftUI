@@ -62,6 +62,14 @@ extension DIContainer: ViewFactory {
         // Transfer routes
         case .transferAudio:
             makeTransferAudioView(router: router)
+
+        // Smart Playlist
+        case .smartPlaylistEditor(let id):
+            makeSmartPlaylistEditorView(playlistId: id, router: router)
+
+        // Equalizer
+        case .equalizer:
+            makeEqualizerView(router: router)
         }
     }
 }
@@ -172,6 +180,23 @@ extension DIContainer {
         return SetupTimerSheetView(viewModel: viewModel)
     }
 
+    // MARK: - Equalizer
+    @MainActor
+    private func makeEqualizerView(router: any BaseRouterProtocol) -> some View {
+        let viewModel = EqualizerViewModel()
+        return EqualizerView(viewModel: viewModel)
+    }
+
+    // MARK: - Smart Playlist Editor
+    @MainActor
+    private func makeSmartPlaylistEditorView(playlistId: UUID?, router: any BaseRouterProtocol) -> some View {
+        let playlist: SmartPlaylist? = playlistId.flatMap { id in
+            try? useCases.saveSmartPlaylistUseCase.fetchAll().first(where: { $0.id == id })
+        }
+        let viewModel = makeSmartPlaylistEditorViewModel(playlist: playlist)
+        return SmartPlaylistEditorView(viewModel: viewModel)
+    }
+
     // MARK: - Transfer Audio View
     @MainActor
     private func makeTransferAudioView(router: any BaseRouterProtocol) -> some View {
@@ -203,7 +228,8 @@ extension DIContainer {
     func makeLibaryViewViewModel() -> LibaryViewViewModel {
         return LibaryViewViewModel(
             fetchPlaylistaUseCase: useCases.fetchPlaylistUseCase,
-            deletePlaylistUseCase: useCases.deletePlaylistUseCase
+            deletePlaylistUseCase: useCases.deletePlaylistUseCase,
+            saveSmartPlaylistUseCase: useCases.saveSmartPlaylistUseCase
         )
     }
 
@@ -258,6 +284,16 @@ extension DIContainer {
     func makeAddNewPlaylistViewModel() -> AddNewPlaylistViewModel {
         return AddNewPlaylistViewModel(
             addPlaylistUseCase: useCases.addPlaylistUseCase
+        )
+    }
+
+    // MARK: - Smart Playlist Editor
+    @MainActor
+    func makeSmartPlaylistEditorViewModel(playlist: SmartPlaylist? = nil) -> SmartPlaylistEditorViewModel {
+        return SmartPlaylistEditorViewModel(
+            playlist: playlist,
+            saveUseCase: useCases.saveSmartPlaylistUseCase,
+            matchUseCase: useCases.smartPlaylistUseCase
         )
     }
 

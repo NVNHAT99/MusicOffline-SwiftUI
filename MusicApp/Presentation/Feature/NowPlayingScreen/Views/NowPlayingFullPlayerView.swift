@@ -56,11 +56,31 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
         ))
     }
 
-    // MARK: - Artwork
+    // MARK: - Lyrics Toggle Button
+    private var lyricsToggleButton: some View {
+        Button {
+            viewModel.send(.toggleLyrics)
+        } label: {
+            Image(systemName: "text.quote")
+                .resizable()
+                .scaledToFit()
+                .frame(width: DesignToken.IconSize.md)
+                .foregroundStyle(viewModel.state.showLyrics ? Color.white : Color.gray)
+        }
+    }
+
+    // MARK: - Artwork / Lyrics Panel
     private func artwork(geometry: GeometryProxy) -> some View {
         let size = geometry.size.height * 3 / 5
         return Group {
-            if let uiImage {
+            if viewModel.state.showLyrics {
+                LyricsView(
+                    lines: viewModel.state.lyrics,
+                    activeIndex: viewModel.state.activeLyricIndex
+                )
+                .frame(width: size, height: size)
+                .clipShape(RoundedRectangle(cornerRadius: DesignToken.Radius.sm))
+            } else if let uiImage {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFit()
@@ -90,15 +110,18 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
     }
 
     private var songInfo: some View {
-        VStack(spacing: 4) {
-            Text(viewModel.songTitle)
-                .font(AppFont.songTitle())
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            Text(viewModel.artistName)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .foregroundStyle(.white)
-                .font(AppFont.callout())
+        HStack(alignment: .top) {
+            VStack(spacing: 4) {
+                Text(viewModel.songTitle)
+                    .font(AppFont.songTitle())
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Text(viewModel.artistName)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(.white)
+                    .font(AppFont.callout())
+            }
+            lyricsToggleButton
         }
     }
 

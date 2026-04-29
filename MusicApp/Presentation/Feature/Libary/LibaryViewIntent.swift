@@ -10,4 +10,6 @@ import Foundation
 enum LibaryViewIntent {
     case loadPlaylist
     case deletePlaylist(Playlist)
+    case loadSmartPlaylists
+    case deleteSmartPlaylist(SmartPlaylist)
 }

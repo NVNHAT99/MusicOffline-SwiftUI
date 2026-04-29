@@ -34,9 +34,14 @@ final class ImportSongFromFilesUseCase: ImportSongFromFilesUseCaseProtocol {
     private static let supportedExtensions: Set<String> = ["mp3", "m4a", "wav", "flac", "aac", "ogg"]
 
     private let addSongUseCase: AddSongUseCaseProtocol
+    private let lyricsRepository: LyricsRepositoryProtocol
 
-    init(addSongUseCase: AddSongUseCaseProtocol = AddSongUseCase()) {
+    init(
+        addSongUseCase: AddSongUseCaseProtocol = AddSongUseCase(),
+        lyricsRepository: LyricsRepositoryProtocol = LyricsRepository()
+    ) {
         self.addSongUseCase = addSongUseCase
+        self.lyricsRepository = lyricsRepository
     }
 
     func execute(urls: [URL], progressHandler: @escaping (Int, Int) -> Void) async -> [ImportSongResult] {
@@ -46,6 +51,20 @@ final class ImportSongFromFilesUseCase: ImportSongFromFilesUseCaseProtocol {
         for (index, url) in urls.enumerated() {
             let fileName = url.lastPathComponent
             let ext = url.pathExtension.lowercased()
+
+            // Route .lrc files to lyrics storage
+            if ext == "lrc" {
+                let stem = url.deletingPathExtension().lastPathComponent
+                do {
+                    let content = try Self.readTextFile(from: url)
+                    try lyricsRepository.save(stem: stem, content: content)
+                    results.append(ImportSongResult(fileName: fileName, success: true, error: nil))
+                } catch {
+                    results.append(ImportSongResult(fileName: fileName, success: false, error: .fileCopyFailed(fileName, error)))
+                }
+                progressHandler(index + 1, urls.count)
+                continue
+            }
 
             guard Self.supportedExtensions.contains(ext) else {
                 results.append(ImportSongResult(fileName: fileName, success: false, error: .unsupportedFormat(ext)))
@@ -71,6 +90,20 @@ final class ImportSongFromFilesUseCase: ImportSongFromFilesUseCaseProtocol {
 
     // MARK: - Private
 
+    private static func readTextFile(from url: URL) throws -> String {
+        let accessed = url.startAccessingSecurityScopedResource()
+        defer { if accessed { url.stopAccessingSecurityScopedResource() } }
+        try ensureLocallyAvailable(url: url)
+        let data = try Data(contentsOf: url)
+        guard let text = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .utf16) else {
+            throw ImportSongError.fileCopyFailed(url.lastPathComponent, NSError(
+                domain: "Import", code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Could not decode .lrc file"]
+            ))
+        }
+        return text
+    }
+
     private static func musicDirectory() -> URL {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let musicDir = docs.appendingPathComponent("Music", isDirectory: true)
@@ -79,23 +112,52 @@ final class ImportSongFromFilesUseCase: ImportSongFromFilesUseCaseProtocol {
     }
 
     private static func copyFile(from sourceURL: URL, to directory: URL) throws -> URL {
-        // Access security-scoped resource from Files app picker
         let accessed = sourceURL.startAccessingSecurityScopedResource()
         defer { if accessed { sourceURL.stopAccessingSecurityScopedResource() } }
 
+        // Materialize iCloud placeholder if not yet downloaded locally
+        try Self.ensureLocallyAvailable(url: sourceURL)
+
         let destURL = directory.appendingPathComponent(sourceURL.lastPathComponent)
 
-        // Skip copy if identical file already exists (same name = treated as duplicate)
         if FileManager.default.fileExists(atPath: destURL.path) {
             return destURL
         }
 
-        do {
-            try FileManager.default.copyItem(at: sourceURL, to: destURL)
-        } catch {
-            throw ImportSongError.fileCopyFailed(sourceURL.lastPathComponent, error)
+        // Use NSFileCoordinator for iCloud-safe read
+        var copyError: Error?
+        var coordinatorError: NSError?
+        NSFileCoordinator().coordinate(readingItemAt: sourceURL, options: .withoutChanges, error: &coordinatorError) { localURL in
+            do {
+                try FileManager.default.copyItem(at: localURL, to: destURL)
+            } catch {
+                copyError = error
+            }
+        }
+
+        if let err = coordinatorError ?? copyError {
+            throw ImportSongError.fileCopyFailed(sourceURL.lastPathComponent, err)
         }
 
         return destURL
+    }
+
+    /// Triggers download of iCloud placeholder files and waits (sync, up to 30s).
+    private static func ensureLocallyAvailable(url: URL) throws {
+        let resourceValues = try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
+        guard let status = resourceValues.ubiquitousItemDownloadingStatus,
+              status != .current else { return }
+
+        // Request download and poll (max 30 iterations × 1s)
+        try FileManager.default.startDownloadingUbiquitousItem(at: url)
+        for _ in 0..<30 {
+            Thread.sleep(forTimeInterval: 1)
+            let updated = try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
+            if updated.ubiquitousItemDownloadingStatus == .current { return }
+        }
+        throw ImportSongError.fileCopyFailed(url.lastPathComponent, NSError(
+            domain: "iCloud", code: -1,
+            userInfo: [NSLocalizedDescriptionKey: "iCloud download timed out"]
+        ))
     }
 }

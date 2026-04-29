@@ -7,12 +7,10 @@
 
 import Foundation
 
-/// Protocol for NowPlaying state reducer
 protocol NowPlayingStateReducerProtocol {
     func reduce(_ state: NowPlayingState, with action: NowPlayingStateAction) -> NowPlayingState
 }
 
-/// Implementation of NowPlaying state reducer (pure function)
 final class NowPlayingStateReducerImpl: NowPlayingStateReducerProtocol {
 
     func reduce(_ state: NowPlayingState, with action: NowPlayingStateAction) -> NowPlayingState {
@@ -33,6 +31,13 @@ final class NowPlayingStateReducerImpl: NowPlayingStateReducerProtocol {
 
         case .setCurrentTime(let time):
             newState.currentTime = time
+            // Recompute active lyric only when crossing a line boundary
+            if !state.lyrics.isEmpty {
+                let newIndex = Self.activeLyricIndex(for: time, in: state.lyrics)
+                if newIndex != state.activeLyricIndex {
+                    newState.activeLyricIndex = newIndex
+                }
+            }
 
         case .setDuration(let duration):
             newState.duration = duration
@@ -42,6 +47,16 @@ final class NowPlayingStateReducerImpl: NowPlayingStateReducerProtocol {
 
         case .setErrorMessage(let message):
             newState.errorMessage = message
+
+        case .setLyrics(let lines):
+            newState.lyrics = lines
+            newState.activeLyricIndex = Self.activeLyricIndex(for: newState.currentTime, in: lines)
+
+        case .setActiveLyricIndex(let index):
+            newState.activeLyricIndex = index
+
+        case .setShowLyrics(let show):
+            newState.showLyrics = show
 
         case .updateFromPlayerState(let playerState):
             newState.currentSong = playerState.currentSong
@@ -55,5 +70,23 @@ final class NowPlayingStateReducerImpl: NowPlayingStateReducerProtocol {
         }
 
         return newState
+    }
+
+    /// Binary search for the last lyric line whose timestamp ≤ currentTime.
+    static func activeLyricIndex(for time: TimeInterval, in lines: [LyricsLine]) -> Int? {
+        guard !lines.isEmpty else { return nil }
+        var lo = 0
+        var hi = lines.count - 1
+        var result: Int? = nil
+        while lo <= hi {
+            let mid = (lo + hi) / 2
+            if lines[mid].timestamp <= time {
+                result = mid
+                lo = mid + 1
+            } else {
+                hi = mid - 1
+            }
+        }
+        return result
     }
 }

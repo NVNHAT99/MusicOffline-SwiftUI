@@ -20,74 +20,88 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
     }
     var body: some View {
         ZStack(alignment: .leading, content: {
-            
+
             Color.backgroundColor
                 .ignoresSafeArea()
-            
-            VStack (spacing: 0) {
+
+            VStack(spacing: 0) {
                 CustomNavigationBar(type: .large(title: "My Libary"))
                     .frame(height: 70)
                     .foregroundColor(.white)
-                VStack (alignment: .leading, spacing: 0) {
-                    Spacer()
-                        .frame(height: 24)
-                    HStack {
-                        Text("Playlists")
-                            .foregroundColor(.white)
-                            .font(.system(size: 28)) // text
-                    }
-                    .padding(.bottom, 24)
-                    
-                    if handler.state.isLoading  {
+                VStack(alignment: .leading, spacing: 0) {
+                    Spacer().frame(height: 24)
+
+                    if handler.state.isLoading {
                         ScrollView(.vertical) {
                             LazyVStack(spacing: 8) {
-                                ForEach(0..<3) { _ in
-                                    SongSkeletonItemView()
-                                }
+                                ForEach(0..<3) { _ in SongSkeletonItemView() }
                             }
-                        } // scrollview
+                        }
                         .scrollIndicators(.hidden)
-                        
-                    } else if !handler.state.playlist.isEmpty {
+                    } else {
                         ScrollView(.vertical) {
-                            LazyVStack(spacing: 0) {
-                                ForEach(handler.state.playlist) { item in
-                                    PlayListItemView(playListName: item.name,
-                                                     onDelete: {
-                                        self.handler.send(intent: .deletePlaylist(item))
-                                    },
-                                                     ontapItem: {
-                                        self.router.route(to: .playlistDetail(id: item.id))
-                                    })
-                                    
-                                    if !self.handler.isLastItem(item: item) {
-                                        Divider()
-                                            .background(Color.gray)
+                            LazyVStack(spacing: 0, pinnedViews: []) {
+                                // Regular Playlists
+                                sectionHeader("Playlists")
+                                if handler.state.playlist.isEmpty {
+                                    emptyLabel("You don't have any playlist yet")
+                                } else {
+                                    ForEach(handler.state.playlist) { item in
+                                        PlayListItemView(
+                                            playListName: item.name,
+                                            onDelete: { handler.send(intent: .deletePlaylist(item)) },
+                                            ontapItem: { router.route(to: .playlistDetail(id: item.id)) }
+                                        )
+                                        if !handler.isLastItem(item: item) {
+                                            Divider().background(Color.gray)
+                                        }
+                                    }
+                                }
+
+                                // Smart Playlists
+                                sectionHeader("Smart Playlists ⚡")
+                                    .padding(.top, 24)
+                                if handler.state.smartPlaylists.isEmpty {
+                                    emptyLabel("No smart playlists yet")
+                                } else {
+                                    ForEach(handler.state.smartPlaylists) { item in
+                                        PlayListItemView(
+                                            playListName: "⚡ \(item.name)",
+                                            onDelete: { handler.send(intent: .deleteSmartPlaylist(item)) },
+                                            ontapItem: { router.route(to: .smartPlaylistEditor(item.id)) }
+                                        )
+                                        if !handler.isLastSmartPlaylist(item: item) {
+                                            Divider().background(Color.gray)
+                                        }
                                     }
                                 }
                             }
-                        } // Scroll
-                        .scrollIndicators(.hidden)
-                    } else {
-                        VStack(alignment: .center) {
-                            Text("You don't have any play list yet")
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity, alignment: .center)
                         }
-                        .frame(maxHeight: .infinity)
+                        .scrollIndicators(.hidden)
                     }
-                    
+
                     Spacer()
-                }// VStack
+                }
                 .padding(.horizontal, 16)
-            } // VStack
-            
+            }
+
+            // FAB menu
             VStack {
+                Spacer()
+                HStack {
                     Spacer()
-
-                    HStack {
-                        Spacer()
-
+                    VStack(spacing: 12) {
+                        Button {
+                            router.route(to: .smartPlaylistEditor(UUID?.none))
+                        } label: {
+                            Image(systemName: "wand.and.stars")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(.white)
+                                .padding(12)
+                                .background(Circle().fill(Color.purple).shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3))
+                        }
                         Button {
                             router.route(to: .addNewPlaylist)
                         } label: {
@@ -97,21 +111,19 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
                                 .frame(width: 24, height: 24)
                                 .foregroundColor(.white)
                                 .padding(12)
-                                .background(
-                                    Circle()
-                                        .fill(Color.cyan)
-                                        .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3)
-                                )
+                                .background(Circle().fill(Color.cyan).shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3))
                         }
-                        .padding()
                     }
+                    .padding()
                 }
+            }
 
-        }) // zstack
+        })
         .withRouting(router: router)
         .onAppear {
             router.factory = container
             handler.send(intent: .loadPlaylist)
+            handler.send(intent: .loadSmartPlaylists)
         }
         .onReceive(NotificationCenter.default.publisher(for: .openPlaylistDetail)) { notif in
             if let playlist = notif.object as? Playlist {
@@ -119,6 +131,22 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
                 router.route(to: .playlistDetail(id: playlist.id))
             }
         }
+    }
+
+    @ViewBuilder
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .foregroundColor(.white)
+            .font(.system(size: 22, weight: .semibold))
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private func emptyLabel(_ text: String) -> some View {
+        Text(text)
+            .foregroundColor(.white.opacity(0.6))
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.vertical, 12)
     }
 }
 

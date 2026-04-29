@@ -18,6 +18,7 @@ extension SongEntity {
 
     @NSManaged public var album: String?
     @NSManaged public var artist: String?
+    @NSManaged public var dateAdded: Date?
     @NSManaged public var duration: Double
     @NSManaged public var id: UUID?
     @NSManaged public var title: String?

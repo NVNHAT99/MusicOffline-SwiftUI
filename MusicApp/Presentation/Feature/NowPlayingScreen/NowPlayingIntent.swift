@@ -18,4 +18,7 @@ enum NowPlayingIntent {
     // hour minute second
     case setSleepTime(Double, Double, Double)
     case cancelSleepTime
+    // Lyrics
+    case toggleLyrics
+    case lyricsLoaded([LyricsLine])
 }

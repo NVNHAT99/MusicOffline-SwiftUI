@@ -10,6 +10,7 @@ import Foundation
 struct LibaryViewState {
     var isLoading: Bool = false
     var playlist: [Playlist]
+    var smartPlaylists: [SmartPlaylist] = []
     var isShowToastView: Bool = false
     var toastViewMessage: String = String.empty
     var isShowAddPlaylist: Bool = false

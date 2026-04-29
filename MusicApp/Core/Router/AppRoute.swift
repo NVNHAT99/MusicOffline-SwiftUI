@@ -30,6 +30,12 @@ public enum AppRoute: Routable {
     // MARK: - Transfer Routes (from SettingRoute)
     case transferAudio
 
+    // MARK: - Smart Playlist
+    case smartPlaylistEditor(UUID?)
+
+    // MARK: - Equalizer
+    case equalizer
+
     // MARK: - Presentation Style
     public var presentationStyle: PresentationStyle {
         switch self {
@@ -55,6 +61,12 @@ public enum AppRoute: Routable {
             return .sheet
 
         case .transferAudio:
+            return .fullScreen
+
+        case .smartPlaylistEditor:
+            return .fullScreen
+
+        case .equalizer:
             return .fullScreen
         }
     }
@@ -84,6 +96,10 @@ public enum AppRoute: Routable {
             return "timerMenuSheet"
         case .transferAudio:
             return "transferAudio"
+        case .smartPlaylistEditor(let id):
+            return "smartPlaylistEditor-\(id?.uuidString ?? "new")"
+        case .equalizer:
+            return "equalizer"
         }
     }
 }
