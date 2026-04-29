@@ -199,6 +199,7 @@
 		BB0000090000000000000009 /* DIContainer+UseCases.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000090000000000000009 /* DIContainer+UseCases.swift */; };
 		C3D65CCB8E669FC7DA98AC1A /* ImportSongIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4AE660320701EFF25870E11 /* ImportSongIntent.swift */; };
 		C9B465B310FED0167DEFBB9E /* Pods_MusicAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9B00B927EFC063FE22AE283 /* Pods_MusicAppTests.framework */; };
+		CF7BE562569BE551A7A3DF5D /* TransferGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD02613E76E926831E25F20A /* TransferGuideView.swift */; };
 		F17FD3B5E627DD90C6C09E64 /* ReorderPlaylistSongsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7733F2577225D4C43B250DBE /* ReorderPlaylistSongsUseCase.swift */; };
 /* End PBXBuildFile section */
 
@@ -419,6 +420,7 @@
 		AA0000080000000000000008 /* NowPlayingFullPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingFullPlayerView.swift; sourceTree = "<group>"; };
 		AA0000090000000000000009 /* DIContainer+UseCases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DIContainer+UseCases.swift"; sourceTree = "<group>"; };
 		ADE2EF897317C0035D02654E /* ImportSongView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImportSongView.swift; path = ImportSong/ImportSongView.swift; sourceTree = "<group>"; };
+		BD02613E76E926831E25F20A /* TransferGuideView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransferGuideView.swift; sourceTree = "<group>"; };
 		D2FD7AC3B35A6650B598314E /* Pods-MusicApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MusicApp.debug.xcconfig"; path = "Target Support Files/Pods-MusicApp/Pods-MusicApp.debug.xcconfig"; sourceTree = "<group>"; };
 		D4AE660320701EFF25870E11 /* ImportSongIntent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImportSongIntent.swift; path = ImportSong/ImportSongIntent.swift; sourceTree = "<group>"; };
 		DB2F648D4590B1FFFF8B7CB2 /* Pods-MusicAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MusicAppTests.debug.xcconfig"; path = "Target Support Files/Pods-MusicAppTests/Pods-MusicAppTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -655,6 +657,7 @@
 				6417112A2F49C1C9005A40E4 /* TransferViewIntent.swift */,
 				6417112B2F49C1C9005A40E4 /* TransferViewModel.swift */,
 				6417112C2F49C1C9005A40E4 /* TransferViewState.swift */,
+				BD02613E76E926831E25F20A /* TransferGuideView.swift */,
 			);
 			path = TransferView;
 			sourceTree = "<group>";
@@ -1667,6 +1670,7 @@
 				C3D65CCB8E669FC7DA98AC1A /* ImportSongIntent.swift in Sources */,
 				2C629AF26D8559D561175686 /* ImportSongViewModel.swift in Sources */,
 				888B8D4090BEDF2D15A372B8 /* ImportSongView.swift in Sources */,
+				CF7BE562569BE551A7A3DF5D /* TransferGuideView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

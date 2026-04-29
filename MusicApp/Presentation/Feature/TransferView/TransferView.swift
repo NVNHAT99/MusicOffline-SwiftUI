@@ -10,18 +10,25 @@ import SwiftUI
 struct TransferView<ViewModel: TransferViewModelProtocol>: View {
     @StateObject private var viewModel: ViewModel
     let navigationHandler: Router<AppRoute>
+    @State private var showGuide = false
 
     init(viewModel: ViewModel, navigationHandler: Router<AppRoute>) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.navigationHandler = navigationHandler
     }
-    
+
     var body: some View {
         ZStack {
             Color.backgroundColor
                 .ignoresSafeArea()
             VStack {
-                CustomNavigationBar(type: .large(title: "Transfer"))
+                CustomNavigationBar(type: .custom(
+                    title: "Transfer",
+                    left: nil,
+                    right: .init(icon: "questionmark.circle", tintColor: .white, action: {
+                        showGuide = true
+                    })
+                ))
                 
                 
                 .foregroundStyle(.white)
@@ -111,6 +118,9 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
                 }
             }
         }// zstack
+        .fullScreenCover(isPresented: $showGuide) {
+            TransferGuideView(onDismiss: { showGuide = false })
+        }
     }
 }
 
