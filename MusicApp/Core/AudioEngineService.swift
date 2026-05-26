@@ -23,11 +23,15 @@ protocol AudioEngineProtocol: AnyObject {
 
 final class AVAudioPlayerEngineService: AudioEngineProtocol {
 
-    static let shared = AVAudioPlayerEngineService(eqService: EQService.shared)
+    static let shared = AVAudioPlayerEngineService(
+        eqService: EQService.shared,
+        effectsService: AudioEffectsService.shared
+    )
 
     private let engine      = AVAudioEngine()
     private let playerNode  = AVAudioPlayerNode()
     private let eqService: EQServiceProtocol
+    private let effectsService: AudioEffectsServiceProtocol
 
     private var audioFile: AVAudioFile?
     private(set) var currentURL: URL?
@@ -56,8 +60,9 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
         return Double(file.length) / file.processingFormat.sampleRate
     }
 
-    init(eqService: EQServiceProtocol) {
+    init(eqService: EQServiceProtocol, effectsService: AudioEffectsServiceProtocol) {
         self.eqService = eqService
+        self.effectsService = effectsService
         buildGraph()
         observeNotifications()
         do { try configureSessionIfNeeded() } catch { Logger.error("AudioSession setup failed: \(error)") }
@@ -65,11 +70,19 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
 
     // MARK: - Graph
 
+    /// Chain: player → timePitch → reverb → eq → mainMixer.
+    /// Effects nodes are attached up-front; runtime toggling uses `.bypass`
+    /// so the engine never has to stop (avoids audible pops).
     private func buildGraph() {
         engine.attach(playerNode)
+        engine.attach(effectsService.timePitchNode)
+        engine.attach(effectsService.reverbNode)
         engine.attach(eqService.eqNode)
-        engine.connect(playerNode, to: eqService.eqNode, format: nil)
-        engine.connect(eqService.eqNode, to: engine.mainMixerNode, format: nil)
+
+        engine.connect(playerNode,                  to: effectsService.timePitchNode, format: nil)
+        engine.connect(effectsService.timePitchNode, to: effectsService.reverbNode,   format: nil)
+        engine.connect(effectsService.reverbNode,    to: eqService.eqNode,            format: nil)
+        engine.connect(eqService.eqNode,             to: engine.mainMixerNode,        format: nil)
     }
 
     private func startEngineIfNeeded() throws {
@@ -97,11 +110,17 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
         sampleRate      = file.processingFormat.sampleRate
         seekOffsetFrames = 0
 
-        // Reconnect with the file's native format to avoid SRC artifacts
+        // Reconnect the whole chain with the file's native format to avoid SRC artifacts.
         engine.disconnectNodeInput(eqService.eqNode)
+        engine.disconnectNodeInput(effectsService.reverbNode)
+        engine.disconnectNodeInput(effectsService.timePitchNode)
         engine.disconnectNodeOutput(playerNode)
-        engine.connect(playerNode, to: eqService.eqNode, format: file.processingFormat)
-        engine.connect(eqService.eqNode, to: engine.mainMixerNode, format: file.processingFormat)
+
+        let fmt = file.processingFormat
+        engine.connect(playerNode,                  to: effectsService.timePitchNode, format: fmt)
+        engine.connect(effectsService.timePitchNode, to: effectsService.reverbNode,   format: fmt)
+        engine.connect(effectsService.reverbNode,    to: eqService.eqNode,            format: fmt)
+        engine.connect(eqService.eqNode,             to: engine.mainMixerNode,        format: fmt)
 
         try startEngineIfNeeded()
         scheduleFile(from: 0)
