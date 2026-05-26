@@ -68,27 +68,23 @@ final class HomeViewModel: HomeViewModelProtocol {
             Logger.debug("Fetching songs for home view")
 
             await MainActor.run {
-                state = reducer.reduce(state, with: .setLoadingRecentSongs(true))
                 state = reducer.reduce(state, with: .setLoadingPlaylist(true))
             }
 
-            Task {
-                do {
-                    Logger.debug("Fetching recent playlist")
-                    let playlistRecentID = RecentSongsManager.fetchRecentPlaylists()
-                    let recentPlaylist = try await fetchPlaylistUseCase.excute(with: playlistRecentID)
-                    let mockData = try await fetchPlaylistUseCase.executeGetAll(sortBy: .nameAscending)
-                    Logger.debug("Recent playlist ID: \(playlistRecentID)")
-                    Logger.debug("Mock data count: \(mockData.count)")
-                    await MainActor.run {
-                        state = reducer.reduce(state, with: .setPlaylists(recentPlaylist))
-                    }
-                    Logger.info("Loaded recent playlist successfully")
-                } catch {
-                    Logger.error("Failed to fetch recent playlist: \(error)")
-                    await MainActor.run {
-                        state = reducer.reduce(state, with: .setLoadingPlaylist(false))
-                    }
+            do {
+                Logger.debug("Fetching recent playlist")
+                let playlistRecentID = RecentSongsManager.fetchRecentPlaylists()
+                let recentPlaylist = try await fetchPlaylistUseCase.excute(with: playlistRecentID)
+                Logger.debug("Recent playlist ID: \(playlistRecentID)")
+                await MainActor.run {
+                    // setPlaylists action auto-clears isLoadingPlaylist via the reducer.
+                    state = reducer.reduce(state, with: .setPlaylists(recentPlaylist))
+                }
+                Logger.info("Loaded recent playlist successfully")
+            } catch {
+                Logger.error("Failed to fetch recent playlist: \(error)")
+                await MainActor.run {
+                    state = reducer.reduce(state, with: .setLoadingPlaylist(false))
                 }
             }
 

@@ -58,7 +58,7 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
     
     @ViewBuilder
     private func albumSection() -> some View {
-        if viewModel.state.isLoadingRecentSongs {
+        if viewModel.state.isLoadingPlaylist {
             skeletonView()
         } else if viewModel.state.albums.isEmpty {
             Text("Hiện tại chưa có album nào")
@@ -83,7 +83,7 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
     
     @ViewBuilder
     private func playlistSection() -> some View {
-        if viewModel.state.isLoadingRecentSongs {
+        if viewModel.state.isLoadingPlaylist {
             skeletonView()
         } else if viewModel.state.playlists.isEmpty {
             Text("There are no recently played playlists.")
