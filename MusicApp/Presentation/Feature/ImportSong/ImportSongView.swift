@@ -13,7 +13,10 @@ struct DocumentPickerView: UIViewControllerRepresentable {
     private static let supportedTypes: [UTType] = [
         .audio,
         UTType(filenameExtension: "flac") ?? .audio,
-        UTType(filenameExtension: "ogg") ?? .audio
+        UTType(filenameExtension: "ogg") ?? .audio,
+        // .lrc lyrics — routed into LyricsRepository inside ImportSongFromFilesUseCase
+        UTType(filenameExtension: "lrc") ?? .plainText,
+        .plainText
     ]
 
     func makeCoordinator() -> Coordinator { Coordinator(onPick: onPick) }
@@ -48,12 +51,17 @@ struct ImportSongView<ViewModel: ImportSongViewModelProtocol>: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
-            if viewModel.state.isImporting {
-                progressView()
-            } else {
-                importButton()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                CloudImportGuideContent()
+
+                if viewModel.state.isImporting {
+                    progressView()
+                } else {
+                    importButton()
+                }
             }
+            .padding(20)
         }
         .sheet(isPresented: $showPicker) {
             DocumentPickerView { urls in
@@ -75,12 +83,13 @@ struct ImportSongView<ViewModel: ImportSongViewModelProtocol>: View {
             HStack(spacing: 8) {
                 Image(systemName: "square.and.arrow.down")
                 Text("Import from Files")
+                    .fontWeight(.semibold)
             }
             .foregroundColor(.white)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 10)
-            .background(Color.gray.opacity(0.3))
-            .cornerRadius(10)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(Color.cyan)
+            .cornerRadius(12)
         }
     }
 
