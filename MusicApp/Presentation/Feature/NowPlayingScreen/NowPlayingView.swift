@@ -19,9 +19,10 @@ struct NowPlayingView<ViewModel: NowPlayingViewModelProtocol>: View {
     }
 
     var body: some View {
-        VStack {
-            Spacer()
+        Group {
             if !isExpanded {
+                // Mini bar wants to size to its own content, not push to bottom
+                // — its parent (MainTabView) positions it above the tab bar.
                 NowPlayingMiniPlayerView(
                     viewModel: viewModel,
                     uiImage: uiImage,
@@ -36,10 +37,10 @@ struct NowPlayingView<ViewModel: NowPlayingViewModelProtocol>: View {
                     isExpanded: $isExpanded
                 )
                 .environmentObject(router)
+                .background(Color.backgroundColor.ignoresSafeArea())
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .background(Color.backgroundColor)
         .animation(.spring(response: 0.6, dampingFraction: 0.8), value: isExpanded)
         .task { await loadArtwork() }
         .onChange(of: viewModel.state.currentSong) { _, _ in

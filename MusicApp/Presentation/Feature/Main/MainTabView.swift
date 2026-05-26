@@ -11,7 +11,9 @@ import SwiftUI
 struct MainTabView: View {
     @State var currentTab: MainTab = .home
     @State private var bottomSafeArea: CGFloat = 0
+    @State private var isNowPlayingExpanded: Bool = false
     @StateObject private var router = Router<AppRoute>()
+    @StateObject private var nowPlayingViewModel = NowPlayingViewModel()
     @EnvironmentObject var container: DIContainer
 
     init() {
@@ -20,38 +22,52 @@ struct MainTabView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            TabView(selection: $currentTab) {
-                // Home Tab
-                HomeView(
-                    viewModel: container.makeHomeViewModel(),
-                    onPlaylistTap: { playlist in
-                        router.route(to: .playlistDetail(id: playlist.id))
-                    }
-                )
-                .tag(MainTab.home)
+        ZStack(alignment: .bottom) {
+            // Main tab content + custom tab bar
+            VStack(spacing: 0) {
+                TabView(selection: $currentTab) {
+                    HomeView(
+                        viewModel: container.makeHomeViewModel(),
+                        onPlaylistTap: { playlist in
+                            router.route(to: .playlistDetail(id: playlist.id))
+                        }
+                    )
+                    .tag(MainTab.home)
 
-                // Library Tab
-                LibaryView(handler: container.makeLibaryViewViewModel())
-                .tag(MainTab.playlist)
+                    LibaryView(handler: container.makeLibaryViewViewModel())
+                        .tag(MainTab.playlist)
 
-                // Transfer Tab
-                TransferView(
-                    viewModel: container.makeTransferViewModel(),
-                    navigationHandler: router
-                )
-                .tag(MainTab.transfer)
+                    TransferView(
+                        viewModel: container.makeTransferViewModel(),
+                        navigationHandler: router
+                    )
+                    .tag(MainTab.transfer)
 
-                // Setting Tab
-                SettingView(viewModel: container.makeSettingViewModel())
-                .tag(MainTab.setting)
+                    SettingView(viewModel: container.makeSettingViewModel())
+                        .tag(MainTab.setting)
+                }
+                .animation(.easeInOut, value: currentTab)
+
+                customTabBar
             }
-            .animation(.easeInOut, value: currentTab) // Smooth tab transition
 
-            customTabBar
+            // Mini + full player coordinator. Visible only when a song is loaded.
+            // NowPlayingView already handles artwork loading + mini↔full swap.
+            if nowPlayingViewModel.state.currentSong != nil {
+                NowPlayingView(
+                    isExpanded: $isNowPlayingExpanded,
+                    viewModel: nowPlayingViewModel
+                )
+                .environmentObject(router)
+                .padding(.bottom, isNowPlayingExpanded ? 0 : max(96, 96 + bottomSafeArea - 10))
+                .padding(.horizontal, isNowPlayingExpanded ? 0 : 8)
+                .ignoresSafeArea(.all, edges: isNowPlayingExpanded ? .all : [])
+                .zIndex(50)
+            }
         }
         .ignoresSafeArea(.all, edges: .bottom)
         .environmentObject(router)
+        .animation(.spring(response: 0.45, dampingFraction: 0.85), value: isNowPlayingExpanded)
         .onAppear {
             router.factory = container
             updateSafeArea()
@@ -63,8 +79,11 @@ struct MainTabView: View {
             guard let tab = notif.object as? MainTab else { return }
             router.popToRoot()
             currentTab = tab
+            // Switching tabs while the full player is open is jarring — collapse.
+            if isNowPlayingExpanded { isNowPlayingExpanded = false }
         }
     }
+
 
     private func updateSafeArea() {
         guard let window = UIApplication.shared.connectedScenes
