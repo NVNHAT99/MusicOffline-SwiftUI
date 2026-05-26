@@ -70,6 +70,18 @@ extension DIContainer: ViewFactory {
         // Equalizer
         case .equalizer:
             makeEqualizerView(router: router)
+
+        // Audio Editor
+        case .audioEditor(let sourceURL, let title):
+            makeAudioEditorView(sourceURL: sourceURL, title: title)
+
+        // URL Download
+        case .urlDownload:
+            UrlDownloadView()
+
+        // Import Hub
+        case .importHub:
+            ImportHubView()
         }
     }
 }
@@ -187,6 +199,13 @@ extension DIContainer {
         return EqualizerView(viewModel: viewModel)
     }
 
+    // MARK: - Audio Editor
+    @MainActor
+    private func makeAudioEditorView(sourceURL: URL, title: String) -> some View {
+        let viewModel = AudioEditorViewModel(sourceURL: sourceURL, originalTitle: title)
+        return AudioEditorView(viewModel: viewModel)
+    }
+
     // MARK: - Smart Playlist Editor
     @MainActor
     private func makeSmartPlaylistEditorView(playlistId: UUID?, router: any BaseRouterProtocol) -> some View {
@@ -274,8 +293,16 @@ extension DIContainer {
     // MARK: - Now Playing
     @MainActor
     func makeNowPlayingViewModel() -> NowPlayingViewModel {
+        // Share one LyricsRepository across all three lyrics use cases so the in-memory
+        // normalized-stem index stays consistent across the Import flow and the NowPlaying
+        // Attach/Paste/Remove flow. Without this, each use case rebuilds its own index at
+        // init time and a .lrc added by one flow is invisible to the others until app restart.
+        let lyricsRepo = useCases.lyricsRepository
         return NowPlayingViewModel(
-            playerManager: PlayerManager.shared
+            playerManager: PlayerManager.shared,
+            fetchLyricsUseCase: useCases.fetchLyricsUseCase,
+            attachLyricsUseCase: AttachLyricsToSongUseCase(repository: lyricsRepo),
+            removeLyricsUseCase: RemoveLyricsUseCase(repository: lyricsRepo)
         )
     }
 

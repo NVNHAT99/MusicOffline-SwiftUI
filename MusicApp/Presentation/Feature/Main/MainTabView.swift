@@ -59,6 +59,11 @@ struct MainTabView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             updateSafeArea()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .switchMainTab)) { notif in
+            guard let tab = notif.object as? MainTab else { return }
+            router.popToRoot()
+            currentTab = tab
+        }
     }
 
     private func updateSafeArea() {

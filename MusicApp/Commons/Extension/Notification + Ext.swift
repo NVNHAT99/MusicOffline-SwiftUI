@@ -9,4 +9,6 @@ import Foundation
 
 extension Notification.Name {
     static let openPlaylistDetail = Notification.Name("openPlaylistDetail")
+    /// Posted with `object: MainTab` to request a tab switch from anywhere in the app.
+    static let switchMainTab = Notification.Name("switchMainTab")
 }

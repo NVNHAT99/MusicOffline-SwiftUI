@@ -36,6 +36,15 @@ public enum AppRoute: Routable {
     // MARK: - Equalizer
     case equalizer
 
+    // MARK: - Audio Editor
+    case audioEditor(sourceURL: URL, title: String)
+
+    // MARK: - URL Download
+    case urlDownload
+
+    // MARK: - Import Hub
+    case importHub
+
     // MARK: - Presentation Style
     public var presentationStyle: PresentationStyle {
         switch self {
@@ -68,6 +77,15 @@ public enum AppRoute: Routable {
 
         case .equalizer:
             return .fullScreen
+
+        case .audioEditor:
+            return .fullScreen
+
+        case .urlDownload:
+            return .sheet
+
+        case .importHub:
+            return .sheet
         }
     }
 
@@ -100,6 +118,12 @@ public enum AppRoute: Routable {
             return "smartPlaylistEditor-\(id?.uuidString ?? "new")"
         case .equalizer:
             return "equalizer"
+        case .audioEditor(let url, _):
+            return "audioEditor-\(url.lastPathComponent)"
+        case .urlDownload:
+            return "urlDownload"
+        case .importHub:
+            return "importHub"
         }
     }
 }

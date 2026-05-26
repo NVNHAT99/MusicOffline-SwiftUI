@@ -69,7 +69,12 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
     private func generalSection() -> some View {
         Section(header: Text("General").foregroundColor(.gray)) {
             SettingRowView(title: "Transfer MP3 Files") {
-                router.route(to: .transferAudio)
+                // Switch to the dedicated Transfer tab instead of pushing TransferView
+                // onto Settings' nav stack — the destination has no back chrome.
+                NotificationCenter.default.post(name: .switchMainTab, object: MainTab.transfer)
+            }
+            SettingRowView(title: "Download from URL") {
+                router.route(to: .urlDownload)
             }
             SettingRowView(title: "Equalizer") {
                 router.route(to: .equalizer)

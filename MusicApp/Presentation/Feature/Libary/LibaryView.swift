@@ -85,34 +85,36 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
                 .padding(.horizontal, 16)
             }
 
-            // FAB menu
+            // FAB — single button opens menu with two playlist creation modes
             VStack {
                 Spacer()
                 HStack {
                     Spacer()
-                    VStack(spacing: 12) {
+                    Menu {
                         Button {
-                            router.route(to: .smartPlaylistEditor(UUID?.none))
+                            router.route(to: .importHub)
                         } label: {
-                            Image(systemName: "wand.and.stars")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 20, height: 20)
-                                .foregroundColor(.white)
-                                .padding(12)
-                                .background(Circle().fill(Color.purple).shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3))
+                            Label("Add Music…", systemImage: "square.and.arrow.down")
                         }
+                        Divider()
                         Button {
                             router.route(to: .addNewPlaylist)
                         } label: {
-                            Image(systemName: "plus")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 24, height: 24)
-                                .foregroundColor(.white)
-                                .padding(12)
-                                .background(Circle().fill(Color.cyan).shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3))
+                            Label("New Playlist", systemImage: "music.note.list")
                         }
+                        Button {
+                            router.route(to: .smartPlaylistEditor(UUID?.none))
+                        } label: {
+                            Label("New Smart Playlist", systemImage: "wand.and.stars")
+                        }
+                    } label: {
+                        Image(systemName: "plus")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(.white)
+                            .padding(14)
+                            .background(Circle().fill(Color.cyan).shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3))
                     }
                     .padding()
                 }
