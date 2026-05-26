@@ -3,80 +3,80 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0448DD7B2526902A91730C7716540C21 /* GCDWebServerFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E46140A24E3D4D770FCF138F9A5F0352 /* GCDWebServerFileResponse.m */; };
-		15261825D80A8A91E9D231D72BFD31B4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA1C1073651CD11E5EAFB9310ADE83E /* MobileCoreServices.framework */; };
-		16ACD4FA4668704E4E95335E4CF5CA9D /* GCDWebServerFileResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A7EB694158FDFA90C9A09C33BA0336D /* GCDWebServerFileResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1F2737B63C8A8FB6F0D7F3127149FC5A /* GCDWebServer-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5879E3BF62E3E6F5DA4C5B5D8A925752 /* GCDWebServer-dummy.m */; };
-		2141FC98FB066A7CEDC05BB4DCCF2FEF /* GCDWebServerRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBB6B9874548911D76CAEBC8861C2FC /* GCDWebServerRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		259EBE1BD0AD16F3FFD71CBB18B00331 /* GCDWebServerStreamedResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = DDE41377AA37A8F1B9B758179C7924DC /* GCDWebServerStreamedResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2E25B9564E33FF70EA913AF204AD684C /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4F7922258564FAF3EA4B49A3FB956DCA /* GCDWebUploader.bundle */; };
-		2EA981CFD90B53CF01B5DC998824959F /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1968F273E7DCCB0A13D8D7DC585631B0 /* GCDWebUploader.m */; };
-		324FD2E4B0D4175BD93084C85A50D554 /* GCDWebServerErrorResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 447F4CD0B2B678D0DD84210A27411004 /* GCDWebServerErrorResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		32ACFEA4BC4874E9A122F83AC3268DE2 /* Pods-MusicApp-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B29D62E13F1F5820441E85FEDE085DFD /* Pods-MusicApp-dummy.m */; };
-		3344C4811991A4D40DAB26125F90B85B /* GCDWebUploader.h in Headers */ = {isa = PBXBuildFile; fileRef = 697E21734D492E01752F7113497ED3AE /* GCDWebUploader.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		41715F9989A0BA611D4884C6E9822237 /* GCDWebServerFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B0EBCB1D9AFB3A3667CCE51FCB8A23 /* GCDWebServerFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		471A1958BDC39BCFCD34F09E2569705C /* GCDWebServerDataResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = B435AD2F2146821543736A9F3F00CA95 /* GCDWebServerDataResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4BEA0A6C635803CF733B5A7868625AC4 /* GCDWebServerFileRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = D7EA88C721481F951B18565F2AB76FD2 /* GCDWebServerFileRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4E2E7B727BFCC6BB797AE8E6ABC1DDF3 /* Pods-MusicApp-MusicAppUITests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B7F9514C4BC42EE68F4541DBA161779 /* Pods-MusicApp-MusicAppUITests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		51F402F95127D8DC81FED635A5322C7F /* GCDWebServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = B830A57E3623AB8AFC628B57F91E00C4 /* GCDWebServerConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		54155CA478006561BCFABA3112B6C210 /* GCDWebServerMultiPartFormRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A424A41A9A3A5FAD0543837A95202FCC /* GCDWebServerMultiPartFormRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		613ED4B45F83A109D9C84C87E667349A /* GCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 51F13490FE63C9C0B373530A5A4C13C3 /* GCDWebServerStreamedResponse.m */; };
-		6508C47B9120286B1C8766A03844FDA9 /* GCDWebServerURLEncodedFormRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 055A4B3980B47886ABA6BB291ADB420D /* GCDWebServerURLEncodedFormRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6560CCF3D8750BB43D9E6206B7B316B6 /* Pods-MusicAppTests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 02D94E56D549BFFEE5DFFAD10CA2C1F4 /* Pods-MusicAppTests-dummy.m */; };
-		66F23F10F5A454A2CC8618C01CF20BD2 /* GCDWebServerFileRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 840EEB90348804EDEAFB2E9940A655F2 /* GCDWebServerFileRequest.m */; };
-		79F575B528312277F56165E69A9C6728 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = AC5F8564F0789C52D4EA4E14D91AD5E6 /* GCDWebServer.m */; };
-		828DD96538AC17EDEEBCBB3D9F58F796 /* Pods-MusicAppTests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A08DDC500EABEA258A4ED2F6B721C6E /* Pods-MusicAppTests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		88A202D7E4229DC9EDBF3E14A6E25E5F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B6C337B2521A9490D4D3EE3BD254BF6 /* CFNetwork.framework */; };
-		8A010DD30B9DF5DA8F110BCF01EFE98B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AD210561E5EB6E0EF29007A69CB494B /* Foundation.framework */; };
-		8A4B8C2F0752536996BF4002FA74A1FC /* GCDWebServerResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B01BC652F1BF246B8C12A6A623CDB75 /* GCDWebServerResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8D394FE94040FB5ECDF97F1908468FDA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AD210561E5EB6E0EF29007A69CB494B /* Foundation.framework */; };
-		8E187A88314E7A2CCCB1EB1B88C688A8 /* GCDWebServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 25B05828948E502ABF07DB4A423923E0 /* GCDWebServer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		95CE010CEB885F32B736DD1704B8B2BC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AD210561E5EB6E0EF29007A69CB494B /* Foundation.framework */; };
-		971EC1495D2A5E8C08BD4BB414352BEF /* GCDWebServerDataRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 48547B1C543AD662C1016E3FD6D2D319 /* GCDWebServerDataRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C2466CFC697DAFC5B50E753DD3CB3741 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 23B696C71EC2D7014F168E50CC3CBE50 /* GCDWebServerConnection.m */; };
-		C7F169FEEDFE1EC4A153F9F4D2E62301 /* GCDWebServer-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = FD3F472D8F01B41EC28DD5DF4A1A584D /* GCDWebServer-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C87562AF0B7E738B8141444B79891BDB /* GCDWebServerMultiPartFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B0142CB02C84016C3F668B1586C91408 /* GCDWebServerMultiPartFormRequest.m */; };
-		CBEFFA1107C318E2155A97D90043050A /* GCDWebServerDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FEECEC98014A2E7A4FA1AF05C2D840F /* GCDWebServerDataRequest.m */; };
-		D62FF5AA9D31713B4CFA1E74B79EDA58 /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 55C77F97FCBCC7DE392101FCB05902C6 /* GCDWebServerErrorResponse.m */; };
-		D80A8416C44FE65DA9C1DDFC3564A066 /* GCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = AAF5FE62CD50EFA86F080C43B8588277 /* GCDWebServerFunctions.m */; };
-		D8AE83EE04F6D94AD356076AA377D9B7 /* Pods-MusicApp-MusicAppUITests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E840E1DE1D9C28625FF8883DBAF1030 /* Pods-MusicApp-MusicAppUITests-dummy.m */; };
-		E21081F91F2C7045BC3E4D7BC90A63F7 /* GCDWebServerHTTPStatusCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FBC139B31F01FB871AA70F25CC110B /* GCDWebServerHTTPStatusCodes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E214FA0961943AE032C69AC7B1347C62 /* Pods-MusicApp-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = AF0A5712641F172103575E7D9508C2E0 /* Pods-MusicApp-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E4C4AA36A9AA3325F9DFA9BC51B828D5 /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 70863C638D9063803F973FB7FECA4D8D /* GCDWebServerRequest.m */; };
-		E5D11A8B7ADE9F5943DC1EFBE5258679 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AD210561E5EB6E0EF29007A69CB494B /* Foundation.framework */; };
-		E7770733A8879299F38BDEA7610CE031 /* GCDWebServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 867598BBF9637778BAB1C50B12564EB9 /* GCDWebServerResponse.m */; };
-		EA52BD2B1557995F50DE0E05BC001F3E /* GCDWebServerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 591A5CA3B29966019A93E672E538D31C /* GCDWebServerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F015BFB4332D052B89A740462D9D8370 /* GCDWebServerURLEncodedFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5689702FEB840A71EF127FDE3F03A27C /* GCDWebServerURLEncodedFormRequest.m */; };
-		F02968BAC97DD778019F8C9C2E6924E6 /* GCDWebServerDataResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 839E8E46A97C2B19378897C68C4A8004 /* GCDWebServerDataResponse.m */; };
+		10B0892B26B115F6B446324E61B050EA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE600BF3A9006548A678BA55CD2B374D /* Foundation.framework */; };
+		1EB9388790CD6D47A6E8619D0CC62F03 /* Pods-MusicApp-MusicAppUITests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E840E1DE1D9C28625FF8883DBAF1030 /* Pods-MusicApp-MusicAppUITests-dummy.m */; };
+		1F036A7C812213F0DC91861C71FA8B39 /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4F7922258564FAF3EA4B49A3FB956DCA /* GCDWebUploader.bundle */; };
+		2BC680B3667BCF1A05D0B7B30E031F47 /* GCDWebServerDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FEECEC98014A2E7A4FA1AF05C2D840F /* GCDWebServerDataRequest.m */; };
+		30CF1CD08343B509239309DFD18FE874 /* GCDWebServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = B830A57E3623AB8AFC628B57F91E00C4 /* GCDWebServerConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		30FA2F70B5697ED2877DDA770601E3D9 /* GCDWebServerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 591A5CA3B29966019A93E672E538D31C /* GCDWebServerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		344583E21BD72AE1BE0000B7B3A29933 /* Pods-MusicApp-MusicAppUITests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B7F9514C4BC42EE68F4541DBA161779 /* Pods-MusicApp-MusicAppUITests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3553B55CCD912B6F1915A4CE46136B43 /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 70863C638D9063803F973FB7FECA4D8D /* GCDWebServerRequest.m */; };
+		3C09E0B89E708CD8D8F2B59907EB88BF /* GCDWebServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 25B05828948E502ABF07DB4A423923E0 /* GCDWebServer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43D7C2B8511A7F54FBBFD37705B1CB9E /* GCDWebServerResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B01BC652F1BF246B8C12A6A623CDB75 /* GCDWebServerResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B97B25CBDF60F7C1457F1A27E96A757 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE600BF3A9006548A678BA55CD2B374D /* Foundation.framework */; };
+		5C5C54290F7BB5247000D29275053CEC /* GCDWebServerMultiPartFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B0142CB02C84016C3F668B1586C91408 /* GCDWebServerMultiPartFormRequest.m */; };
+		62403AC11A9935D22B7DF3E04C52BA3B /* Pods-MusicAppTests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A08DDC500EABEA258A4ED2F6B721C6E /* Pods-MusicAppTests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		71EB4F3D2F3BBF85AA81E37F2E840494 /* Pods-MusicApp-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B29D62E13F1F5820441E85FEDE085DFD /* Pods-MusicApp-dummy.m */; };
+		71F4FC6ACD0D6118E657A67B3FAF6ECB /* GCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 51F13490FE63C9C0B373530A5A4C13C3 /* GCDWebServerStreamedResponse.m */; };
+		7A12130A5EFF65D1A25BEF8A4CBCF4D5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE600BF3A9006548A678BA55CD2B374D /* Foundation.framework */; };
+		7D4EA265B7F1FBCE6C609D375B48C691 /* GCDWebServerHTTPStatusCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FBC139B31F01FB871AA70F25CC110B /* GCDWebServerHTTPStatusCodes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		835FF8F4F6680D6D6DD48B92139B1615 /* GCDWebServerDataResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = B435AD2F2146821543736A9F3F00CA95 /* GCDWebServerDataResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		84595C3A7376FEAAD778CFB1304E8D5F /* GCDWebUploader.h in Headers */ = {isa = PBXBuildFile; fileRef = 697E21734D492E01752F7113497ED3AE /* GCDWebUploader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		84CFC86A97F5EE8CC8FFFF7C989FF1CE /* GCDWebServerFileRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 840EEB90348804EDEAFB2E9940A655F2 /* GCDWebServerFileRequest.m */; };
+		8CA4DE59C012E16D4C6426FEA686A8A1 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = AC5F8564F0789C52D4EA4E14D91AD5E6 /* GCDWebServer.m */; };
+		8DDE6F630F0508E5868D09514A93B1E0 /* GCDWebServerURLEncodedFormRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 055A4B3980B47886ABA6BB291ADB420D /* GCDWebServerURLEncodedFormRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		95E6E00D64A2E71DE454C6B7701E4E86 /* GCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = AAF5FE62CD50EFA86F080C43B8588277 /* GCDWebServerFunctions.m */; };
+		96C6DBA5F9BD4017B0634FE42CB1B744 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC45E7524341B651F7B00597C13164BD /* CFNetwork.framework */; };
+		9AD3D4537B9C92CC17A46EA99FEA371B /* Pods-MusicApp-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = AF0A5712641F172103575E7D9508C2E0 /* Pods-MusicApp-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9FB7E53569A5BF6CDA34B419E1189B42 /* GCDWebServerErrorResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 447F4CD0B2B678D0DD84210A27411004 /* GCDWebServerErrorResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A7D441F614CCA1CF0C52808698A59DFE /* Pods-MusicAppTests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 02D94E56D549BFFEE5DFFAD10CA2C1F4 /* Pods-MusicAppTests-dummy.m */; };
+		AC8C64DEA9593E2FCA272C785D3D37DD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE600BF3A9006548A678BA55CD2B374D /* Foundation.framework */; };
+		AD5D97FAD80E2153556D8F290D3D8431 /* GCDWebServerFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B0EBCB1D9AFB3A3667CCE51FCB8A23 /* GCDWebServerFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B2864ACC250B56428F970FAB7F63CE93 /* GCDWebServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 867598BBF9637778BAB1C50B12564EB9 /* GCDWebServerResponse.m */; };
+		B4715ED91756C9A02C428F3462A51C63 /* GCDWebServerFileResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A7EB694158FDFA90C9A09C33BA0336D /* GCDWebServerFileResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B733E0FC40C30A15AF8191742E136546 /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 55C77F97FCBCC7DE392101FCB05902C6 /* GCDWebServerErrorResponse.m */; };
+		C04A61B370494F22C8DCC17F642205C9 /* GCDWebServerFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = E46140A24E3D4D770FCF138F9A5F0352 /* GCDWebServerFileResponse.m */; };
+		C269C4D153F5EC366CF474B3097F5C1D /* GCDWebServerDataRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 48547B1C543AD662C1016E3FD6D2D319 /* GCDWebServerDataRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C9131A9C8D3FF8C97141B800FDBACBD6 /* GCDWebServerDataResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 839E8E46A97C2B19378897C68C4A8004 /* GCDWebServerDataResponse.m */; };
+		CBC014D034C27AD113AE3606368A00FD /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1968F273E7DCCB0A13D8D7DC585631B0 /* GCDWebUploader.m */; };
+		CD9124B69E3838B62F277721F8786C6B /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 23B696C71EC2D7014F168E50CC3CBE50 /* GCDWebServerConnection.m */; };
+		D77234CB2A6D4DB5D61F7EF32A6F0858 /* GCDWebServerFileRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = D7EA88C721481F951B18565F2AB76FD2 /* GCDWebServerFileRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D88ED42D82B1641E41F2577F8BC5D68F /* GCDWebServerURLEncodedFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5689702FEB840A71EF127FDE3F03A27C /* GCDWebServerURLEncodedFormRequest.m */; };
+		D89B5C12B67D0249B76438C370C3E9FB /* GCDWebServer-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = FD3F472D8F01B41EC28DD5DF4A1A584D /* GCDWebServer-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D94577EADE45A4009A26E19CC12418EC /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 787F3D0773D066BC625A0E914BFC0556 /* MobileCoreServices.framework */; };
+		DFB457C790922C969F5AE1597D26FBE6 /* GCDWebServerStreamedResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = DDE41377AA37A8F1B9B758179C7924DC /* GCDWebServerStreamedResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DFC2E18E203A6A67B1BA8D61D3F6EF16 /* GCDWebServerRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBB6B9874548911D76CAEBC8861C2FC /* GCDWebServerRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F1BD5727634B094FDDB180E1B16F39F8 /* GCDWebServer-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5879E3BF62E3E6F5DA4C5B5D8A925752 /* GCDWebServer-dummy.m */; };
+		F95BAEA7B2F738CA824B0AA42592A460 /* GCDWebServerMultiPartFormRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A424A41A9A3A5FAD0543837A95202FCC /* GCDWebServerMultiPartFormRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		4C032360E579F58B38305060436C1561 /* PBXContainerItemProxy */ = {
+		321176ABEF17E6FDB41FFC2E619E63E3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AD904F32069787EFB2DFFE05EB82F5BD;
+			remoteInfo = GCDWebServer;
+		};
+		859A7257D09DD78A37151EE3A4CE1549 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 3499DC067B0EBEA10AFE963EF9632638;
 			remoteInfo = "Pods-MusicApp";
 		};
-		7D28215D1A828D559EDF1676D324F7E7 /* PBXContainerItemProxy */ = {
+		D7FD8C000342D89A41208867DC714112 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = AD904F32069787EFB2DFFE05EB82F5BD;
 			remoteInfo = GCDWebServer;
 		};
-		95CB3B3E7530AAE3C49A57ECD3D58E40 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AD904F32069787EFB2DFFE05EB82F5BD;
-			remoteInfo = GCDWebServer;
-		};
-		EFA6C6F3EB73F2880E894E9E498EB725 /* PBXContainerItemProxy */ = {
+		E4FDA19E87E6EB92679A92AB9E85C7C6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
@@ -119,11 +119,10 @@
 		608A90C4DA86587C7F8742AFA201F15A /* Pods-MusicAppTests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-MusicAppTests.modulemap"; sourceTree = "<group>"; };
 		62C0C560F5A28EF7B58C26EC60FED655 /* GCDWebServer-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "GCDWebServer-prefix.pch"; sourceTree = "<group>"; };
 		697E21734D492E01752F7113497ED3AE /* GCDWebUploader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GCDWebUploader.h; path = GCDWebUploader/GCDWebUploader.h; sourceTree = "<group>"; };
-		6B6C337B2521A9490D4D3EE3BD254BF6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		70863C638D9063803F973FB7FECA4D8D /* GCDWebServerRequest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GCDWebServerRequest.m; path = GCDWebServer/Core/GCDWebServerRequest.m; sourceTree = "<group>"; };
 		71FBC139B31F01FB871AA70F25CC110B /* GCDWebServerHTTPStatusCodes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GCDWebServerHTTPStatusCodes.h; path = GCDWebServer/Core/GCDWebServerHTTPStatusCodes.h; sourceTree = "<group>"; };
 		75FBA19EC620034FC4AAB2D84BAE5A27 /* Pods-MusicApp-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-MusicApp-acknowledgements.markdown"; sourceTree = "<group>"; };
-		7AD210561E5EB6E0EF29007A69CB494B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		787F3D0773D066BC625A0E914BFC0556 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		7EF5B8409063C2994DB8239A8DAD0112 /* Pods-MusicAppTests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-MusicAppTests-Info.plist"; sourceTree = "<group>"; };
 		839E8E46A97C2B19378897C68C4A8004 /* GCDWebServerDataResponse.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GCDWebServerDataResponse.m; path = GCDWebServer/Responses/GCDWebServerDataResponse.m; sourceTree = "<group>"; };
 		840EEB90348804EDEAFB2E9940A655F2 /* GCDWebServerFileRequest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GCDWebServerFileRequest.m; path = GCDWebServer/Requests/GCDWebServerFileRequest.m; sourceTree = "<group>"; };
@@ -131,21 +130,22 @@
 		8CFEE6A96CCB144740B4DFB58BEB075F /* Pods-MusicApp-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-MusicApp-acknowledgements.plist"; sourceTree = "<group>"; };
 		8D19C6FEED41DA895DFC34696CC0F9C3 /* Pods-MusicApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MusicApp.release.xcconfig"; sourceTree = "<group>"; };
 		9A7EB694158FDFA90C9A09C33BA0336D /* GCDWebServerFileResponse.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GCDWebServerFileResponse.h; path = GCDWebServer/Responses/GCDWebServerFileResponse.h; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		A19184921086CC09B6A77BCF7881C35A /* Pods-MusicApp-MusicAppUITests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-MusicApp-MusicAppUITests-acknowledgements.plist"; sourceTree = "<group>"; };
 		A424A41A9A3A5FAD0543837A95202FCC /* GCDWebServerMultiPartFormRequest.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GCDWebServerMultiPartFormRequest.h; path = GCDWebServer/Requests/GCDWebServerMultiPartFormRequest.h; sourceTree = "<group>"; };
 		AAF5FE62CD50EFA86F080C43B8588277 /* GCDWebServerFunctions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GCDWebServerFunctions.m; path = GCDWebServer/Core/GCDWebServerFunctions.m; sourceTree = "<group>"; };
 		AB7F3F6947A7EAAB1F94BCAFC6A0386C /* Pods-MusicApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MusicApp.debug.xcconfig"; sourceTree = "<group>"; };
+		AC45E7524341B651F7B00597C13164BD /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		AC5F8564F0789C52D4EA4E14D91AD5E6 /* GCDWebServer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GCDWebServer.m; path = GCDWebServer/Core/GCDWebServer.m; sourceTree = "<group>"; };
 		AF0A5712641F172103575E7D9508C2E0 /* Pods-MusicApp-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-MusicApp-umbrella.h"; sourceTree = "<group>"; };
 		B0142CB02C84016C3F668B1586C91408 /* GCDWebServerMultiPartFormRequest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GCDWebServerMultiPartFormRequest.m; path = GCDWebServer/Requests/GCDWebServerMultiPartFormRequest.m; sourceTree = "<group>"; };
 		B29D62E13F1F5820441E85FEDE085DFD /* Pods-MusicApp-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-MusicApp-dummy.m"; sourceTree = "<group>"; };
 		B435AD2F2146821543736A9F3F00CA95 /* GCDWebServerDataResponse.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GCDWebServerDataResponse.h; path = GCDWebServer/Responses/GCDWebServerDataResponse.h; sourceTree = "<group>"; };
-		B68C1052A3B51DBCF7D960F898AAFA95 /* GCDWebServer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GCDWebServer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B68C1052A3B51DBCF7D960F898AAFA95 /* GCDWebServer */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = GCDWebServer; path = GCDWebServer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B830A57E3623AB8AFC628B57F91E00C4 /* GCDWebServerConnection.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GCDWebServerConnection.h; path = GCDWebServer/Core/GCDWebServerConnection.h; sourceTree = "<group>"; };
 		BA22E675476397F11F02BCB91E34019E /* GCDWebServer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GCDWebServer.release.xcconfig; sourceTree = "<group>"; };
+		BE600BF3A9006548A678BA55CD2B374D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		BFBB6B9874548911D76CAEBC8861C2FC /* GCDWebServerRequest.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GCDWebServerRequest.h; path = GCDWebServer/Core/GCDWebServerRequest.h; sourceTree = "<group>"; };
-		CEA1C1073651CD11E5EAFB9310ADE83E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		D5BFFC94FBEB0BAF65C099D431E97D0F /* GCDWebServer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GCDWebServer.debug.xcconfig; sourceTree = "<group>"; };
 		D7EA88C721481F951B18565F2AB76FD2 /* GCDWebServerFileRequest.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GCDWebServerFileRequest.h; path = GCDWebServer/Requests/GCDWebServerFileRequest.h; sourceTree = "<group>"; };
 		DDE41377AA37A8F1B9B758179C7924DC /* GCDWebServerStreamedResponse.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GCDWebServerStreamedResponse.h; path = GCDWebServer/Responses/GCDWebServerStreamedResponse.h; sourceTree = "<group>"; };
@@ -162,37 +162,37 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0F993C55CFE5BEB0D1F566A2484C5994 /* Frameworks */ = {
+		1E0BB7EFBF766886B7958837CDA49946 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A010DD30B9DF5DA8F110BCF01EFE98B /* Foundation.framework in Frameworks */,
+				10B0892B26B115F6B446324E61B050EA /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1A94ED43F10F1D8937F59BED4671ECE8 /* Frameworks */ = {
+		2219A9BE79E66B7AAD77D7B3C438EDD0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95CE010CEB885F32B736DD1704B8B2BC /* Foundation.framework in Frameworks */,
+				AC8C64DEA9593E2FCA272C785D3D37DD /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5BF3FA34A8133CA8EC9314E2372E10B7 /* Frameworks */ = {
+		552FAB803D52A851540198AAD251CB80 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E5D11A8B7ADE9F5943DC1EFBE5258679 /* Foundation.framework in Frameworks */,
+				96C6DBA5F9BD4017B0634FE42CB1B744 /* CFNetwork.framework in Frameworks */,
+				7A12130A5EFF65D1A25BEF8A4CBCF4D5 /* Foundation.framework in Frameworks */,
+				D94577EADE45A4009A26E19CC12418EC /* MobileCoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9222E1F65B930E45914477F1F9DD1992 /* Frameworks */ = {
+		C4F0E9F79EE7C4F0FCCD0881444D043B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88A202D7E4229DC9EDBF3E14A6E25E5F /* CFNetwork.framework in Frameworks */,
-				8D394FE94040FB5ECDF97F1908468FDA /* Foundation.framework in Frameworks */,
-				15261825D80A8A91E9D231D72BFD31B4 /* MobileCoreServices.framework in Frameworks */,
+				5B97B25CBDF60F7C1457F1A27E96A757 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,7 +202,7 @@
 		03C5C200A0787E300053CFA8F53CA094 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				180F6D477E0A5C8DE9E6C44AF948E735 /* iOS */,
+				480422F6FA3B5288CD1DC4AECA35070D /* iOS */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -222,16 +222,6 @@
 			);
 			name = "Pods-MusicApp";
 			path = "Target Support Files/Pods-MusicApp";
-			sourceTree = "<group>";
-		};
-		180F6D477E0A5C8DE9E6C44AF948E735 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				6B6C337B2521A9490D4D3EE3BD254BF6 /* CFNetwork.framework */,
-				7AD210561E5EB6E0EF29007A69CB494B /* Foundation.framework */,
-				CEA1C1073651CD11E5EAFB9310ADE83E /* MobileCoreServices.framework */,
-			);
-			name = iOS;
 			sourceTree = "<group>";
 		};
 		1A122D1EAAAF9CB053C2BD0A471ED2D8 /* Pods-MusicApp-MusicAppUITests */ = {
@@ -264,6 +254,16 @@
 			);
 			name = "Support Files";
 			path = "../Target Support Files/GCDWebServer";
+			sourceTree = "<group>";
+		};
+		480422F6FA3B5288CD1DC4AECA35070D /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				AC45E7524341B651F7B00597C13164BD /* CFNetwork.framework */,
+				BE600BF3A9006548A678BA55CD2B374D /* Foundation.framework */,
+				787F3D0773D066BC625A0E914BFC0556 /* MobileCoreServices.framework */,
+			);
+			name = iOS;
 			sourceTree = "<group>";
 		};
 		676959A02B4E3B1864283369C23F98AE /* WebUploader */ = {
@@ -304,7 +304,7 @@
 		B0FEA0F4A9F465900522019E07B14CEB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B68C1052A3B51DBCF7D960F898AAFA95 /* GCDWebServer.framework */,
+				B68C1052A3B51DBCF7D960F898AAFA95 /* GCDWebServer */,
 				4C36CEE8E24176E7997DC3042FDD720B /* Pods-MusicApp */,
 				5931DBAC0FF3C194375AA106D0FA2017 /* Pods-MusicApp-MusicAppUITests */,
 				4F99313184E2CF31EF187D3DDE98B8C9 /* Pods-MusicAppTests */,
@@ -373,6 +373,7 @@
 				417EBAEF4D55034EA6152067B902EC39 /* Support Files */,
 				676959A02B4E3B1864283369C23F98AE /* WebUploader */,
 			);
+			name = GCDWebServer;
 			path = GCDWebServer;
 			sourceTree = "<group>";
 		};
@@ -389,51 +390,51 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		3E27F821CBE0F539BE5B7BE10F631F2F /* Headers */ = {
+		6F26B74318DC58445231234411853856 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E214FA0961943AE032C69AC7B1347C62 /* Pods-MusicApp-umbrella.h in Headers */,
+				9AD3D4537B9C92CC17A46EA99FEA371B /* Pods-MusicApp-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5D4652A50808D098B86A4D06F99F8E4E /* Headers */ = {
+		805B42D55F469C77928FB076B0ECF9EB /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E187A88314E7A2CCCB1EB1B88C688A8 /* GCDWebServer.h in Headers */,
-				C7F169FEEDFE1EC4A153F9F4D2E62301 /* GCDWebServer-umbrella.h in Headers */,
-				51F402F95127D8DC81FED635A5322C7F /* GCDWebServerConnection.h in Headers */,
-				971EC1495D2A5E8C08BD4BB414352BEF /* GCDWebServerDataRequest.h in Headers */,
-				471A1958BDC39BCFCD34F09E2569705C /* GCDWebServerDataResponse.h in Headers */,
-				324FD2E4B0D4175BD93084C85A50D554 /* GCDWebServerErrorResponse.h in Headers */,
-				4BEA0A6C635803CF733B5A7868625AC4 /* GCDWebServerFileRequest.h in Headers */,
-				16ACD4FA4668704E4E95335E4CF5CA9D /* GCDWebServerFileResponse.h in Headers */,
-				41715F9989A0BA611D4884C6E9822237 /* GCDWebServerFunctions.h in Headers */,
-				E21081F91F2C7045BC3E4D7BC90A63F7 /* GCDWebServerHTTPStatusCodes.h in Headers */,
-				54155CA478006561BCFABA3112B6C210 /* GCDWebServerMultiPartFormRequest.h in Headers */,
-				EA52BD2B1557995F50DE0E05BC001F3E /* GCDWebServerPrivate.h in Headers */,
-				2141FC98FB066A7CEDC05BB4DCCF2FEF /* GCDWebServerRequest.h in Headers */,
-				8A4B8C2F0752536996BF4002FA74A1FC /* GCDWebServerResponse.h in Headers */,
-				259EBE1BD0AD16F3FFD71CBB18B00331 /* GCDWebServerStreamedResponse.h in Headers */,
-				6508C47B9120286B1C8766A03844FDA9 /* GCDWebServerURLEncodedFormRequest.h in Headers */,
-				3344C4811991A4D40DAB26125F90B85B /* GCDWebUploader.h in Headers */,
+				344583E21BD72AE1BE0000B7B3A29933 /* Pods-MusicApp-MusicAppUITests-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7F58007A58A5A817F17AAD8B0B1F6420 /* Headers */ = {
+		BAFD3178E48D53D0E98E6612AC09B418 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				828DD96538AC17EDEEBCBB3D9F58F796 /* Pods-MusicAppTests-umbrella.h in Headers */,
+				3C09E0B89E708CD8D8F2B59907EB88BF /* GCDWebServer.h in Headers */,
+				D89B5C12B67D0249B76438C370C3E9FB /* GCDWebServer-umbrella.h in Headers */,
+				30CF1CD08343B509239309DFD18FE874 /* GCDWebServerConnection.h in Headers */,
+				C269C4D153F5EC366CF474B3097F5C1D /* GCDWebServerDataRequest.h in Headers */,
+				835FF8F4F6680D6D6DD48B92139B1615 /* GCDWebServerDataResponse.h in Headers */,
+				9FB7E53569A5BF6CDA34B419E1189B42 /* GCDWebServerErrorResponse.h in Headers */,
+				D77234CB2A6D4DB5D61F7EF32A6F0858 /* GCDWebServerFileRequest.h in Headers */,
+				B4715ED91756C9A02C428F3462A51C63 /* GCDWebServerFileResponse.h in Headers */,
+				AD5D97FAD80E2153556D8F290D3D8431 /* GCDWebServerFunctions.h in Headers */,
+				7D4EA265B7F1FBCE6C609D375B48C691 /* GCDWebServerHTTPStatusCodes.h in Headers */,
+				F95BAEA7B2F738CA824B0AA42592A460 /* GCDWebServerMultiPartFormRequest.h in Headers */,
+				30FA2F70B5697ED2877DDA770601E3D9 /* GCDWebServerPrivate.h in Headers */,
+				DFC2E18E203A6A67B1BA8D61D3F6EF16 /* GCDWebServerRequest.h in Headers */,
+				43D7C2B8511A7F54FBBFD37705B1CB9E /* GCDWebServerResponse.h in Headers */,
+				DFB457C790922C969F5AE1597D26FBE6 /* GCDWebServerStreamedResponse.h in Headers */,
+				8DDE6F630F0508E5868D09514A93B1E0 /* GCDWebServerURLEncodedFormRequest.h in Headers */,
+				84595C3A7376FEAAD778CFB1304E8D5F /* GCDWebUploader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C3E0210EDCF344A4C73ECDF618DA14C3 /* Headers */ = {
+		E00FB3A2B8A28006E4CAEBAA5C3CD45F /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4E2E7B727BFCC6BB797AE8E6ABC1DDF3 /* Pods-MusicApp-MusicAppUITests-umbrella.h in Headers */,
+				62403AC11A9935D22B7DF3E04C52BA3B /* Pods-MusicAppTests-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,17 +443,17 @@
 /* Begin PBXNativeTarget section */
 		332D3FF66DF3D6DEAA0CC272B1290B46 /* Pods-MusicApp-MusicAppUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E81BA8C2A493E752BD0C3AB759799C1F /* Build configuration list for PBXNativeTarget "Pods-MusicApp-MusicAppUITests" */;
+			buildConfigurationList = 6A662B32D0C140CD3D219939E8B9A659 /* Build configuration list for PBXNativeTarget "Pods-MusicApp-MusicAppUITests" */;
 			buildPhases = (
-				C3E0210EDCF344A4C73ECDF618DA14C3 /* Headers */,
-				54A1F4019745EE69D6BD5D9C018F112A /* Sources */,
-				5BF3FA34A8133CA8EC9314E2372E10B7 /* Frameworks */,
-				3E3A7A6604C13442594C5EBF640CBBC8 /* Resources */,
+				805B42D55F469C77928FB076B0ECF9EB /* Headers */,
+				6432D8711314E6938B4DA357C4C9518C /* Sources */,
+				2219A9BE79E66B7AAD77D7B3C438EDD0 /* Frameworks */,
+				2AE5E6DCDD43D16B25F9F2FD8F742DC7 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				8982C6AAF5DDEFB03ED11F80E290B72F /* PBXTargetDependency */,
+				9783EF0C3F6F8505A021764200E90F1B /* PBXTargetDependency */,
 			);
 			name = "Pods-MusicApp-MusicAppUITests";
 			productName = Pods_MusicApp_MusicAppUITests;
@@ -461,17 +462,17 @@
 		};
 		3499DC067B0EBEA10AFE963EF9632638 /* Pods-MusicApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 66302A806803333BFF04364998F90BAD /* Build configuration list for PBXNativeTarget "Pods-MusicApp" */;
+			buildConfigurationList = 3869A836F2397EE5666638A73E5987A3 /* Build configuration list for PBXNativeTarget "Pods-MusicApp" */;
 			buildPhases = (
-				3E27F821CBE0F539BE5B7BE10F631F2F /* Headers */,
-				AE9DC58141C30A0C90DE0720AF3C8FAC /* Sources */,
-				0F993C55CFE5BEB0D1F566A2484C5994 /* Frameworks */,
-				B36EA32F98E3EC186740EE433AAEC1CA /* Resources */,
+				6F26B74318DC58445231234411853856 /* Headers */,
+				EC311C2C7426063ACA6BF7C06833F9BE /* Sources */,
+				C4F0E9F79EE7C4F0FCCD0881444D043B /* Frameworks */,
+				0BC7D363D4944BD4A121E1E95577D8B9 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				7C0408DB425A049636DC135C1174AFC3 /* PBXTargetDependency */,
+				D8A5D4782D66826A34207D066890DB3E /* PBXTargetDependency */,
 			);
 			name = "Pods-MusicApp";
 			productName = Pods_MusicApp;
@@ -480,18 +481,18 @@
 		};
 		9ED2CBFF2F2E9B94BD18ECEA74C3D5AA /* Pods-MusicAppTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E4A2566B9E7F4D5F3305464CBE9377F9 /* Build configuration list for PBXNativeTarget "Pods-MusicAppTests" */;
+			buildConfigurationList = 6E6D73A759E3BEE6A7B396F1A42FF775 /* Build configuration list for PBXNativeTarget "Pods-MusicAppTests" */;
 			buildPhases = (
-				7F58007A58A5A817F17AAD8B0B1F6420 /* Headers */,
-				741E43D983A7E610961C6658EC5A97C2 /* Sources */,
-				1A94ED43F10F1D8937F59BED4671ECE8 /* Frameworks */,
-				5714583E0C3381A5C2E96DB661C01481 /* Resources */,
+				E00FB3A2B8A28006E4CAEBAA5C3CD45F /* Headers */,
+				4462F8DD3E3FA67A739AFE63524A6D91 /* Sources */,
+				1E0BB7EFBF766886B7958837CDA49946 /* Frameworks */,
+				5CA33A74EA576E9BCA41BE25C60EBC8C /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				08A47292D9B9EA1FDD17F5F4705946E8 /* PBXTargetDependency */,
-				4A9B5B32F429DC61DACEE797164B9461 /* PBXTargetDependency */,
+				FA21B08057EB407EC29085420C208393 /* PBXTargetDependency */,
+				829A974DF5B234F28D8858302BFCFC35 /* PBXTargetDependency */,
 			);
 			name = "Pods-MusicAppTests";
 			productName = Pods_MusicAppTests;
@@ -500,12 +501,12 @@
 		};
 		AD904F32069787EFB2DFFE05EB82F5BD /* GCDWebServer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3FBFFE97BFC3A7278B7FCCE077C7E8CE /* Build configuration list for PBXNativeTarget "GCDWebServer" */;
+			buildConfigurationList = 2EE827F2688605E9E76CED9222453B24 /* Build configuration list for PBXNativeTarget "GCDWebServer" */;
 			buildPhases = (
-				5D4652A50808D098B86A4D06F99F8E4E /* Headers */,
-				520E788A3092B8AA82510E132D9B9900 /* Sources */,
-				9222E1F65B930E45914477F1F9DD1992 /* Frameworks */,
-				57750CCFABE90F778792CCF357E3BE70 /* Resources */,
+				BAFD3178E48D53D0E98E6612AC09B418 /* Headers */,
+				95E0B3444FC4EF4A7B2726329A68A165 /* Sources */,
+				552FAB803D52A851540198AAD251CB80 /* Frameworks */,
+				E6ABC20BECB5BC71BD1886D3C352788A /* Resources */,
 			);
 			buildRules = (
 			);
@@ -513,7 +514,7 @@
 			);
 			name = GCDWebServer;
 			productName = GCDWebServer;
-			productReference = B68C1052A3B51DBCF7D960F898AAFA95 /* GCDWebServer.framework */;
+			productReference = B68C1052A3B51DBCF7D960F898AAFA95 /* GCDWebServer */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -522,11 +523,11 @@
 		BFDFE7DC352907FC980B868725387E98 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1300;
-				LastUpgradeCheck = 1300;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
-			compatibilityVersion = "Xcode 14.0";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -534,6 +535,8 @@
 				en,
 			);
 			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
+			minimizedProjectReferenceProxies = 0;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = B0FEA0F4A9F465900522019E07B14CEB /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -547,296 +550,115 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		3E3A7A6604C13442594C5EBF640CBBC8 /* Resources */ = {
+		0BC7D363D4944BD4A121E1E95577D8B9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5714583E0C3381A5C2E96DB661C01481 /* Resources */ = {
+		2AE5E6DCDD43D16B25F9F2FD8F742DC7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		57750CCFABE90F778792CCF357E3BE70 /* Resources */ = {
+		5CA33A74EA576E9BCA41BE25C60EBC8C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2E25B9564E33FF70EA913AF204AD684C /* GCDWebUploader.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B36EA32F98E3EC186740EE433AAEC1CA /* Resources */ = {
+		E6ABC20BECB5BC71BD1886D3C352788A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F036A7C812213F0DC91861C71FA8B39 /* GCDWebUploader.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		520E788A3092B8AA82510E132D9B9900 /* Sources */ = {
+		4462F8DD3E3FA67A739AFE63524A6D91 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				79F575B528312277F56165E69A9C6728 /* GCDWebServer.m in Sources */,
-				1F2737B63C8A8FB6F0D7F3127149FC5A /* GCDWebServer-dummy.m in Sources */,
-				C2466CFC697DAFC5B50E753DD3CB3741 /* GCDWebServerConnection.m in Sources */,
-				CBEFFA1107C318E2155A97D90043050A /* GCDWebServerDataRequest.m in Sources */,
-				F02968BAC97DD778019F8C9C2E6924E6 /* GCDWebServerDataResponse.m in Sources */,
-				D62FF5AA9D31713B4CFA1E74B79EDA58 /* GCDWebServerErrorResponse.m in Sources */,
-				66F23F10F5A454A2CC8618C01CF20BD2 /* GCDWebServerFileRequest.m in Sources */,
-				0448DD7B2526902A91730C7716540C21 /* GCDWebServerFileResponse.m in Sources */,
-				D80A8416C44FE65DA9C1DDFC3564A066 /* GCDWebServerFunctions.m in Sources */,
-				C87562AF0B7E738B8141444B79891BDB /* GCDWebServerMultiPartFormRequest.m in Sources */,
-				E4C4AA36A9AA3325F9DFA9BC51B828D5 /* GCDWebServerRequest.m in Sources */,
-				E7770733A8879299F38BDEA7610CE031 /* GCDWebServerResponse.m in Sources */,
-				613ED4B45F83A109D9C84C87E667349A /* GCDWebServerStreamedResponse.m in Sources */,
-				F015BFB4332D052B89A740462D9D8370 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
-				2EA981CFD90B53CF01B5DC998824959F /* GCDWebUploader.m in Sources */,
+				A7D441F614CCA1CF0C52808698A59DFE /* Pods-MusicAppTests-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		54A1F4019745EE69D6BD5D9C018F112A /* Sources */ = {
+		6432D8711314E6938B4DA357C4C9518C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8AE83EE04F6D94AD356076AA377D9B7 /* Pods-MusicApp-MusicAppUITests-dummy.m in Sources */,
+				1EB9388790CD6D47A6E8619D0CC62F03 /* Pods-MusicApp-MusicAppUITests-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		741E43D983A7E610961C6658EC5A97C2 /* Sources */ = {
+		95E0B3444FC4EF4A7B2726329A68A165 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6560CCF3D8750BB43D9E6206B7B316B6 /* Pods-MusicAppTests-dummy.m in Sources */,
+				8CA4DE59C012E16D4C6426FEA686A8A1 /* GCDWebServer.m in Sources */,
+				F1BD5727634B094FDDB180E1B16F39F8 /* GCDWebServer-dummy.m in Sources */,
+				CD9124B69E3838B62F277721F8786C6B /* GCDWebServerConnection.m in Sources */,
+				2BC680B3667BCF1A05D0B7B30E031F47 /* GCDWebServerDataRequest.m in Sources */,
+				C9131A9C8D3FF8C97141B800FDBACBD6 /* GCDWebServerDataResponse.m in Sources */,
+				B733E0FC40C30A15AF8191742E136546 /* GCDWebServerErrorResponse.m in Sources */,
+				84CFC86A97F5EE8CC8FFFF7C989FF1CE /* GCDWebServerFileRequest.m in Sources */,
+				C04A61B370494F22C8DCC17F642205C9 /* GCDWebServerFileResponse.m in Sources */,
+				95E6E00D64A2E71DE454C6B7701E4E86 /* GCDWebServerFunctions.m in Sources */,
+				5C5C54290F7BB5247000D29275053CEC /* GCDWebServerMultiPartFormRequest.m in Sources */,
+				3553B55CCD912B6F1915A4CE46136B43 /* GCDWebServerRequest.m in Sources */,
+				B2864ACC250B56428F970FAB7F63CE93 /* GCDWebServerResponse.m in Sources */,
+				71F4FC6ACD0D6118E657A67B3FAF6ECB /* GCDWebServerStreamedResponse.m in Sources */,
+				D88ED42D82B1641E41F2577F8BC5D68F /* GCDWebServerURLEncodedFormRequest.m in Sources */,
+				CBC014D034C27AD113AE3606368A00FD /* GCDWebUploader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AE9DC58141C30A0C90DE0720AF3C8FAC /* Sources */ = {
+		EC311C2C7426063ACA6BF7C06833F9BE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				32ACFEA4BC4874E9A122F83AC3268DE2 /* Pods-MusicApp-dummy.m in Sources */,
+				71EB4F3D2F3BBF85AA81E37F2E840494 /* Pods-MusicApp-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		08A47292D9B9EA1FDD17F5F4705946E8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = GCDWebServer;
-			target = AD904F32069787EFB2DFFE05EB82F5BD /* GCDWebServer */;
-			targetProxy = 7D28215D1A828D559EDF1676D324F7E7 /* PBXContainerItemProxy */;
-		};
-		4A9B5B32F429DC61DACEE797164B9461 /* PBXTargetDependency */ = {
+		829A974DF5B234F28D8858302BFCFC35 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "Pods-MusicApp";
 			target = 3499DC067B0EBEA10AFE963EF9632638 /* Pods-MusicApp */;
-			targetProxy = 4C032360E579F58B38305060436C1561 /* PBXContainerItemProxy */;
+			targetProxy = 859A7257D09DD78A37151EE3A4CE1549 /* PBXContainerItemProxy */;
 		};
-		7C0408DB425A049636DC135C1174AFC3 /* PBXTargetDependency */ = {
+		9783EF0C3F6F8505A021764200E90F1B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = GCDWebServer;
 			target = AD904F32069787EFB2DFFE05EB82F5BD /* GCDWebServer */;
-			targetProxy = EFA6C6F3EB73F2880E894E9E498EB725 /* PBXContainerItemProxy */;
+			targetProxy = D7FD8C000342D89A41208867DC714112 /* PBXContainerItemProxy */;
 		};
-		8982C6AAF5DDEFB03ED11F80E290B72F /* PBXTargetDependency */ = {
+		D8A5D4782D66826A34207D066890DB3E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = GCDWebServer;
 			target = AD904F32069787EFB2DFFE05EB82F5BD /* GCDWebServer */;
-			targetProxy = 95CB3B3E7530AAE3C49A57ECD3D58E40 /* PBXContainerItemProxy */;
+			targetProxy = E4FDA19E87E6EB92679A92AB9E85C7C6 /* PBXContainerItemProxy */;
+		};
+		FA21B08057EB407EC29085420C208393 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = GCDWebServer;
+			target = AD904F32069787EFB2DFFE05EB82F5BD /* GCDWebServer */;
+			targetProxy = 321176ABEF17E6FDB41FFC2E619E63E3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		081476A49053BF7A4B3B259D70F27253 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4B4DD5EEA3F4B8D787B7A5FDCCE0E2C7 /* Pods-MusicAppTests.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-MusicAppTests/Pods-MusicAppTests-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-MusicAppTests/Pods-MusicAppTests.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		4975165F574E20F8A11FD77D39E09EE3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BA22E675476397F11F02BCB91E34019E /* GCDWebServer.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/GCDWebServer/GCDWebServer-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/GCDWebServer/GCDWebServer-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/GCDWebServer/GCDWebServer.modulemap";
-				PRODUCT_MODULE_NAME = GCDWebServer;
-				PRODUCT_NAME = GCDWebServer;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		4A30EEAE9F371CAC51C5A38207C74E93 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5BFFC94FBEB0BAF65C099D431E97D0F /* GCDWebServer.debug.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/GCDWebServer/GCDWebServer-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/GCDWebServer/GCDWebServer-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/GCDWebServer/GCDWebServer.modulemap";
-				PRODUCT_MODULE_NAME = GCDWebServer;
-				PRODUCT_NAME = GCDWebServer;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		4C1764EC1CDCF9A31A53BB7F4280A9A1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DE7DB1730500B6970802EB0B65FEEFB6 /* Pods-MusicApp-MusicAppUITests.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-MusicApp-MusicAppUITests/Pods-MusicApp-MusicAppUITests-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-MusicApp-MusicAppUITests/Pods-MusicApp-MusicAppUITests.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		76ECA4AFF5026E3DE688FCAE8B46E799 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = E1F513E899A74C8E03EAD9075B8E245A /* Pods-MusicAppTests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-MusicAppTests/Pods-MusicAppTests-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-MusicAppTests/Pods-MusicAppTests.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		8F6A950B366CFD83DBE1A753BDB9E5E7 /* Debug */ = {
+		2BABBA2EA719758E418814C94F90B839 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AB7F3F6947A7EAAB1F94BCAFC6A0386C /* Pods-MusicApp.debug.xcconfig */;
 			buildSettings = {
@@ -850,9 +672,11 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = "Target Support Files/Pods-MusicApp/Pods-MusicApp-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -873,45 +697,7 @@
 			};
 			name = Debug;
 		};
-		9183939DA7083B7E06DF8FFBEDCC22E5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = E205A5A6955B8D9DBC7D922049C3B27D /* Pods-MusicApp-MusicAppUITests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-MusicApp-MusicAppUITests/Pods-MusicApp-MusicAppUITests-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-MusicApp-MusicAppUITests/Pods-MusicApp-MusicAppUITests.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		92486E5E72E54FAF60E1A7D022C21B10 /* Release */ = {
+		30E0B9EFD9A5C45D0D351231E81B30B3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -961,7 +747,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -973,7 +759,282 @@
 			};
 			name = Release;
 		};
-		934ED2B84836A780113D1F63484628B2 /* Debug */ = {
+		7154588BCF7D16284B78205CB2FCC0A2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E1F513E899A74C8E03EAD9075B8E245A /* Pods-MusicAppTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "Target Support Files/Pods-MusicAppTests/Pods-MusicAppTests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MusicAppTests/Pods-MusicAppTests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		7820BE00B183C6606C18EDF3C6605681 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4B4DD5EEA3F4B8D787B7A5FDCCE0E2C7 /* Pods-MusicAppTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "Target Support Files/Pods-MusicAppTests/Pods-MusicAppTests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MusicAppTests/Pods-MusicAppTests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		93EF73CBA518D9CBBBC9AB68935A8865 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E205A5A6955B8D9DBC7D922049C3B27D /* Pods-MusicApp-MusicAppUITests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "Target Support Files/Pods-MusicApp-MusicAppUITests/Pods-MusicApp-MusicAppUITests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MusicApp-MusicAppUITests/Pods-MusicApp-MusicAppUITests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		ADA3C901A2DECBEAD742F40392BB9CA5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8D19C6FEED41DA895DFC34696CC0F9C3 /* Pods-MusicApp.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "Target Support Files/Pods-MusicApp/Pods-MusicApp-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MusicApp/Pods-MusicApp.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		BD0C429406A106DD8241071F8DB9934E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5BFFC94FBEB0BAF65C099D431E97D0F /* GCDWebServer.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/GCDWebServer/GCDWebServer-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/GCDWebServer/GCDWebServer-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/GCDWebServer/GCDWebServer.modulemap";
+				PRODUCT_MODULE_NAME = GCDWebServer;
+				PRODUCT_NAME = GCDWebServer;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		CAA5B64B453FF4E06FB8D07B15A44E3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BA22E675476397F11F02BCB91E34019E /* GCDWebServer.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/GCDWebServer/GCDWebServer-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/GCDWebServer/GCDWebServer-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/GCDWebServer/GCDWebServer.modulemap";
+				PRODUCT_MODULE_NAME = GCDWebServer;
+				PRODUCT_NAME = GCDWebServer;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		E5D4E1FDECC12C1F8B6FF892DA1E863A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DE7DB1730500B6970802EB0B65FEEFB6 /* Pods-MusicApp-MusicAppUITests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "Target Support Files/Pods-MusicApp-MusicAppUITests/Pods-MusicApp-MusicAppUITests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MusicApp-MusicAppUITests/Pods-MusicApp-MusicAppUITests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		F4FF6A0D1970CA9705974E3CB2134802 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1026,7 +1087,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1039,52 +1100,23 @@
 			};
 			name = Debug;
 		};
-		AB89D1583B19622B2A46B30866C6952E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8D19C6FEED41DA895DFC34696CC0F9C3 /* Pods-MusicApp.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-MusicApp/Pods-MusicApp-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-MusicApp/Pods-MusicApp.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3FBFFE97BFC3A7278B7FCCE077C7E8CE /* Build configuration list for PBXNativeTarget "GCDWebServer" */ = {
+		2EE827F2688605E9E76CED9222453B24 /* Build configuration list for PBXNativeTarget "GCDWebServer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4A30EEAE9F371CAC51C5A38207C74E93 /* Debug */,
-				4975165F574E20F8A11FD77D39E09EE3 /* Release */,
+				BD0C429406A106DD8241071F8DB9934E /* Debug */,
+				CAA5B64B453FF4E06FB8D07B15A44E3E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3869A836F2397EE5666638A73E5987A3 /* Build configuration list for PBXNativeTarget "Pods-MusicApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2BABBA2EA719758E418814C94F90B839 /* Debug */,
+				ADA3C901A2DECBEAD742F40392BB9CA5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1092,35 +1124,26 @@
 		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				934ED2B84836A780113D1F63484628B2 /* Debug */,
-				92486E5E72E54FAF60E1A7D022C21B10 /* Release */,
+				F4FF6A0D1970CA9705974E3CB2134802 /* Debug */,
+				30E0B9EFD9A5C45D0D351231E81B30B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		66302A806803333BFF04364998F90BAD /* Build configuration list for PBXNativeTarget "Pods-MusicApp" */ = {
+		6A662B32D0C140CD3D219939E8B9A659 /* Build configuration list for PBXNativeTarget "Pods-MusicApp-MusicAppUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8F6A950B366CFD83DBE1A753BDB9E5E7 /* Debug */,
-				AB89D1583B19622B2A46B30866C6952E /* Release */,
+				E5D4E1FDECC12C1F8B6FF892DA1E863A /* Debug */,
+				93EF73CBA518D9CBBBC9AB68935A8865 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E4A2566B9E7F4D5F3305464CBE9377F9 /* Build configuration list for PBXNativeTarget "Pods-MusicAppTests" */ = {
+		6E6D73A759E3BEE6A7B396F1A42FF775 /* Build configuration list for PBXNativeTarget "Pods-MusicAppTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				081476A49053BF7A4B3B259D70F27253 /* Debug */,
-				76ECA4AFF5026E3DE688FCAE8B46E799 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		E81BA8C2A493E752BD0C3AB759799C1F /* Build configuration list for PBXNativeTarget "Pods-MusicApp-MusicAppUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4C1764EC1CDCF9A31A53BB7F4280A9A1 /* Debug */,
-				9183939DA7083B7E06DF8FFBEDCC22E5 /* Release */,
+				7820BE00B183C6606C18EDF3C6605681 /* Debug */,
+				7154588BCF7D16284B78205CB2FCC0A2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
