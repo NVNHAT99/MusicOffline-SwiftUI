@@ -17,24 +17,58 @@ public struct RootView: View {
     @EnvironmentObject var container: DIContainer
     @EnvironmentObject var appRouter: Router<AppRoute>
 
+    @State private var importToast: String? = nil
+    @State private var toastTask: Task<Void, Never>? = nil
+
     // MARK: - Body
     public var body: some View {
         Group {
             if !appState.isOnboardingCompleted {
-                // TODO: Show onboarding if not completed
-                // For now, skip onboarding
                 MainTabView()
             } else {
-                // Show main app
                 MainTabView()
             }
         }
         .overlay {
-            // Show splash on top during initialization
             if appState.isChecking {
                 splashView
                     .ignoresSafeArea()
             }
+        }
+        .overlay(alignment: .top) {
+            if let toast = importToast {
+                Text(toast)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(Capsule().fill(Color.black.opacity(0.85)))
+                    .padding(.top, 60)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: importToast)
+        .onReceive(NotificationCenter.default.publisher(for: .externalImportFinished)) { notif in
+            guard let summary = notif.object as? ExternalImportSummary else { return }
+            let msg: String
+            if summary.failed == 0 {
+                msg = summary.succeeded == 1
+                    ? "Imported 1 song"
+                    : "Imported \(summary.succeeded) songs"
+            } else {
+                msg = "Imported \(summary.succeeded), \(summary.failed) failed"
+            }
+            showToast(msg)
+        }
+    }
+
+    private func showToast(_ message: String) {
+        importToast = message
+        toastTask?.cancel()
+        toastTask = Task {
+            try? await Task.sleep(nanoseconds: 2_500_000_000)
+            guard !Task.isCancelled else { return }
+            await MainActor.run { importToast = nil }
         }
     }
 

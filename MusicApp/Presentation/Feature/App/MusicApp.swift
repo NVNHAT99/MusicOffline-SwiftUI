@@ -28,9 +28,19 @@ struct MusicApp: App {
                 .environmentObject(environment.diContainer.appState)
                 .environmentObject(environment.appRouter)
                 .environmentObject(environment.diContainer.makePlayerManager())
+                .onOpenURL { url in
+                    Logger.info("Received external URL: \(url.lastPathComponent)")
+                    ExternalFileImportCoordinator.shared.handle(openURL: url)
+                }
         }
         .onChange(of: scenePhase) { newPhase in
             environment.handleScenePhaseChange(newPhase)
+            if newPhase == .active {
+                // Pick up files dropped via Finder / Files.app while we were gone.
+                Task { @MainActor in
+                    ExternalFileImportCoordinator.shared.scanDocumentsRootAndImport()
+                }
+            }
         }
     }
 }
