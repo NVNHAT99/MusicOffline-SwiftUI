@@ -15,4 +15,8 @@ struct PlaylistDetailState {
     var sortOption: PlaylistSortOption = .nameAscending
     var isEditMode: Bool = false
     var selectedSongIDs: Set<UUID> = []
+
+    // Player snapshot — drives per-row play/pause indicator
+    var currentSongID: UUID? = nil
+    var isPlaying: Bool = false
 }

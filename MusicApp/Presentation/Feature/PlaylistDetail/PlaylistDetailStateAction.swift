@@ -16,4 +16,5 @@ enum PlaylistDetailStateAction {
     case toggleSongSelection(UUID)
     case clearSelection
     case setSortOption(PlaylistSortOption)
+    case setPlayerSnapshot(currentSongID: UUID?, isPlaying: Bool)
 }

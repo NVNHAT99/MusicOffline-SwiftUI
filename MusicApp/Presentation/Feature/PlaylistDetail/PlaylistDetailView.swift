@@ -145,9 +145,12 @@ struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
                     .foregroundColor(viewModel.state.selectedSongIDs.contains(song.id) ? .blue : .gray)
                     .onTapGesture { viewModel.send(.toggleSongSelection(id: song.id)) }
             }
-            SongItemView(song: song, onTapPlayAction: {
-                viewModel.send(.playSongAt(song: song))
-            })
+            SongItemView(
+                song: song,
+                isCurrent: viewModel.state.currentSongID == song.id,
+                isPlaying: viewModel.state.currentSongID == song.id && viewModel.state.isPlaying,
+                onTapPlayAction: { viewModel.send(.tapSongRowButton(song: song)) }
+            )
             .frame(height: 54)
         }
     }

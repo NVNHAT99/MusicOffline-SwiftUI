@@ -6,6 +6,7 @@
 import Foundation
 import CoreData
 import SwiftUI
+import Combine
 
 @MainActor
 protocol PlaylistDetailViewModelProtocol: ObservableObject {
@@ -27,6 +28,7 @@ final class PlaylistDetailViewModel: PlaylistDetailViewModelProtocol {
     @Published private(set) var state: PlaylistDetailState
     private let reducer: any PlaylistDetailStateReducerProtocol
     private var playlist: Playlist?
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
     init(
@@ -46,6 +48,23 @@ final class PlaylistDetailViewModel: PlaylistDetailViewModelProtocol {
         self.updatePlaylistUseCase = updatePlaylistUseCase
         self.reorderSongsUseCase = reorderSongsUseCase
         Logger.debug("PlaylistDetailViewModel initialized for playlist: \(playlist?.name ?? "Unknown")")
+        bindToPlayer()
+    }
+
+    private func bindToPlayer() {
+        PlayerManager.shared.statePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] playerState in
+                guard let self else { return }
+                self.state = self.reducer.reduce(
+                    self.state,
+                    with: .setPlayerSnapshot(
+                        currentSongID: playerState.currentSong?.id,
+                        isPlaying: playerState.isPlaying
+                    )
+                )
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Intent Handler
@@ -55,6 +74,8 @@ final class PlaylistDetailViewModel: PlaylistDetailViewModelProtocol {
         switch intent {
         case .playSongAt(let song):
             playSong(at: song)
+        case .tapSongRowButton(let song):
+            handleRowButtonTap(song: song)
         case .deleteSong(let index):
             deleteSongAt(index: index)
         case .loadPlaylist:
@@ -104,6 +125,22 @@ final class PlaylistDetailViewModel: PlaylistDetailViewModelProtocol {
         guard let playlistId = self.playlist?.id else { return }
         Task {
             await PlayerManager.shared.play(playlistId, songs: state.songs, songPlay: song)
+        }
+    }
+
+    /// Tapping the row button: if this is already the current song, toggle play/pause;
+    /// otherwise start playback from this song. Mirrors Apple Music behavior.
+    private func handleRowButtonTap(song: SongModel) {
+        if state.currentSongID == song.id {
+            Task {
+                if state.isPlaying {
+                    await PlayerManager.shared.pause()
+                } else {
+                    await PlayerManager.shared.play()
+                }
+            }
+        } else {
+            playSong(at: song)
         }
     }
 

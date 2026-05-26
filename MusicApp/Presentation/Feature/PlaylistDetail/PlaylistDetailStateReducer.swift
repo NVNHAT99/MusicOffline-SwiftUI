@@ -46,6 +46,10 @@ final class PlaylistDetailStateReducerImpl: PlaylistDetailStateReducerProtocol {
 
         case .setSortOption(let option):
             newState.sortOption = option
+
+        case .setPlayerSnapshot(let currentSongID, let isPlaying):
+            newState.currentSongID = currentSongID
+            newState.isPlaying = isPlaying
         }
 
         return newState
