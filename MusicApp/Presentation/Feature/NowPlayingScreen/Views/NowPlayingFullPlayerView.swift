@@ -32,7 +32,7 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
             .scrollIndicators(.hidden)
         }
         .overlay(alignment: .bottom) {
-            if let errorMsg = viewModel.state.errorMessage {
+            if let errorMsg = viewModel.state.errorMessage ?? viewModel.state.lyricsErrorMessage {
                 Text(errorMsg)
                     .font(AppFont.callout())
                     .foregroundStyle(.white)
@@ -43,8 +43,39 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
                     .padding(.bottom, 24)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .animation(.easeInOut, value: viewModel.state.errorMessage)
+                    .animation(.easeInOut, value: viewModel.state.lyricsErrorMessage)
             }
         }
+        .sheet(isPresented: pasteLyricsBinding) {
+            PasteLyricsSheetView(
+                onSave: { viewModel.send(.pasteLyrics($0)) },
+                onCancel: { viewModel.send(.presentPasteLyricsSheet(false)) }
+            )
+        }
+        .sheet(isPresented: lyricsPickerBinding) {
+            LyricsFilePickerView { url in
+                viewModel.send(.presentLyricsPicker(false))
+                if let url = url {
+                    viewModel.send(.attachLyricsFile(url))
+                }
+            }
+        }
+    }
+
+    // MARK: - Sheet Bindings
+
+    private var pasteLyricsBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.state.showPasteLyricsSheet },
+            set: { if !$0 { viewModel.send(.presentPasteLyricsSheet(false)) } }
+        )
+    }
+
+    private var lyricsPickerBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.state.showLyricsPicker },
+            set: { if !$0 { viewModel.send(.presentLyricsPicker(false)) } }
+        )
     }
 
     // MARK: - Navigation Bar
@@ -57,6 +88,8 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
     }
 
     // MARK: - Lyrics Toggle Button
+    private var hasLyrics: Bool { !viewModel.state.lyrics.isEmpty }
+
     private var lyricsToggleButton: some View {
         Button {
             viewModel.send(.toggleLyrics)
@@ -65,7 +98,67 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: DesignToken.IconSize.md)
-                .foregroundStyle(viewModel.state.showLyrics ? Color.white : Color.gray)
+                .foregroundStyle(lyricsToggleColor)
+        }
+        .disabled(!hasLyrics)
+    }
+
+    private var lyricsToggleColor: Color {
+        if !hasLyrics { return Color.gray.opacity(0.35) }
+        return viewModel.state.showLyrics ? .white : .gray
+    }
+
+    // MARK: - Audio Editor entry
+
+    private var canOpenAudioEditor: Bool {
+        guard let urlStr = viewModel.state.currentSong?.urlStr, !urlStr.isEmpty else { return false }
+        return true
+    }
+
+    private func openAudioEditor() {
+        guard let song = viewModel.state.currentSong,
+              let urlStr = song.urlStr, !urlStr.isEmpty else { return }
+        let url: URL = urlStr.hasPrefix("file://")
+            ? (URL(string: urlStr) ?? URL(fileURLWithPath: urlStr))
+            : URL(fileURLWithPath: urlStr)
+        let title = song.title ?? url.deletingPathExtension().lastPathComponent
+        router.route(to: .audioEditor(sourceURL: url, title: title))
+    }
+
+    /// Ellipsis menu for managing lyrics (attach file / paste text / remove).
+    private var lyricsMenuButton: some View {
+        Menu {
+            Button {
+                viewModel.send(.presentLyricsPicker(true))
+            } label: {
+                Label("Attach Lyrics File…", systemImage: "doc.badge.plus")
+            }
+            Button {
+                viewModel.send(.presentPasteLyricsSheet(true))
+            } label: {
+                Label("Paste Lyrics…", systemImage: "doc.on.clipboard")
+            }
+            Divider()
+            Button {
+                openAudioEditor()
+            } label: {
+                Label("Edit Audio…", systemImage: "scissors")
+            }
+            .disabled(!canOpenAudioEditor)
+            if hasLyrics {
+                Divider()
+                Button(role: .destructive) {
+                    viewModel.send(.removeLyrics)
+                } label: {
+                    Label("Remove Lyrics", systemImage: "trash")
+                }
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+                .resizable()
+                .scaledToFit()
+                .frame(width: DesignToken.IconSize.md)
+                .foregroundStyle(Color.white.opacity(0.8))
         }
     }
 
@@ -110,7 +203,7 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
     }
 
     private var songInfo: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: .top, spacing: 12) {
             VStack(spacing: 4) {
                 Text(viewModel.songTitle)
                     .font(AppFont.songTitle())
@@ -122,6 +215,7 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
                     .font(AppFont.callout())
             }
             lyricsToggleButton
+            lyricsMenuButton
         }
     }
 

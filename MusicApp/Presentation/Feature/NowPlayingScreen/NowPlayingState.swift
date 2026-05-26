@@ -19,4 +19,8 @@ struct NowPlayingState {
     var lyrics: [LyricsLine] = []
     var activeLyricIndex: Int? = nil
     var showLyrics: Bool = false
+    var showLyricsMenu: Bool = false
+    var showPasteLyricsSheet: Bool = false
+    var showLyricsPicker: Bool = false
+    var lyricsErrorMessage: String? = nil
 }

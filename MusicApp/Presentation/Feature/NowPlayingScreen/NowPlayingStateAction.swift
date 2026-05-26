@@ -22,4 +22,8 @@ enum NowPlayingStateAction {
     case setLyrics([LyricsLine])
     case setActiveLyricIndex(Int?)
     case setShowLyrics(Bool)
+    case setShowLyricsMenu(Bool)
+    case setShowPasteLyricsSheet(Bool)
+    case setShowLyricsPicker(Bool)
+    case setLyricsErrorMessage(String?)
 }

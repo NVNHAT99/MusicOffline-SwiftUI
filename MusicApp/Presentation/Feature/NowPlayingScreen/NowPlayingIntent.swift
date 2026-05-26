@@ -21,4 +21,11 @@ enum NowPlayingIntent {
     // Lyrics
     case toggleLyrics
     case lyricsLoaded([LyricsLine])
+    case attachLyricsFile(URL)
+    case pasteLyrics(String)
+    case removeLyrics
+    case presentLyricsMenu(Bool)        // sheet/menu visibility — UI driver
+    case presentPasteLyricsSheet(Bool)
+    case presentLyricsPicker(Bool)
+    case setLyricsErrorMessage(String?)
 }

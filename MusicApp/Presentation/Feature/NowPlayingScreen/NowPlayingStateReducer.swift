@@ -58,6 +58,18 @@ final class NowPlayingStateReducerImpl: NowPlayingStateReducerProtocol {
         case .setShowLyrics(let show):
             newState.showLyrics = show
 
+        case .setShowLyricsMenu(let show):
+            newState.showLyricsMenu = show
+
+        case .setShowPasteLyricsSheet(let show):
+            newState.showPasteLyricsSheet = show
+
+        case .setShowLyricsPicker(let show):
+            newState.showLyricsPicker = show
+
+        case .setLyricsErrorMessage(let msg):
+            newState.lyricsErrorMessage = msg
+
         case .updateFromPlayerState(let playerState):
             newState.currentSong = playerState.currentSong
             newState.isPlaying = playerState.isPlaying
@@ -73,6 +85,8 @@ final class NowPlayingStateReducerImpl: NowPlayingStateReducerProtocol {
     }
 
     /// Binary search for the last lyric line whose timestamp ≤ currentTime.
+    /// When `time` precedes the first line we return `0` (highlight upcoming line
+    /// instead of leaving the panel un-highlighted — better UX during intro).
     static func activeLyricIndex(for time: TimeInterval, in lines: [LyricsLine]) -> Int? {
         guard !lines.isEmpty else { return nil }
         var lo = 0
@@ -87,6 +101,6 @@ final class NowPlayingStateReducerImpl: NowPlayingStateReducerProtocol {
                 hi = mid - 1
             }
         }
-        return result
+        return result ?? 0
     }
 }

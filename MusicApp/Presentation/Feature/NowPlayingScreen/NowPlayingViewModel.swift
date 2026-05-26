@@ -32,6 +32,8 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
     private let playerManager: any PlayerManagerProtocol
     private let reducer: any NowPlayingStateReducerProtocol
     private let fetchLyricsUseCase: FetchLyricsUseCaseProtocol
+    private let attachLyricsUseCase: AttachLyricsToSongUseCaseProtocol
+    private let removeLyricsUseCase: RemoveLyricsUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     private var lastLyricsSongStem: String? = nil
 
@@ -39,11 +41,15 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
     init(
         playerManager: any PlayerManagerProtocol = PlayerManager.shared,
         reducer: any NowPlayingStateReducerProtocol = NowPlayingStateReducerImpl(),
-        fetchLyricsUseCase: FetchLyricsUseCaseProtocol = FetchLyricsUseCase(repository: LyricsRepository())
+        fetchLyricsUseCase: FetchLyricsUseCaseProtocol = FetchLyricsUseCase(repository: LyricsRepository()),
+        attachLyricsUseCase: AttachLyricsToSongUseCaseProtocol = AttachLyricsToSongUseCase(),
+        removeLyricsUseCase: RemoveLyricsUseCaseProtocol = RemoveLyricsUseCase()
     ) {
         self.playerManager = playerManager
         self.reducer = reducer
         self.fetchLyricsUseCase = fetchLyricsUseCase
+        self.attachLyricsUseCase = attachLyricsUseCase
+        self.removeLyricsUseCase = removeLyricsUseCase
         self.state = .init()
         Logger.debug("NowPlayingViewModel initialized")
         setupBindings()
@@ -76,18 +82,29 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
 
     private func updateFromPlayerState(_ playerState: PlayerManagerState) {
         state = reducer.reduce(state, with: .updateFromPlayerState(playerState))
-        // Fetch lyrics when song changes
-        let newStem: String? = playerState.currentSong.flatMap { song -> String? in
-            guard let urlStr = song.urlStr, !urlStr.isEmpty else { return nil }
-            let stem = URL(fileURLWithPath: urlStr).deletingPathExtension().lastPathComponent
-            return stem.isEmpty ? nil : stem
-        }
+        let newStem = Self.lyricsStem(from: playerState.currentSong?.urlStr)
         if newStem != lastLyricsSongStem {
             lastLyricsSongStem = newStem
             let stem = newStem ?? ""
             let lines = stem.isEmpty ? [] : fetchLyricsUseCase.execute(stem: stem)
             state = reducer.reduce(state, with: .setLyrics(lines))
         }
+    }
+
+    /// Robust stem extraction handling:
+    ///   - plain path  ("/var/.../My Song.mp3")
+    ///   - file:// URL ("file:///var/.../My%20Song.mp3" — percent-decoded)
+    ///   - bare filename ("My Song.mp3")
+    nonisolated static func lyricsStem(from urlStr: String?) -> String? {
+        guard let raw = urlStr, !raw.isEmpty else { return nil }
+        let url: URL
+        if raw.hasPrefix("file://"), let parsed = URL(string: raw) {
+            url = parsed
+        } else {
+            url = URL(fileURLWithPath: raw)
+        }
+        let stem = url.deletingPathExtension().lastPathComponent
+        return stem.isEmpty ? nil : stem
     }
 
     func send(_ intent: NowPlayingIntent) {
@@ -132,6 +149,79 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
 
         case .lyricsLoaded(let lines):
             state = reducer.reduce(state, with: .setLyrics(lines))
+
+        case .attachLyricsFile(let url):
+            handleAttachLyricsFile(url)
+
+        case .pasteLyrics(let content):
+            handlePasteLyrics(content)
+
+        case .removeLyrics:
+            handleRemoveLyrics()
+
+        case .presentLyricsMenu(let show):
+            state = reducer.reduce(state, with: .setShowLyricsMenu(show))
+
+        case .presentPasteLyricsSheet(let show):
+            state = reducer.reduce(state, with: .setShowPasteLyricsSheet(show))
+
+        case .presentLyricsPicker(let show):
+            state = reducer.reduce(state, with: .setShowLyricsPicker(show))
+
+        case .setLyricsErrorMessage(let msg):
+            state = reducer.reduce(state, with: .setLyricsErrorMessage(msg))
+        }
+    }
+
+    // MARK: - Lyrics attach / paste / remove
+
+    /// Stem of the currently-playing song, derived once via the same logic used for auto-load.
+    private var currentSongStem: String? {
+        Self.lyricsStem(from: state.currentSong?.urlStr)
+    }
+
+    private func handleAttachLyricsFile(_ url: URL) {
+        guard let stem = currentSongStem else {
+            state = reducer.reduce(state, with: .setLyricsErrorMessage("No song is playing"))
+            return
+        }
+        do {
+            try attachLyricsUseCase.executeFromFile(url: url, stem: stem)
+            reloadLyricsForCurrentSong(stem: stem)
+        } catch {
+            Logger.error("Attach lyrics failed: \(error)")
+            state = reducer.reduce(state, with: .setLyricsErrorMessage(error.localizedDescription))
+        }
+    }
+
+    private func handlePasteLyrics(_ content: String) {
+        guard let stem = currentSongStem else {
+            state = reducer.reduce(state, with: .setLyricsErrorMessage("No song is playing"))
+            return
+        }
+        do {
+            try attachLyricsUseCase.executeFromText(content: content, stem: stem)
+            reloadLyricsForCurrentSong(stem: stem)
+            state = reducer.reduce(state, with: .setShowPasteLyricsSheet(false))
+        } catch {
+            Logger.error("Paste lyrics failed: \(error)")
+            state = reducer.reduce(state, with: .setLyricsErrorMessage(error.localizedDescription))
+        }
+    }
+
+    private func handleRemoveLyrics() {
+        guard let stem = currentSongStem else { return }
+        removeLyricsUseCase.execute(stem: stem)
+        state = reducer.reduce(state, with: .setLyrics([]))
+    }
+
+    private func reloadLyricsForCurrentSong(stem: String) {
+        let lines = fetchLyricsUseCase.execute(stem: stem)
+        state = reducer.reduce(state, with: .setLyrics(lines))
+        // Auto-open the lyrics panel after a successful attach/paste so the user
+        // sees feedback that lyrics actually loaded.
+        if !lines.isEmpty {
+            state = reducer.reduce(state, with: .setShowLyrics(true))
         }
     }
 
