@@ -164,7 +164,12 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
 
     // MARK: - Artwork / Lyrics Panel
     private func artwork(geometry: GeometryProxy) -> some View {
-        let size = geometry.size.height * 3 / 5
+        // Use the smaller of (3/5 height, width - margin) so the artwork is
+        // always a real square that fits both axes, never wider than the screen.
+        let horizontalInset: CGFloat = 32
+        let maxSquare = min(geometry.size.height * 3 / 5,
+                            geometry.size.width - horizontalInset)
+        let size = max(120, maxSquare)
         return Group {
             if viewModel.state.showLyrics {
                 LyricsView(
@@ -176,7 +181,10 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
             } else if let uiImage {
                 Image(uiImage: uiImage)
                     .resizable()
-                    .scaledToFit()
+                    // Fill the square frame and crop the overflow — source images
+                    // are often non-square (e.g. 16:9 YouTube thumbnails) and
+                    // .scaledToFit() leaves visible letterbox bars.
+                    .scaledToFill()
                     .frame(width: size, height: size)
                     .clipShape(RoundedRectangle(cornerRadius: DesignToken.Radius.sm))
                     .shadow(color: .black.opacity(0.3), radius: DesignToken.Shadow.large, x: 0, y: 10)
@@ -187,6 +195,7 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
                     .shimmer()
             }
         }
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 
     // MARK: - Controls
@@ -199,7 +208,11 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
             playbackButtons
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, geometry.size.width / 10)
+        // Use a fixed inset rather than width/10 — at small geometry widths
+        // (e.g. when nested inside the MainTabView ZStack overlay) the
+        // proportional inset collapses to near-zero and the controls
+        // visibly clip the left edge.
+        .padding(.horizontal, 28)
     }
 
     private var songInfo: some View {
