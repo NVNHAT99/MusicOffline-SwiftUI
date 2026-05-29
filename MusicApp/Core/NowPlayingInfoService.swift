@@ -50,7 +50,23 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
             }
             .store(in: &cancellables)
 
+        // Required for the app to receive remote-control events reliably and be
+        // recognized as the active now-playing app.
+        UIApplication.shared.beginReceivingRemoteControlEvents()
+
         setupRemoteTransportControls(playerManager: playerManager)
+    }
+
+    /// Push the current play/pause state to the system synchronously. Called from
+    /// inside the remote-command handlers BEFORE returning .success — the async
+    /// statePublisher sink lands too late, so Control Center keeps interpolating
+    /// the old rate and flips the button back. Updating elapsed-time + rate here,
+    /// in the same dictionary write, stops that.
+    private func pushPlaybackState(isPlaying: Bool, currentTime: TimeInterval) {
+        var info = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
+        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
+        info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
     }
 
     private func updateNowPlaying(song: SongModel,
@@ -66,7 +82,6 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
             info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
             info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
             MPNowPlayingInfoCenter.default().nowPlayingInfo = info
-            MPNowPlayingInfoCenter.default().playbackState = isPlaying ? .playing : .paused
             return
         }
 
@@ -81,7 +96,6 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
-        MPNowPlayingInfoCenter.default().playbackState = isPlaying ? .playing : .paused
 
         Task { [weak self] in
             guard let self else { return }
@@ -104,7 +118,6 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
-        MPNowPlayingInfoCenter.default().playbackState = isPlaying ? .playing : .paused
     }
     
     private func setupRemoteTransportControls(playerManager: any PlayerManagerProtocol) {
@@ -121,10 +134,25 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
 
         commandCenter.playCommand.isEnabled = true
         commandCenter.pauseCommand.isEnabled = true
-        commandCenter.togglePlayPauseCommand.isEnabled = true
         commandCenter.nextTrackCommand.isEnabled = true
         commandCenter.previousTrackCommand.isEnabled = true
         commandCenter.changePlaybackPositionCommand.isEnabled = true
+
+        // Control Center's single media button on iOS uses togglePlayPauseCommand
+        // to manage the button's visual state. Handle it explicitly (toggling on
+        // the engine's real playing state) so CC reliably flips play↔pause.
+        commandCenter.togglePlayPauseCommand.isEnabled = true
+        commandCenter.togglePlayPauseCommand.addTarget { [weak self, weak playerManager] _ in
+            guard let playerManager else { return .commandFailed }
+            let willPlay = !playerManager.state.isPlaying
+            // Push the NEW state to the system synchronously so Control Center
+            // doesn't keep interpolating the old rate and flip the button back.
+            self?.pushPlaybackState(isPlaying: willPlay, currentTime: playerManager.state.currentTimePlay)
+            Task { @MainActor in
+                if willPlay { await playerManager.play() } else { await playerManager.pause() }
+            }
+            return .success
+        }
 
         // Commands we don't support must be disabled, otherwise iOS can route a
         // single-tap to a shadowing command (e.g. seek) and the play button
@@ -135,25 +163,16 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         commandCenter.skipForwardCommand.isEnabled = false
         commandCenter.skipBackwardCommand.isEnabled = false
 
-        commandCenter.playCommand.addTarget { _ in
+        commandCenter.playCommand.addTarget { [weak self, weak playerManager] _ in
+            guard let playerManager else { return .commandFailed }
+            self?.pushPlaybackState(isPlaying: true, currentTime: playerManager.state.currentTimePlay)
             Task { @MainActor in await playerManager.play() }
             return .success
         }
-        commandCenter.pauseCommand.addTarget { _ in
+        commandCenter.pauseCommand.addTarget { [weak self, weak playerManager] _ in
+            guard let playerManager else { return .commandFailed }
+            self?.pushPlaybackState(isPlaying: false, currentTime: playerManager.state.currentTimePlay)
             Task { @MainActor in await playerManager.pause() }
-            return .success
-        }
-        // The lock-screen / Control Center button often sends a single toggle
-        // command rather than discrete play/pause.
-        commandCenter.togglePlayPauseCommand.addTarget { [weak playerManager] _ in
-            Task { @MainActor in
-                guard let playerManager else { return }
-                if playerManager.state.isPlaying {
-                    await playerManager.pause()
-                } else {
-                    await playerManager.play()
-                }
-            }
             return .success
         }
         commandCenter.nextTrackCommand.addTarget { _ in

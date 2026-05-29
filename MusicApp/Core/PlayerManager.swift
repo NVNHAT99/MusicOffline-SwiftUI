@@ -186,12 +186,9 @@ final class PlayerManager: PlayerManagerProtocol {
         // re-resolved), resume would silently no-op while the timer still ran,
         // giving "progress moves but no sound". Do a full load in that case.
         if engine.currentURL == nil {
-            Logger.debug("No file loaded in engine - loading before play: \(currentSong.title)")
             loadAndPlay(song: currentSong)
             return
         }
-
-        Logger.debug("Resuming playback of: \(currentSong.title)")
         engine.play()
         progressTimerService.start(interval: 1.0, from: self.state.currentTimePlay)
         updateState { state in

@@ -46,6 +46,13 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
     // without relying on playerNode.isPlaying (which races at completion time).
     private var scheduleGeneration: Int = 0
 
+    // True only while playback was suspended by a system interruption that the
+    // engine itself paused (phone call, another app's audio). Auto-resume on
+    // interruption-ended is gated on this so a USER pause (Control Center /
+    // in-app) is never auto-resumed — which previously flipped the CC button
+    // pause→play→pause and made resume impossible.
+    private var wasInterruptedWhilePlaying = false
+
     private let eventSubject = PassthroughSubject<AudioEngineEvent, Never>()
     var eventPublisher: AnyPublisher<AudioEngineEvent, Never> {
         eventSubject.eraseToAnyPublisher()
@@ -92,7 +99,9 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
     }
 
     private func startEngineIfNeeded() throws {
-        guard !engine.isRunning else { return }
+        guard !engine.isRunning else {
+            return
+        }
         try engine.start()
     }
 
@@ -134,7 +143,18 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
 
     func play() {
         guard audioFile != nil else { return }
-        try? startEngineIfNeeded()
+        do {
+            // Re-assert the audio session; iOS may have deactivated it while the
+            // app was backgrounded, which makes playerNode.play() a silent no-op.
+            try configureSessionIfNeeded()
+        } catch {
+            Logger.error("Audio session reactivate failed: \(error)")
+        }
+        do {
+            try startEngineIfNeeded()
+        } catch {
+            Logger.error("Audio engine start failed: \(error)")
+        }
         playerNode.play()
     }
 
@@ -219,14 +239,21 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
 
         switch type {
         case .began:
+            // Remember whether WE were actually playing so we only auto-resume
+            // an interruption we caused — never a user-initiated pause.
+            wasInterruptedWhilePlaying = playerNode.isPlaying
             pause()
         case .ended:
             let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
             let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
-            if options.contains(.shouldResume) {
+            // Only resume if the system says so AND the interruption is what
+            // paused us. A Control Center / in-app user pause leaves
+            // wasInterruptedWhilePlaying == false, so it stays paused.
+            if options.contains(.shouldResume), wasInterruptedWhilePlaying {
                 try? configureSessionIfNeeded()
                 play()
             }
+            wasInterruptedWhilePlaying = false
         @unknown default:
             break
         }
