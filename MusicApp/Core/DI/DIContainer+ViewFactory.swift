@@ -178,7 +178,7 @@ extension DIContainer {
         viewModel.onCancelSleepTime = {
             Logger.debug("Cancel sleep time")
             appRouter?.dismiss()
-            // TODO: Connect to NowPlayingViewModel
+            Task { await PlayerManager.shared.cancelScheduleStop() }
         }
 
         viewModel.onNavigateToPicker = {

@@ -88,18 +88,12 @@ final class HomeViewModel: HomeViewModelProtocol {
                 }
             }
 
-            // TODO: RecentSongItem not defined - temporarily disabled
-            /*
-            Task {
-                Logger.debug("Fetching recent songs")
-                let recentSongs = RecentSongsManager.fetchRecentSongs()
-                await MainActor.run {
-                    state = reducer.reduce(state, with: .setRecentSongs(recentSongs))
-                }
-                Logger.info("Loaded \(recentSongs.count) recent songs")
+            Logger.debug("Fetching recent songs")
+            let recentSongs = RecentSongsManager.fetchRecentSongs()
+            await MainActor.run {
+                state = reducer.reduce(state, with: .setRecentSongs(recentSongs))
             }
-            */
-
+            Logger.info("Loaded \(recentSongs.count) recent songs")
         }
     }
 }

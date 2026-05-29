@@ -10,7 +10,6 @@ import Combine
 
 /// Protocol defining app state management
 public protocol AppStateProtocol: ObservableObject {
-    var isFirstInstall: Bool { get }
     var isOnboardingCompleted: Bool { get }
     var isAuthenticated: Bool { get }
     var isLoading: Bool { get }
@@ -50,15 +49,6 @@ public final class AppState: AppStateProtocol {
             try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
             self.isChecking = false
         }
-    }
-
-    // MARK: - Computed Properties
-    public var isFirstInstall: Bool {
-        if userDefaults.object(forKey: "firstLaunchDate") == nil {
-            userDefaults.set(Date(), forKey: "firstLaunchDate")
-            return true
-        }
-        return false
     }
 
     // MARK: - Public Methods
