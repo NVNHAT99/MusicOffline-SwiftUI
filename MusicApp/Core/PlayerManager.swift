@@ -164,6 +164,16 @@ final class PlayerManager: PlayerManagerProtocol {
             return
         }
 
+        // If the engine has no file loaded (e.g. the song was restored from a
+        // previous session but never loaded — common after a stale path was
+        // re-resolved), resume would silently no-op while the timer still ran,
+        // giving "progress moves but no sound". Do a full load in that case.
+        if engine.currentURL == nil {
+            Logger.debug("No file loaded in engine - loading before play: \(currentSong.title)")
+            loadAndPlay(song: currentSong)
+            return
+        }
+
         Logger.debug("Resuming playback of: \(currentSong.title)")
         engine.play()
         progressTimerService.start(interval: 1.0, from: self.state.currentTimePlay)
@@ -357,9 +367,8 @@ final class PlayerManager: PlayerManagerProtocol {
     }
 
     private func loadAndPlay(song: SongModel) {
-        let path = song.urlStr ?? ""
-        guard !path.isEmpty, FileManager.default.fileExists(atPath: path) else {
-            Logger.error("Song file missing: \(path)")
+        guard let path = song.resolvedFilePath() else {
+            Logger.error("Song file missing: \(song.urlStr ?? "")")
             handleLoadFailure(song: song)
             return
         }
@@ -400,13 +409,16 @@ final class PlayerManager: PlayerManagerProtocol {
     }
     
     private func loadSong(song: SongModel) {
+        guard let path = song.resolvedFilePath() else {
+            Logger.error("Song file missing: \(song.urlStr ?? "")")
+            return
+        }
         do {
-            let url = URL(fileURLWithPath: song.urlStr ?? "")
-            try engine.load(url: url)
+            try engine.load(url: URL(fileURLWithPath: path))
             self.state.isPlaying = false
             self.progressTimerService.stop()
         } catch {
-            print("⚠️ Error loading song: \(error)")
+            Logger.error("Error loading song: \(error)")
         }
     }
 
