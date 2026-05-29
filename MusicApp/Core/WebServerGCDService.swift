@@ -58,7 +58,7 @@ final class WebServerGCDService: NSObject, WebServerGCDServiceProtocol {
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         webUploader = GCDWebUploader(uploadDirectory: documentsPath)
         webUploader?.delegate = self
-        Logger.info("WebServerGCDService initialized with documents path: \(documentsPath)")
+        Logger.info("WebServerGCDService initialized")
     }
     
     func startWebUploader() {
@@ -77,7 +77,7 @@ final class WebServerGCDService: NSObject, WebServerGCDServiceProtocol {
                 let start = str.index(str.startIndex, offsetBy: 7)
                 let end = str.index(str.endIndex, offsetBy: -1)
                 let ipAddressStr =  "Http://\(String(str[start..<end]))/"
-                Logger.info("Web server already running at: \(ipAddressStr)")
+                Logger.info("Web server already running")
                 loaderStateResultSubject.send(.startSuccess(ipAddress: ipAddressStr))
             } else {
                 Logger.error("Web server is running but no server URL available")
@@ -96,8 +96,7 @@ final class WebServerGCDService: NSObject, WebServerGCDServiceProtocol {
             try webUploader.start(options: options)
             Logger.info("Web server started successfully")
         } catch {
-            Logger.error("Failed to start web server: \(error)")
-            print("Web server start error: \(error)")
+            Logger.error("Failed to start web server: \(error.localizedDescription)")
             loaderStateResultSubject.send(.startFailed)
             return
         }
@@ -110,7 +109,7 @@ final class WebServerGCDService: NSObject, WebServerGCDServiceProtocol {
             let start = str.index(str.startIndex, offsetBy: 7)
             let end = str.index(str.endIndex, offsetBy: -1)
             let ipAddressStr =  "\(String(str[start..<end]))"
-            Logger.info("Web server available at: \(ipAddressStr)")
+            Logger.info("Web server available")
             loaderStateResultSubject.send(.startSuccess(ipAddress: ipAddressStr))
         } else {
             Logger.error("Web server started but no server URL available")
@@ -141,17 +140,17 @@ final class WebServerGCDService: NSObject, WebServerGCDServiceProtocol {
 
 extension WebServerGCDService: GCDWebUploaderDelegate {
     func webUploader(_ uploader: GCDWebUploader, didUploadFileAtPath path: String) {
-        Logger.info("File uploaded at path: \(path)")
+        Logger.info("File uploaded")
         uploadedFileSubject.send(path)
     }
 
     func webUploader(_ uploader: GCDWebUploader, didDeleteItemAtPath path: String) {
-        Logger.info("File deleted at path: \(path)")
+        Logger.info("File deleted")
         removeFileSubject.send(path)
     }
 
     func webUploader(_ uploader: GCDWebUploader, didMoveItemFromPath fromPath: String, toPath: String) {
-        Logger.info("File moved from \(fromPath) to \(toPath)")
+        Logger.info("File moved")
         updatePathSubject.send((fromPath, toPath))
     }
 }
