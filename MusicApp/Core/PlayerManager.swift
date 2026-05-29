@@ -53,6 +53,10 @@ final class PlayerManager: PlayerManagerProtocol {
     // Guards against infinite next() recursion when every file is missing
     // (e.g. after iCloud offload). Reset on any successful load.
     private var consecutiveLoadFailures: Int = 0
+    // End-of-song can be signalled by both the progress timer reaching duration
+    // and the engine's .finished callback; this dedupes so the song only advances
+    // once per completion.
+    private var isHandlingFinish = false
     // MARK: - Init
     private init(engine: AudioEngineProtocol,
                  timerService: TimerServiceProtocol,
@@ -112,7 +116,20 @@ final class PlayerManager: PlayerManagerProtocol {
         
         progressTimerService.tickPublisher
             .sink { [weak self] time in
-                self?.state.currentTimePlay = time
+                guard let self else { return }
+                let duration = self.state.currentSong?.duration ?? 0
+
+                // The progress timer is a free-running counter, decoupled from the
+                // engine's real playback position. Bound it to the song length and
+                // drive end-of-song here so completion no longer depends solely on
+                // the engine's .finished callback (which can race and be missed,
+                // leaving isPlaying stuck true and the timer running past duration).
+                if duration > 0, time >= duration {
+                    self.state.currentTimePlay = duration
+                    Task { await self.handleSongFinished() }
+                } else {
+                    self.state.currentTimePlay = time
+                }
             }
             .store(in: &cancellables)
     }
@@ -377,6 +394,7 @@ final class PlayerManager: PlayerManagerProtocol {
             let url = URL(fileURLWithPath: path)
             try engine.load(url: url)
             consecutiveLoadFailures = 0
+            isHandlingFinish = false
             RecentSongsManager.add(song, in: self.currentPlaylistID?.uuidString)
             RecentSongsManager.saveCurrentPlaylist(id: self.currentPlaylistID?.uuidString ?? "")
             RecentSongsManager.addRecentPlaylist(id: self.currentPlaylistID?.uuidString ?? String.empty)
@@ -423,6 +441,8 @@ final class PlayerManager: PlayerManagerProtocol {
     }
 
     private func handleSongFinished() async {
+        guard !isHandlingFinish else { return }
+        isHandlingFinish = true
         progressTimerService.stop()
         self.state.isPlaying = false
 

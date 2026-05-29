@@ -40,6 +40,12 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
     private var seekOffsetFrames: AVAudioFramePosition = 0
     private var sampleRate: Double = 44100
 
+    // Bumped on every (re)schedule (load/seek). A segment's completion callback
+    // only counts as a real end-of-track if no newer segment was scheduled after
+    // it — this distinguishes a natural finish from a seek/new-song interruption
+    // without relying on playerNode.isPlaying (which races at completion time).
+    private var scheduleGeneration: Int = 0
+
     private let eventSubject = PassthroughSubject<AudioEngineEvent, Never>()
     var eventPublisher: AnyPublisher<AudioEngineEvent, Never> {
         eventSubject.eraseToAnyPublisher()
@@ -163,6 +169,8 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
         let remaining = AVAudioFrameCount(file.length - startFrame)
         guard remaining > 0 else { return }
 
+        scheduleGeneration += 1
+        let generation = scheduleGeneration
         playerNode.scheduleSegment(
             file,
             startingFrame: startFrame,
@@ -171,8 +179,11 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
             completionCallbackType: .dataPlayedBack
         ) { [weak self] _ in
             DispatchQueue.main.async {
-                // Only fire finished if we're near the real end (not a seek)
-                guard let self, !self.playerNode.isPlaying else { return }
+                guard let self else { return }
+                // Only a genuine end-of-track: no newer segment scheduled since
+                // (a seek or new song bumps the generation). Avoids the
+                // playerNode.isPlaying race that could drop the finish event.
+                guard self.scheduleGeneration == generation else { return }
                 self.eventSubject.send(.finished(true))
             }
         }
