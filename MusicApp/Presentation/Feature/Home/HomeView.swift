@@ -54,6 +54,12 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
         .padding(.top, 54)
         .scrollContentBackground(.hidden) // 👈 Ẩn background
         .background(Color.backgroundColor)
+        .onAppear {
+            // Recently-played is pushed via refreshHomePubliser when a song starts,
+            // but that fires while the user is on the Now Playing screen, not Home.
+            // Re-fetch on appear so returning to this tab always shows fresh data.
+            viewModel.send(.fetchData)
+        }
     }
     
     @ViewBuilder
