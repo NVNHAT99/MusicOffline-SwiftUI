@@ -98,11 +98,14 @@ class PlaylistDetailViewModel: ObservableObject {
 
 **Available Features:**
 - Home — Dashboard with recent playlists
-- Library — Song browser & search
+- Library — Song browser, search, smart playlists
 - PlaylistDetail — Playlist songs + management
-- ImportSong — NEW: File import from Files app
-- NowPlayingScreen — Full player interface
+- ImportSong — File import from Files app
+- NowPlayingScreen — Full player with lyrics + EQ
 - AddPlaylist — Create new playlist
+- SmartPlaylistEditor — Rule-based playlist creation
+- Lyrics — Synced .lrc display (scroll-follow, drag-pause)
+- Equalizer — 3-band EQ with presets
 - TransferView — Web upload interface
 
 ### 2. Domain Layer
@@ -145,9 +148,15 @@ Domain/UseCases/
 │   ├── FetchPlaylistUseCase        # List all playlists
 │   ├── AddPlaylistUseCase          # Create + validate
 │   ├── UpdatePlaylistUseCase       # Modify songs list
-│   ├── ReorderPlaylistSongsUseCase # NEW: Drag reorder
-│   ├── ImportSongFromFilesUseCase  # NEW: File import
+│   ├── ReorderPlaylistSongsUseCase # Drag reorder
+│   ├── ImportSongFromFilesUseCase  # File import + .lrc support
 │   └── DeletePlaylistUseCase       # Remove playlist
+├── SmartPlaylist/
+│   ├── SmartPlaylistUseCase        # Filter by rules
+│   └── SaveSmartPlaylistUseCase    # Persist smart playlists
+├── Lyrics/
+│   ├── ParseLrcContentUseCase      # Parse .lrc files (regex)
+│   └── FetchLyricsUseCase          # Retrieve synced lyrics
 ├── SongUseCases/
 │   ├── FetchSongUseCase            # Get all/by ID
 │   ├── AddSongUseCase              # Add + metadata extract
@@ -263,95 +272,173 @@ Data/CoreData/
 └── SongEntity+CoreDataProperties.swift
 ```
 
-## New Features (Phase 04)
+## New Features (Phases 02-04)
 
-### Reorder Playlist Songs
-
-**Files Modified:**
-- `ReorderPlaylistSongsUseCase.swift` — NEW
-- `PlaylistRepository.swift` — Added `updateSongOrder()`
-- `PlaylistDetailState/Intent/ViewModel/View` — Reorder UI
-
-**Flow:**
-
-```
-User drags song
-  ↓
-PlaylistDetailView.onMove fires
-  ↓
-Intent.reorderSongs(from: IndexSet, to: Int)
-  ↓
-PlaylistDetailViewModel.send(intent)
-  ↓
-ReorderPlaylistSongsUseCase.execute(playlistId, orderedSongIDs)
-  ↓
-PlaylistRepository.updateSongOrder(playlistId, orderedSongIDs)
-  ↓
-CoreData: Update playlist.songUUIDs array
-  ↓
-PlaylistEventCenter publishes .updated(playlistId)
-  ↓
-View re-renders with new order
-```
-
-**Sort Options:**
-
-```swift
-enum PlaylistSortOption {
-    case nameAscending       // A-Z by song name
-    case dateCreated         // Newest first
-    case songCount           // Most songs first
-}
-```
-
-Sorting happens in PlaylistRepository.fetchAllPlayList(sortBy:).
-
-### Import Songs from Files
+### Phase 02: Lyrics Support
 
 **Files Created:**
-- `ImportSongFromFilesUseCase.swift`
-- `ImportSong/` feature module (State, Intent, ViewModel, View)
+- `Domain/Entities/LyricsLine.swift` — timestamp, text, raw content
+- `Domain/Repositories/LyricsRepositoryProtocol.swift`
+- `Domain/UseCases/Lyrics/ParseLrcContentUseCase.swift` — NSRegularExpression, multi-timestamp
+- `Domain/UseCases/Lyrics/FetchLyricsUseCase.swift` — Retrieve & cache
+- `Data/Repositories/LyricsRepository.swift` — Filesystem (Documents/Lyrics/{stem}.lrc)
+- `Presentation/Feature/Lyrics/LyricsView.swift` — ScrollViewReader auto-scroll
+- `Presentation/Feature/NowPlayingFullPlayerView` — Lyrics toggle button
 
 **Architecture:**
 
 ```
-ImportSongView (UIDocumentPickerViewController wrapper)
-  ↓ User selects files
-ImportSongIntent.selectFiles([URL])
+Playback event fires (currentTime updated)
   ↓
-ImportSongViewModel.send(intent)
+FetchLyricsUseCase.execute(songId)
   ↓
-ImportSongFromFilesUseCase.execute(urls: [URL]) async throws -> [ImportResult]
-  ├─ For each file:
-  │  ├─ Check duplicate (filename hash)
-  │  ├─ Copy to Documents/Music/
-  │  ├─ Extract metadata (AVAsset)
-  │  ├─ Add to CoreData via AddSongUseCase
-  │  └─ Publish progress
+LyricsRepository reads Documents/Lyrics/{stem}.lrc
   ↓
-State.importResults: [ImportResult]
-  ├─ .success(Song)
-  ├─ .failure(String, Error)
-
-View displays results per file
+ParseLrcContentUseCase parses timestamps & text
+  ↓
+LyricsView auto-scrolls to current line
+  ↓
+User drags → 3s pause on scroll interaction
 ```
 
-**Supported Formats:**
-- mp3, m4a, wav, flac, aac, ogg
+**.lrc Format:**
+```
+[00:12.00] Intro text
+[00:12.00][00:20.00] Multi-timestamp support
+[00:30.50] Next line
+```
 
-**Duplicate Detection:**
-- Filename-based (hash comparison)
-- Prevents duplicate file copies
+**Features:**
+- ScrollViewReader auto-follows current time
+- 3-second pause when user manually scrolls
+- "No lyrics" placeholder if file missing
+- Integrated in NowPlayingFullPlayerView via lyrics toggle (text.quote icon)
+- ImportSongFromFilesUseCase saves .lrc alongside audio
 
-**Error Handling:**
+---
+
+### Phase 03: Smart Playlist
+
+**Files Created:**
+- `Domain/Entities/SmartPlaylist.swift` — RuleField, RuleOperator, SmartPlaylistRule
+- `Domain/Repositories/SmartPlaylistRepositoryProtocol.swift`
+- `Data/CoreData/SmartPlaylistEntity.swift` — id, name, rulesJSON, createdAt
+- `Data/Repositories/SmartPlaylistRepository.swift` — CoreData + JSON rules
+- `Domain/UseCases/SmartPlaylist/SmartPlaylistUseCase.swift` — NSCompoundPredicate filtering
+- `Domain/UseCases/SmartPlaylist/SaveSmartPlaylistUseCase.swift` — Create & persist
+- `Presentation/Feature/SmartPlaylistEditor/` — MVI (State, Intent, ViewModel, View)
+- `Data/CoreData/SongEntity` — Added dateAdded property
+
+**Rule Model:**
+
 ```swift
-enum ImportSongError: Error {
-    case unsupportedFormat(String)
-    case fileCopyFailed(String, Error)
-    case metadataExtractionFailed(String)
-    case addSongFailed(String, Error)
+enum RuleField {
+    case artist
+    case album
+    case duration
+    case dateAdded
+}
+
+enum RuleOperator {
+    case equals
+    case contains
+    case greaterThan
+    case lessThan
+}
+
+struct SmartPlaylistRule {
+    var field: RuleField
+    var op: RuleOperator
+    var value: String // or Date/TimeInterval
 }
 ```
+
+**Architecture:**
+
+```
+SmartPlaylistEditor displays rule editor
+  ↓
+User adds rules (artist/album/duration/dateAdded)
+  ↓
+SmartPlaylistEditorIntent.savePlaylist(rules: [SmartPlaylistRule])
+  ↓
+SaveSmartPlaylistUseCase.execute(name, rules)
+  ↓
+SmartPlaylistRepository saves to CoreData
+  ↓
+LibaryView updates with new smart playlist (⚡ prefix)
+  ↓
+On fetch: SmartPlaylistUseCase builds NSCompoundPredicate
+  ↓
+SongRepository filters matches
+```
+
+**Features:**
+- Live match count preview in editor
+- ⚡ prefix in LibaryView smart playlists section
+- FAB wand button (🪄) to create new smart playlist
+- AppRoute.smartPlaylistEditor(UUID?) for navigation
+
+---
+
+### Phase 04: Equalizer + AVAudioEngine
+
+**Files Created/Modified:**
+- `Core/AudioEngineService.swift` — **Rewritten** (AVAudioPlayer → AVAudioEngine + AVAudioPlayerNode)
+- `Domain/Services/EQServiceProtocol.swift`
+- `Data/Services/EQService.swift` — Singleton, 3-band EQ, UserDefaults persistence
+- `Presentation/Feature/Equalizer/` — MVI (State, Intent, ViewModel, View)
+
+**Audio Graph:**
+
+```
+AVAudioEngine
+  ├─ AVAudioPlayerNode (playback with current scheduling)
+  ├─ AVAudioUnitEQ (3-band: 60Hz bass, 1kHz mid, 14kHz treble)
+  └─ AVAudioOutputNode (device speaker/headphones)
+
+Seek:
+  ├─ scheduleSegment(audioFile, startTime: samplerTime)
+  ├─ seekOffsetFrames tracking
+  └─ currentTime = nodeTime + offset frames → seconds
+
+Interruptions:
+  ├─ AVAudioSession.interruptionNotification
+  ├─ Route change handling
+  └─ mediaServicesResetNotification recovery
+```
+
+**EQ Architecture:**
+
+```
+EQPreset enum
+  ├─ Flat (0, 0, 0 dB)
+  ├─ BassBoost (+6, 0, -3 dB)
+  ├─ Pop (+2, +4, -1 dB)
+  ├─ Rock (+3, +1, +2 dB)
+  ├─ Classical (-1, -2, +3 dB)
+  ├─ Jazz (+2, +3, +1 dB)
+  └─ Custom (user-defined)
+
+EqualizerView
+  ├─ Preset chip row (selectable)
+  ├─ 3 vertical sliders (-12..+12 dB)
+  └─ Live preview with AudioEngineService
+
+EQService (Singleton)
+  ├─ Apply gains to AVAudioUnitEQ
+  ├─ Persist UserDefaults (lastPreset, customGains)
+  └─ Restore on app launch
+```
+
+**Settings Integration:**
+- Settings → General → "Equalizer" row
+- Navigates to EqualizerView via AppRoute.equalizer
+- DIContainer wired with EQService
+
+**PlayerManager Updates:**
+- Uses AudioEngineProtocol (not concrete AudioEngineService type)
+- Dependency injection ensures testability
 
 ## Dependency Injection
 
@@ -385,17 +472,25 @@ final class DIContainer {
 }
 ```
 
-**Use Case Wiring (Phase 04 Changes):**
+**Use Case Wiring (Phases 02-04):**
 
 ```swift
 // DIContainer+UseCases.swift
-let reorderSongs = ReorderPlaylistSongsUseCase(repository: playlistRepository)
-let importSong = ImportSongFromFilesUseCase(addSongUseCase: addSong)
+let lyrics = (
+    parse: ParseLrcContentUseCase(),
+    fetch: FetchLyricsUseCase(repository: lyricsRepository)
+)
+let smartPlaylist = (
+    fetch: SmartPlaylistUseCase(repository: smartPlaylistRepository),
+    save: SaveSmartPlaylistUseCase(repository: smartPlaylistRepository)
+)
+let eqService = EQService()
 
 return UseCases(
     ...
-    reorderPlaylistSongsUseCase: reorderSongs,
-    importSongFromFilesUseCase: importSong,
+    lyricsUseCases: lyrics,
+    smartPlaylistUseCases: smartPlaylist,
+    eqService: eqService,
     ...
 )
 ```
@@ -426,20 +521,58 @@ func fetchPlaylists() {
 4. Upload files through web UI
 5. Files saved to app Documents via `DocumentFileManager`
 
-### Audio Engine
+### Audio Engine (AVAudioEngine graph)
+
+Playback runs through an `AVAudioEngine` graph, not a plain `AVPlayer`. Effect nodes are attached up-front and toggled with `.bypass` so the engine never stops at runtime (avoids audible pops):
+
+```
+playerNode → AVAudioUnitTimePitch → AVAudioUnitReverb → AVAudioUnitEQ(10-band) → mainMixer
+```
 
 **Service:** `PlayerManager`
-- AVPlayer wrapper
-- Playback control (play, pause, seek, skip)
-- Shuffle & repeat modes
-- Background playback support
+- Depends on `AudioEngineProtocol` (not a concrete type)
+- Playback control (play, pause, seek, skip), shuffle & repeat, background playback
 
-**Service:** `AudioEngineService`
-- Alternative audio engine (optional)
+**Service:** `AVAudioPlayerEngineService` (`Core/AudioEngineService.swift`)
+- Owns the engine + `AVAudioPlayerNode`; builds the graph and **reconnects the whole chain with the file's native format on each `load`** to avoid sample-rate-conversion artifacts.
+- Seek via `scheduleSegment(startingFrame:)` + `seekOffsetFrames`; `currentTime` derived from `playerTime` sample-time.
+- Handles `AVAudioSession` `.playback`, interruption (pause/resume on `.shouldResume`), route change (pause on old-device-unavailable), and media-services-reset (rebuild graph + reload).
+
+**Service:** `EQService` — owns `AVAudioUnitEQ` (10 bands, lowShelf/parametric/highShelf), presets + per-band gain, bypass, UserDefaults persist, v1→v2 migration.
+
+**Service:** `AudioEffectsService` — owns `AVAudioUnitTimePitch` (speed + pitch, single node, auto-bypass when neutral) and `AVAudioUnitReverb` (factory preset + wet/dry, auto-bypass when wet<0.5).
 
 **Service:** `NowPlayingInfoService`
 - Lock screen & control center integration
 - Metadata display in system UI
+
+### Audio Editor Export
+
+`ExportEditedAudioUseCase` produces a non-destructive edited copy:
+1. `AVMutableComposition` inserts the trimmed time range (timescale 600).
+2. `AVMutableAudioMix` applies base volume (= normalize gain when enabled) + fade-in/out volume ramps in composition coordinate space.
+3. `AVAssetExportSession` (preset `AppleM4A`) writes **M4A/AAC** to a uniquified path in `Documents/Music/`.
+4. A `UIApplication` background task spans the export; progress polled every 200 ms; cancel/fail removes the partial file.
+
+Normalization is **peak-based** (`ComputeNormalizationGainUseCase`: scan peak → `0.95/peak`, clamp [0.5, 3.0]), not LUFS — chosen for cheap single-pass computation without loudness libraries.
+
+### External File Import Flow
+
+Every "file from outside" route converges on one coordinator:
+
+```
+AirDrop / Open-in / Share  ─ MusicApp.onOpenURL ─────────────┐
+Finder / Files.app drop    ─ scenePhase .active scan ────────┤
+URL download (HTTPS)       ─ DownloadAudioFromURLUseCase ─────┼→ ExternalFileImportCoordinator
+Web Transfer (GCDWebServer)─ upload ─────────────────────────┘        │
+Import Hub (manual)        ─ ImportHubView routes ────────────────────┤
+                                                                       ▼
+                                          ImportSongFromFilesUseCase (dedup, metadata, .lrc sidecar)
+                                                                       │
+                                                       posts .externalImportFinished(ExternalImportSummary)
+```
+
+`ExternalFileImportCoordinator` is `@MainActor`, guards against concurrent batches (`inFlight`), and on a Documents-root scan skips managed subfolders (`Music`, `Lyrics`, `Inbox`) and non-audio files.
 
 ## Event Publishing
 
