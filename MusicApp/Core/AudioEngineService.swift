@@ -46,12 +46,13 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
     // without relying on playerNode.isPlaying (which races at completion time).
     private var scheduleGeneration: Int = 0
 
-    // True only while playback was suspended by a system interruption that the
-    // engine itself paused (phone call, another app's audio). Auto-resume on
-    // interruption-ended is gated on this so a USER pause (Control Center /
-    // in-app) is never auto-resumed — which previously flipped the CC button
-    // pause→play→pause and made resume impossible.
-    private var wasInterruptedWhilePlaying = false
+    // True only between an interruption .began that paused us and the matching
+    // .ended. Any explicit user/app play() or pause() clears it, so an
+    // interruption that races with a user pause (Control Center / in-app) can't
+    // trigger auto-resume — that race previously flipped the CC button
+    // pause→play→pause and made resume impossible. Auto-resume after a real
+    // phone call / other-app audio still works because no user action intervenes.
+    private var pausedByInterruption = false
 
     private let eventSubject = PassthroughSubject<AudioEngineEvent, Never>()
     var eventPublisher: AnyPublisher<AudioEngineEvent, Never> {
@@ -143,6 +144,8 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
 
     func play() {
         guard audioFile != nil else { return }
+        // Explicit play intent ends any pending interruption-resume state.
+        pausedByInterruption = false
         do {
             // Re-assert the audio session; iOS may have deactivated it while the
             // app was backgrounded, which makes playerNode.play() a silent no-op.
@@ -159,6 +162,16 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
     }
 
     func pause() {
+        // A direct (user/app) pause is NOT an interruption pause — clear the flag
+        // so a racing interruption can't later auto-resume over the user's intent.
+        pausedByInterruption = false
+        playerNode.pause()
+    }
+
+    /// Pause specifically because of a system interruption — marks the state so
+    /// interruption-ended can auto-resume (unless a user action intervenes).
+    private func pauseForInterruption() {
+        pausedByInterruption = true
         playerNode.pause()
     }
 
@@ -239,21 +252,23 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
 
         switch type {
         case .began:
-            // Remember whether WE were actually playing so we only auto-resume
-            // an interruption we caused — never a user-initiated pause.
-            wasInterruptedWhilePlaying = playerNode.isPlaying
-            pause()
+            // Only mark for auto-resume if we were genuinely playing. If we were
+            // already paused (incl. a user pause that just happened), do nothing —
+            // pauseForInterruption is skipped so pausedByInterruption stays false.
+            if playerNode.isPlaying {
+                pauseForInterruption()
+            }
         case .ended:
             let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
             let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
-            // Only resume if the system says so AND the interruption is what
-            // paused us. A Control Center / in-app user pause leaves
-            // wasInterruptedWhilePlaying == false, so it stays paused.
-            if options.contains(.shouldResume), wasInterruptedWhilePlaying {
-                try? configureSessionIfNeeded()
+            // Resume only if the system suggests it AND the interruption is still
+            // what paused us (no user play/pause intervened — that would have
+            // cleared pausedByInterruption, avoiding the CC pause→play→pause race).
+            if options.contains(.shouldResume), pausedByInterruption {
+                pausedByInterruption = false
                 play()
             }
-            wasInterruptedWhilePlaying = false
+            pausedByInterruption = false
         @unknown default:
             break
         }
