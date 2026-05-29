@@ -11,6 +11,12 @@ import SwiftUI
 @MainActor
 protocol NowPlayingViewModelProtocol: ObservableObject {
     var state: NowPlayingState { get set }
+    /// High-frequency playback position, published separately from `state` so a
+    /// 1s tick only re-renders the progress bar/label — not the whole player +
+    /// lyrics List that observe `state`.
+    var currentTime: Double { get set }
+    var activeLyricIndex: Int? { get }
+    var isDragging: Bool { get set }
     func send(_ intent: NowPlayingIntent)
     var playButtonIcon: String { get }
     var shuffleButtonColor: Color { get }
@@ -27,6 +33,11 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
 
     // MARK: - Published Properties
     @Published var state: NowPlayingState = .init()
+    // High-frequency values kept out of `state` so the per-second tick only
+    // invalidates the progress slider/label, not the entire player + lyrics List.
+    @Published var currentTime: Double = 0
+    @Published var activeLyricIndex: Int? = nil
+    @Published var isDragging: Bool = false
 
     // MARK: - Dependencies
     private let playerManager: any PlayerManagerProtocol
@@ -81,13 +92,44 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
     }
 
     private func updateFromPlayerState(_ playerState: PlayerManagerState) {
-        state = reducer.reduce(state, with: .updateFromPlayerState(playerState))
+        // High-frequency position lives outside `state` — update it (and the
+        // derived active lyric) without reassigning `state` on every tick.
+        if !isDragging {
+            currentTime = playerState.currentTimePlay
+            recomputeActiveLyric()
+        }
+
+        // Only reassign `state` (which the whole player + lyrics List observe)
+        // when something structural actually changed, not on a pure time tick.
+        let structuralChanged =
+            state.currentSong != playerState.currentSong ||
+            state.isPlaying != playerState.isPlaying ||
+            state.shuffleEnabled != playerState.shuffleEnabled ||
+            state.repeatMode != playerState.repeatMode ||
+            state.duration != (playerState.currentSong?.duration ?? 0)
+
+        if structuralChanged {
+            state = reducer.reduce(state, with: .updateFromPlayerState(playerState))
+        }
+
         let newStem = Self.lyricsStem(from: playerState.currentSong?.urlStr)
         if newStem != lastLyricsSongStem {
             lastLyricsSongStem = newStem
             let stem = newStem ?? ""
             let lines = stem.isEmpty ? [] : fetchLyricsUseCase.execute(stem: stem)
             state = reducer.reduce(state, with: .setLyrics(lines))
+            recomputeActiveLyric()
+        }
+    }
+
+    private func recomputeActiveLyric() {
+        guard !state.lyrics.isEmpty else {
+            if activeLyricIndex != nil { activeLyricIndex = nil }
+            return
+        }
+        let newIndex = NowPlayingStateReducerImpl.activeLyricIndex(for: currentTime, in: state.lyrics)
+        if newIndex != activeLyricIndex {
+            activeLyricIndex = newIndex
         }
     }
 
@@ -130,8 +172,9 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
             Logger.debug("Seeking to time: \(double)")
             seek(to: double)
         case .seekDragging(let double):
-            state = reducer.reduce(state, with: .setCurrentTime(double))
-            state = reducer.reduce(state, with: .setIsDragging(true))
+            isDragging = true
+            currentTime = double
+            recomputeActiveLyric()
         case .setSleepTime(let hour, let minus, let second):
             let value = hour * 60 * 60 + minus * 60 + second
             Logger.info("Setting sleep timer for \(hour)h \(minus)m \(second)s")
@@ -269,7 +312,9 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
     }
 
     private func seek(to time: Double) {
-        state = reducer.reduce(state, with: .setIsDragging(false))
+        isDragging = false
+        currentTime = time
+        recomputeActiveLyric()
         playerManager.seek(to: time)
     }
 
@@ -306,6 +351,6 @@ final class NowPlayingViewModel: NowPlayingViewModelProtocol {
     }
 
     var currentTimeStr: String {
-        return state.currentTime.toTimeString()
+        return currentTime.toTimeString()
     }
 }

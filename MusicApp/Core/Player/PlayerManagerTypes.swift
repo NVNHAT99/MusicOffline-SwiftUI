@@ -18,6 +18,7 @@ struct PlayerManagerState {
 }
 
 // MARK: - PlayerManagerProtocol
+@MainActor
 protocol PlayerManagerProtocol: ObservableObject {
     var state: PlayerManagerState { get }
     var statePublisher: Published<PlayerManagerState>.Publisher { get }

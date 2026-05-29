@@ -24,6 +24,7 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
     private let fileManager = FileManager.default
     private let accessQueue = DispatchQueue(label: "com.musicapp.imagecache.access", qos: .utility)
     private var accessOrder = NSMutableOrderedSet()
+    private var memoryWarningObserver: NSObjectProtocol?
 
     // MARK: - Initialization
     init(configuration: ImageCacheConfiguration = .default) {
@@ -44,34 +45,6 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
         }
     }
 
-    // MARK: - Setup
-    private func setupCache() {
-        guard configuration.enableDiskCache else { return }
-
-        try? fileManager.createDirectory(at: diskURL, withIntermediateDirectories: true)
-        Task {
-            await cleanupExpiredCacheAsync()
-        }
-    }
-
-    private func setupMemoryCache() {
-        memoryCache.countLimit = configuration.memoryCountLimit
-        memoryCache.totalCostLimit = configuration.memoryTotalCostLimit
-        memoryCache.delegate = self
-    }
-
-    private func observeMemoryWarnings() {
-        NotificationCenter.default.addObserver(
-            forName: UIApplication.didReceiveMemoryWarningNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            Task { @MainActor [weak self] in
-                self?.handleMemoryWarning()
-            }
-        }
-    }
-
     // MARK: - Synchronous Setup (called from init)
     private func setupMemoryCacheSync() {
         memoryCache.countLimit = configuration.memoryCountLimit
@@ -80,7 +53,9 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
     }
 
     private func observeMemoryWarningsSync() {
-        NotificationCenter.default.addObserver(
+        // Retain the token: block-based observers are NOT removed by
+        // removeObserver(self) — only the token API can unregister them.
+        memoryWarningObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.didReceiveMemoryWarningNotification,
             object: nil,
             queue: .main
@@ -271,28 +246,6 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
         }
     }
 
-    private func cleanupExpiredCache() {
-        guard configuration.enableDiskCache else { return }
-
-        do {
-            let resources = try fileManager.contentsOfDirectory(
-                at: diskURL,
-                includingPropertiesForKeys: [.creationDateKey, .fileSizeKey]
-            )
-
-            let expiryDate = Date().addingTimeInterval(-TimeInterval(configuration.cacheExpiryDays * 24 * 60 * 60))
-
-            for url in resources {
-                guard let creationDate = try? url.resourceValues(forKeys: [.creationDateKey]).creationDate,
-                      creationDate < expiryDate else { continue }
-
-                try? fileManager.removeItem(at: url)
-            }
-        } catch {
-            print("⚠️ Failed to cleanup expired cache: \(error)")
-        }
-    }
-
     private func cleanupExpiredCacheAsync() async {
         guard configuration.enableDiskCache else { return }
 
@@ -343,10 +296,6 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
         }
     }
 
-    private func cleanupOldestFiles(requiredSpace: Int) async {
-        cleanupOldestFilesSync(requiredSpace: requiredSpace)
-    }
-
     private func handleMemoryWarning() {
         print("🗑️ Memory warning received, clearing memory cache")
         clearMemory()
@@ -379,7 +328,9 @@ final class ImageCacheManager: NSObject, ImageCacheProtocol {
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self)
+        if let memoryWarningObserver {
+            NotificationCenter.default.removeObserver(memoryWarningObserver)
+        }
     }
 }
 

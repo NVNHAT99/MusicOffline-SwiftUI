@@ -10,8 +10,9 @@ import Combine
 
 // Types extracted to PlayerManagerTypes.swift
 
+@MainActor
 final class PlayerManager: PlayerManagerProtocol {
-    
+
     static let shared = PlayerManager(
         engine: AVAudioPlayerEngineService.shared,
         timerService: GCDTimerService(),
@@ -49,6 +50,9 @@ final class PlayerManager: PlayerManagerProtocol {
     private var shuffledOrder: [Int] = []
     private var playlist: [SongModel] = []
     private var currentPlaylistID: UUID?
+    // Guards against infinite next() recursion when every file is missing
+    // (e.g. after iCloud offload). Reset on any successful load.
+    private var consecutiveLoadFailures: Int = 0
     // MARK: - Init
     private init(engine: AudioEngineProtocol,
                  timerService: TimerServiceProtocol,
@@ -356,14 +360,14 @@ final class PlayerManager: PlayerManagerProtocol {
         let path = song.urlStr ?? ""
         guard !path.isEmpty, FileManager.default.fileExists(atPath: path) else {
             Logger.error("Song file missing: \(path)")
-            missingFileSubject.send(song.title)
-            Task { await next() }
+            handleLoadFailure(song: song)
             return
         }
 
         do {
             let url = URL(fileURLWithPath: path)
             try engine.load(url: url)
+            consecutiveLoadFailures = 0
             RecentSongsManager.add(song, in: self.currentPlaylistID?.uuidString)
             RecentSongsManager.saveCurrentPlaylist(id: self.currentPlaylistID?.uuidString ?? "")
             RecentSongsManager.addRecentPlaylist(id: self.currentPlaylistID?.uuidString ?? String.empty)
@@ -373,9 +377,26 @@ final class PlayerManager: PlayerManagerProtocol {
             progressTimerService.start(interval: 1, from: 0)
         } catch {
             Logger.error("Error loading song: \(error)")
-            missingFileSubject.send(song.title)
-            Task { await next() }
+            handleLoadFailure(song: song)
         }
+    }
+
+    /// Skip to the next song after a load failure, but stop after a full pass
+    /// over the playlist so an all-missing playlist (e.g. iCloud-offloaded
+    /// library) can't recurse forever — especially under repeatMode == .all.
+    private func handleLoadFailure(song: SongModel) {
+        missingFileSubject.send(song.title)
+        consecutiveLoadFailures += 1
+
+        guard consecutiveLoadFailures < playlist.count else {
+            consecutiveLoadFailures = 0
+            progressTimerService.stop()
+            self.state.isPlaying = false
+            missingFileSubject.send("No playable songs")
+            return
+        }
+
+        Task { await next() }
     }
     
     private func loadSong(song: SongModel) {
@@ -441,7 +462,7 @@ final class PlayerManager: PlayerManagerProtocol {
         timerService.cancel()
     }
     
-    // Thread-safe state updates
+    // State writes are main-actor isolated (class is @MainActor).
     private func updateState(_ update: (inout PlayerManagerState) -> Void) {
         update(&self.state)
     }

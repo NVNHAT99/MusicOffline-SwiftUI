@@ -10,7 +10,7 @@ struct NowPlayingView<ViewModel: NowPlayingViewModelProtocol>: View {
 
     private let miniPlayerHeight: CGFloat = DesignToken.Player.miniPlayerHeight
     private let cornerRadius: CGFloat = DesignToken.Radius.md
-    private let cache = ImageCacheFactory.createDefaultCache()
+    private let cache = ImageCacheFactory.shared
     @State private var uiImage: UIImage?
 
     init(isExpanded: Binding<Bool>, viewModel: ViewModel) {
