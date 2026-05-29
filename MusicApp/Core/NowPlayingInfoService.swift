@@ -66,6 +66,7 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
             info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
             info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
             MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+            MPNowPlayingInfoCenter.default().playbackState = isPlaying ? .playing : .paused
             return
         }
 
@@ -80,6 +81,7 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        MPNowPlayingInfoCenter.default().playbackState = isPlaying ? .playing : .paused
 
         Task { [weak self] in
             guard let self else { return }
@@ -102,28 +104,67 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        MPNowPlayingInfoCenter.default().playbackState = isPlaying ? .playing : .paused
     }
     
     private func setupRemoteTransportControls(playerManager: any PlayerManagerProtocol) {
         let commandCenter = MPRemoteCommandCenter.shared()
-        
+
+        // Register fresh handlers. removeTarget(nil) first so re-binding never
+        // stacks duplicate handlers on the process-wide shared command center.
+        commandCenter.playCommand.removeTarget(nil)
+        commandCenter.pauseCommand.removeTarget(nil)
+        commandCenter.togglePlayPauseCommand.removeTarget(nil)
+        commandCenter.nextTrackCommand.removeTarget(nil)
+        commandCenter.previousTrackCommand.removeTarget(nil)
+        commandCenter.changePlaybackPositionCommand.removeTarget(nil)
+
+        commandCenter.playCommand.isEnabled = true
+        commandCenter.pauseCommand.isEnabled = true
+        commandCenter.togglePlayPauseCommand.isEnabled = true
+        commandCenter.nextTrackCommand.isEnabled = true
+        commandCenter.previousTrackCommand.isEnabled = true
+        commandCenter.changePlaybackPositionCommand.isEnabled = true
+
+        // Commands we don't support must be disabled, otherwise iOS can route a
+        // single-tap to a shadowing command (e.g. seek) and the play button
+        // appears to do nothing.
+        commandCenter.changePlaybackRateCommand.isEnabled = false
+        commandCenter.seekForwardCommand.isEnabled = false
+        commandCenter.seekBackwardCommand.isEnabled = false
+        commandCenter.skipForwardCommand.isEnabled = false
+        commandCenter.skipBackwardCommand.isEnabled = false
+
         commandCenter.playCommand.addTarget { _ in
-            Task { await playerManager.play() }
+            Task { @MainActor in await playerManager.play() }
             return .success
         }
         commandCenter.pauseCommand.addTarget { _ in
-            Task { await playerManager.pause() }
+            Task { @MainActor in await playerManager.pause() }
+            return .success
+        }
+        // The lock-screen / Control Center button often sends a single toggle
+        // command rather than discrete play/pause.
+        commandCenter.togglePlayPauseCommand.addTarget { [weak playerManager] _ in
+            Task { @MainActor in
+                guard let playerManager else { return }
+                if playerManager.state.isPlaying {
+                    await playerManager.pause()
+                } else {
+                    await playerManager.play()
+                }
+            }
             return .success
         }
         commandCenter.nextTrackCommand.addTarget { _ in
-            Task { await playerManager.next() }
+            Task { @MainActor in await playerManager.next() }
             return .success
         }
         commandCenter.previousTrackCommand.addTarget { _ in
-            Task { await playerManager.previous() }
+            Task { @MainActor in await playerManager.previous() }
             return .success
         }
-        
+
         commandCenter.changePlaybackPositionCommand.addTarget { event in
             if let positionEvent = event as? MPChangePlaybackPositionCommandEvent {
                 Task { @MainActor in playerManager.seek(to: positionEvent.positionTime) }
