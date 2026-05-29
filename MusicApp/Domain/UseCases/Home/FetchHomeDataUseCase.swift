@@ -32,7 +32,18 @@ final class FetchHomeDataUseCase: FetchHomeDataUseCaseProtocol {
             Album(id: albumTitle, title: albumTitle, songs: songs)
         }
         let playlists = try await fetchPlaylistUseCase.executeGetAll(sortBy: .nameAscending)
-        
-        return .init(albums: albums, playlists: playlists, recentSongs: [])
+
+        let recentSongs = RecentSongsManager.fetchRecentSongs().map { item in
+            Song(
+                id: item.song.id,
+                title: item.song.title,
+                album: item.song.album,
+                artist: item.song.artist,
+                duration: item.song.duration,
+                urlStr: item.song.urlStr ?? ""
+            )
+        }
+
+        return .init(albums: albums, playlists: playlists, recentSongs: recentSongs)
     }
 }

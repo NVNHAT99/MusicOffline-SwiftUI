@@ -174,7 +174,7 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
             if viewModel.state.showLyrics {
                 LyricsView(
                     lines: viewModel.state.lyrics,
-                    activeIndex: viewModel.state.activeLyricIndex
+                    activeIndex: viewModel.activeLyricIndex
                 )
                 .frame(width: size, height: size)
                 .clipShape(RoundedRectangle(cornerRadius: DesignToken.Radius.sm))
@@ -235,8 +235,8 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
     private var progressSection: some View {
         VStack {
             CustomSliderView(
-                value: $viewModel.state.currentTime,
-                isDragSliderView: $viewModel.state.isDraging,
+                value: $viewModel.currentTime,
+                isDragSliderView: $viewModel.isDragging,
                 minValue: 0,
                 maxValue: viewModel.state.duration,
                 trackColor: Color(hexString: "#808080"),

@@ -4,9 +4,9 @@ High-level plan for MusicOffline-SwiftUI features and improvements.
 
 ## Current Status
 
-**Latest Phase:** Phase 04 - Playlist Management Improvements ✅ Complete
-**Current Version:** 1.3.0
-**Last Updated:** 2026-04-29
+**Latest Phase:** Audio Editing + Import Expansion ✅ Complete (P04 Share Extension deferred)
+**Current Version:** 2.0.0
+**Last Updated:** 2026-05-29
 
 ## Phase Overview
 
@@ -15,17 +15,19 @@ High-level plan for MusicOffline-SwiftUI features and improvements.
 | **Phase 01** | DI Architecture Refactor | ✅ Complete | 1 week |
 | **Phase 02** | File Structure & Layers | ✅ Complete | 1 week |
 | **Phase 03** | Modularization & Splitting | ✅ Complete | 1 week |
-| **Phase 04** | Playlist Management | ✅ Complete | 2 weeks |
-| **Phase 05** | Playback Improvements | 📋 Planned | 2 weeks |
-| **Phase 06** | Feature Brainstorm | 🔮 Research | 1 week |
+| **Phase 04** | Playlist Management (Reorder, Import) | ✅ Complete | 2 weeks |
+| **Phase 05** | Lyrics + Smart Playlist + Equalizer + AVAudioEngine | ✅ Complete | 2.5 weeks |
+| **Audio Editing + Import Expansion** | Lyrics fix, 10-band EQ, effects, audio editor, multi-method import | ✅ Complete | 1.5 weeks |
+| **Phase 06** | Playback Improvements (Queue, Shuffle, Repeat) | 📋 Planned | 2 weeks |
+| **Phase 07** | Feature Brainstorm & Prioritization | 🔮 Research | 1 week |
 
 ---
 
-## Phase 05: Playback Flow Improvements
+## Phase 06: Playback Flow Improvements
 
-**Priority:** P1 | **Status:** 📋 Planned | **Depends on:** Phase 04 complete
+**Priority:** P1 | **Status:** 📋 Planned | **Depends on:** Phase 05 complete
 
-**Target Date:** 2026-05-13 (2 weeks from Phase 04)
+**Target Date:** 2026-05-13 (2 weeks from Phase 05)
 
 ### Objectives
 
@@ -133,11 +135,11 @@ enum RepeatMode {
 
 ---
 
-## Phase 06: Feature Brainstorm & Prioritization
+## Phase 07: Feature Brainstorm & Prioritization
 
-**Priority:** P2 | **Status:** 🔮 Research | **Depends on:** Phase 05 complete
+**Priority:** P2 | **Status:** 🔮 Research | **Depends on:** Phase 06 complete
 
-**Target Date:** 2026-05-20 (1 week from Phase 05)
+**Target Date:** 2026-05-20 (1 week from Phase 06)
 
 ### Objectives
 
@@ -234,6 +236,49 @@ Evaluate and prioritize new features for future development.
 
 ## Completed Phases
 
+### Audio Editing + Import Expansion ✅
+
+**Completed:** 2026-05-29
+**Plan:** `plans/260526-audio-editing-and-import-expansion/`
+
+**Sub-phases (P00–P07):**
+- **P00 — Lyrics pipeline fix** ✅ — normalized stem-match fallback (exact → case-insensitive → diacritics/separator-collapsed), ambiguity guard, Attach/Remove use-cases, unit tests.
+- **P01 — 10-band parametric EQ** ✅ — ISO freqs [31…16k] Hz, 6 built-in presets + custom, user-preset CRUD, **v1 (3-band) → v2 (10-band) UserDefaults migration**, A/B bypass.
+- **P02 — Audio effects** ✅ — speed 0.5–2.0×, pitch ±12 st, reverb preset + wet/dry; `AVAudioUnitTimePitch` + `AVAudioUnitReverb` in the engine graph, auto-bypass when neutral.
+- **P03 — Audio editor export** ✅ — trim + fade in/out + peak-normalize → M4A/AAC in `Documents/Music/`, background task, progress, cancel cleanup.
+- **P04 — Share Extension / AirDrop** ⏸️ **Deferred** — code artifact prepared; Xcode target add (pbxproj) pending. AirDrop/Open-in via `onOpenURL` works today.
+- **P05 — URL download** ✅ — HTTPS-only sanitize, background download, cancellable, auto-ingest.
+- **P06 — iTunes/Finder sharing + Open-in** ✅ — Documents-root scan on scene-active, single-file `onOpenURL`.
+- **P07 — Import Hub** ✅ (with gaps) — one-screen route list reached from Library. Known gaps: "Pick from Files" action has no listener; first-launch routing not implemented (see QA report).
+
+**Engine graph:** `player → timePitch → reverb → eq(10) → mainMixer`, reconnected with file-native format on load.
+
+**QA:** build PASS, `MusicAppTests` PASS (lyrics matching suite). Full matrix + flagged findings: `plans/reports/qa-checklist-260529.md`.
+
+### Phase 05: iCloud + Lyrics + Smart Playlist + Equalizer ✅
+
+**Completed:** 2026-04-29
+
+**Features Delivered:**
+- **iCloud Drive verification & entitlements** — Access to iCloud Drive import via UIDocumentPickerViewController
+- **Lyrics (.lrc file support)** — Import .lrc files, display synced lyrics with auto-scroll, parse [mm:ss.xx] format
+- **Smart Playlist (rule-based)** — Create playlists from CoreData predicates (artist/album/duration/dateAdded), live rule preview
+- **Equalizer + AVAudioEngine migration** — 3-band parametric EQ (Bass 60Hz, Mid 1kHz, Treble 14kHz), 6 presets, engine rewrite
+
+**New Components:**
+- LyricsLine, LyricsRepository, ParseLrcContentUseCase, FetchLyricsUseCase, LyricsView (P02)
+- SmartPlaylist entity, SmartPlaylistRepository, SmartPlaylistUseCase, SaveSmartPlaylistUseCase, SmartPlaylistEditor MVI (P03)
+- EQPreset, EQServiceProtocol, EQService, AVAudioEngine rewrite of AudioEngineService, Equalizer MVI (P04)
+- AppRoute extended with .smartPlaylistEditor and .equalizer
+- DIContainer updated with all new use cases + view factories
+
+**Metrics:**
+- 4 phases executed sequentially
+- 15+ new source files
+- 10+ modified files
+- Build verified passing on all phases
+- Zero regressions on existing playback/playlist flows
+
 ### Phase 04: Playlist Management Improvements ✅
 
 **Completed:** 2026-04-29
@@ -283,9 +328,9 @@ Evaluate and prioritize new features for future development.
 ## Long-Term Vision (6-12 Months)
 
 ### Quarter 2 (May - July)
-- Phase 05: Playback improvements
-- Phase 06: Feature brainstorm
-- Phase 07: Smart playlists + backup/restore
+- Phase 06: Playback improvements
+- Phase 07: Feature brainstorm
+- Phase 08: Backup & restore (postponed from Phase 07)
 
 ### Quarter 3 (Aug - Oct)
 - Advanced search filters
@@ -369,10 +414,10 @@ Evaluate and prioritize new features for future development.
 - **Code Standards:** `docs/code-standards.md`
 - **Changelog:** `docs/project-changelog.md`
 - **Codebase Summary:** `docs/codebase-summary.md`
-- **Phase Plans:** `plans/260428-2336-musicapp-full-refactor-and-improve/phase-XX-*.md`
+- **Phase Plans:** `plans/260429-2228-new-features-eq-lyrics-playlist-icloud/phase-XX-*.md`
 
 ---
 
 **Last Updated:** 2026-04-29
-**Next Review:** 2026-05-13 (Phase 05 kickoff)
+**Next Review:** 2026-05-13 (Phase 06 kickoff)
 **Maintained by:** Development Team

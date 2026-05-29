@@ -19,6 +19,7 @@ public struct RootView: View {
 
     @State private var importToast: String? = nil
     @State private var toastTask: Task<Void, Never>? = nil
+    @State private var showFilesImport: Bool = false
 
     // MARK: - Body
     public var body: some View {
@@ -48,6 +49,15 @@ public struct RootView: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: importToast)
+        .sheet(isPresented: $showFilesImport) {
+            ImportSongView(viewModel: ImportSongViewModel())
+                .background(Color.backgroundColor.ignoresSafeArea())
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openImportFromFiles)) { _ in
+            // The Import Hub dismisses itself before posting; presenting from the
+            // root (a different presenter) avoids a sheet-over-sheet conflict.
+            showFilesImport = true
+        }
         .onReceive(NotificationCenter.default.publisher(for: .externalImportFinished)) { notif in
             guard let summary = notif.object as? ExternalImportSummary else { return }
             let msg: String

@@ -11,7 +11,7 @@ struct ImportHubView: View {
     @State private var infoAlert: InfoAlert? = nil
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color.backgroundColor.ignoresSafeArea()
                 ScrollView {

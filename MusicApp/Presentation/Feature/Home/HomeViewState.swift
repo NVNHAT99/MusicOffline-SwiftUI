@@ -12,6 +12,5 @@ struct HomeViewState {
     var isLoadingPlaylist: Bool = false
     var albums: [Album] = []
     var playlists: [Playlist] = []
-    // TODO: RecentSongItem not defined - comment out for now
-    // var recentSongs: [RecentSongItem] = []
+    var recentSongs: [RecentSongItem] = []
 }

@@ -2,8 +2,13 @@ import Foundation
 
 // MARK: - ImageCacheFactory
 enum ImageCacheFactory {
+    /// Single process-wide cache. Multiple instances each register their own
+    /// memory-warning observer and fragment the in-memory/disk cache, so every
+    /// caller must share this one. DI passes this same instance around.
+    static let shared = ImageCacheManager(configuration: .default)
+
     static func createDefaultCache() -> ImageCacheManager {
-        ImageCacheManager(configuration: .default)
+        shared
     }
 
     static func createLightweightCache() -> ImageCacheManager {

@@ -12,7 +12,7 @@ final class  AudioImageRepositoryImpl: AudioImageRepositoryProtocol {
     
     private let cache: ImageCacheProtocol
 
-    init(cache: ImageCacheProtocol = ImageCacheFactory.createDefaultCache()) {
+    init(cache: ImageCacheProtocol = ImageCacheFactory.shared) {
         self.cache = cache
     }
 

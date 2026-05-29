@@ -56,7 +56,7 @@ final class ImportSongFromFilesUseCase: ImportSongFromFilesUseCaseProtocol {
             if ext == "lrc" {
                 let stem = url.deletingPathExtension().lastPathComponent
                 do {
-                    let content = try Self.readTextFile(from: url)
+                    let content = try await Self.readTextFile(from: url)
                     try lyricsRepository.save(stem: stem, content: content)
                     results.append(ImportSongResult(fileName: fileName, success: true, error: nil))
                 } catch {
@@ -73,7 +73,7 @@ final class ImportSongFromFilesUseCase: ImportSongFromFilesUseCaseProtocol {
             }
 
             do {
-                let destURL = try Self.copyFile(from: url, to: musicDir)
+                let destURL = try await Self.copyFile(from: url, to: musicDir)
                 try await addSongUseCase.execute(from: destURL.path)
                 results.append(ImportSongResult(fileName: fileName, success: true, error: nil))
             } catch let err as ImportSongError {
@@ -90,10 +90,10 @@ final class ImportSongFromFilesUseCase: ImportSongFromFilesUseCaseProtocol {
 
     // MARK: - Private
 
-    private static func readTextFile(from url: URL) throws -> String {
+    private static func readTextFile(from url: URL) async throws -> String {
         let accessed = url.startAccessingSecurityScopedResource()
         defer { if accessed { url.stopAccessingSecurityScopedResource() } }
-        try ensureLocallyAvailable(url: url)
+        try await ensureLocallyAvailable(url: url)
         let data = try Data(contentsOf: url)
         guard let text = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .utf16) else {
             throw ImportSongError.fileCopyFailed(url.lastPathComponent, NSError(
@@ -111,12 +111,12 @@ final class ImportSongFromFilesUseCase: ImportSongFromFilesUseCaseProtocol {
         return musicDir
     }
 
-    private static func copyFile(from sourceURL: URL, to directory: URL) throws -> URL {
+    private static func copyFile(from sourceURL: URL, to directory: URL) async throws -> URL {
         let accessed = sourceURL.startAccessingSecurityScopedResource()
         defer { if accessed { sourceURL.stopAccessingSecurityScopedResource() } }
 
         // Materialize iCloud placeholder if not yet downloaded locally
-        try Self.ensureLocallyAvailable(url: sourceURL)
+        try await Self.ensureLocallyAvailable(url: sourceURL)
 
         let destURL = directory.appendingPathComponent(sourceURL.lastPathComponent)
 
@@ -142,16 +142,18 @@ final class ImportSongFromFilesUseCase: ImportSongFromFilesUseCaseProtocol {
         return destURL
     }
 
-    /// Triggers download of iCloud placeholder files and waits (sync, up to 30s).
-    private static func ensureLocallyAvailable(url: URL) throws {
+    /// Triggers download of iCloud placeholder files and polls until current
+    /// (up to ~30s). Uses async sleep so the cooperative thread pool is not
+    /// starved, and honours task cancellation.
+    private static func ensureLocallyAvailable(url: URL) async throws {
         let resourceValues = try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
         guard let status = resourceValues.ubiquitousItemDownloadingStatus,
               status != .current else { return }
 
-        // Request download and poll (max 30 iterations × 1s)
         try FileManager.default.startDownloadingUbiquitousItem(at: url)
         for _ in 0..<30 {
-            Thread.sleep(forTimeInterval: 1)
+            try Task.checkCancellation()
+            try await Task.sleep(nanoseconds: 1_000_000_000)
             let updated = try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
             if updated.ubiquitousItemDownloadingStatus == .current { return }
         }

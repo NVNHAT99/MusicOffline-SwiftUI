@@ -16,8 +16,13 @@ struct MusicApp: App {
     @StateObject private var environment = AppEnvironment.bootstrap()
 
     init() {
-        // Configure logging at app startup
+        // Configure logging at app startup. In release the Logger clamps this
+        // to .warning so verbose/path/PII lines never reach the device console.
+        #if DEBUG
         Logger.setup(level: .debug, colored: true, timestamp: true, shortenFileNames: true)
+        #else
+        Logger.setup(level: .warning, colored: false, timestamp: true, shortenFileNames: true)
+        #endif
         Logger.info("🚀 MusicApp starting up with AppEnvironment")
     }
 
@@ -29,7 +34,7 @@ struct MusicApp: App {
                 .environmentObject(environment.appRouter)
                 .environmentObject(environment.diContainer.makePlayerManager())
                 .onOpenURL { url in
-                    Logger.info("Received external URL: \(url.lastPathComponent)")
+                    Logger.debug("Received external URL")
                     ExternalFileImportCoordinator.shared.handle(openURL: url)
                 }
         }

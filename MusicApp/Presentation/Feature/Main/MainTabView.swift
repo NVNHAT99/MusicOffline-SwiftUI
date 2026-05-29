@@ -26,13 +26,8 @@ struct MainTabView: View {
             // Main tab content + custom tab bar
             VStack(spacing: 0) {
                 TabView(selection: $currentTab) {
-                    HomeView(
-                        viewModel: container.makeHomeViewModel(),
-                        onPlaylistTap: { playlist in
-                            router.route(to: .playlistDetail(id: playlist.id))
-                        }
-                    )
-                    .tag(MainTab.home)
+                    homeTab
+                        .tag(MainTab.home)
 
                     LibaryView(handler: container.makeLibaryViewViewModel())
                         .tag(MainTab.playlist)
@@ -96,6 +91,17 @@ struct MainTabView: View {
         if newSafeArea != bottomSafeArea {
             bottomSafeArea = newSafeArea
         }
+    }
+
+    // HomeView wraps this VM in its own @StateObject, so it retains the first
+    // instance for the view's lifetime; extracting the tab keeps body tidy.
+    private var homeTab: some View {
+        HomeView(
+            viewModel: container.makeHomeViewModel(),
+            onPlaylistTap: { playlist in
+                router.route(to: .playlistDetail(id: playlist.id))
+            }
+        )
     }
 
     private var customTabBar: some View {

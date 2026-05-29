@@ -140,7 +140,7 @@ struct UrlDownloadView: View {
                 .foregroundStyle(.white.opacity(0.7))
             Text("• Google Drive *share* links don't work — they redirect to an HTML page. Use a direct file link or download via Drive app + import.")
             Text("• Dropbox links: replace dl=0 with dl=1 in the URL.")
-            Text("• archive.org direct links work out of the box.")
+            Text("• HTTPS links only — some archive.org links are HTTP and won't work. Use the https:// variant of the link.")
         }
         .font(.caption)
         .foregroundStyle(.gray)

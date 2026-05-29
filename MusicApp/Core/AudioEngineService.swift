@@ -40,6 +40,20 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
     private var seekOffsetFrames: AVAudioFramePosition = 0
     private var sampleRate: Double = 44100
 
+    // Bumped on every (re)schedule (load/seek). A segment's completion callback
+    // only counts as a real end-of-track if no newer segment was scheduled after
+    // it — this distinguishes a natural finish from a seek/new-song interruption
+    // without relying on playerNode.isPlaying (which races at completion time).
+    private var scheduleGeneration: Int = 0
+
+    // True only between an interruption .began that paused us and the matching
+    // .ended. Any explicit user/app play() or pause() clears it, so an
+    // interruption that races with a user pause (Control Center / in-app) can't
+    // trigger auto-resume — that race previously flipped the CC button
+    // pause→play→pause and made resume impossible. Auto-resume after a real
+    // phone call / other-app audio still works because no user action intervenes.
+    private var pausedByInterruption = false
+
     private let eventSubject = PassthroughSubject<AudioEngineEvent, Never>()
     var eventPublisher: AnyPublisher<AudioEngineEvent, Never> {
         eventSubject.eraseToAnyPublisher()
@@ -86,7 +100,9 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
     }
 
     private func startEngineIfNeeded() throws {
-        guard !engine.isRunning else { return }
+        guard !engine.isRunning else {
+            return
+        }
         try engine.start()
     }
 
@@ -128,11 +144,46 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
 
     func play() {
         guard audioFile != nil else { return }
-        try? startEngineIfNeeded()
+        // Explicit play intent ends any pending interruption-resume state.
+        pausedByInterruption = false
+        do {
+            // Re-assert the audio session; iOS may have deactivated it while the
+            // app was backgrounded, which makes playerNode.play() a silent no-op.
+            try configureSessionIfNeeded()
+        } catch {
+            Logger.error("Audio session reactivate failed: \(error)")
+        }
+        do {
+            try startEngineIfNeeded()
+        } catch {
+            Logger.error("Audio engine start failed: \(error)")
+        }
         playerNode.play()
     }
 
     func pause() {
+        // A direct (user/app) pause is NOT an interruption pause — clear the flag
+        // so a racing interruption can't later auto-resume over the user's intent.
+        pausedByInterruption = false
+        playerNode.pause()
+        // With a custom AVAudioEngine, leaving the session active + engine running
+        // while only the node is paused makes iOS still consider the app "playing",
+        // so Control Center keeps showing pause and only sends pauseCommand. Pause
+        // the engine and yield the audio session so the system sees us as paused
+        // and the Control Center button toggles correctly. play() re-activates the
+        // session and restarts the engine on resume.
+        engine.pause()
+        do {
+            try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        } catch {
+            Logger.error("Audio session deactivate on pause failed: \(error)")
+        }
+    }
+
+    /// Pause specifically because of a system interruption — marks the state so
+    /// interruption-ended can auto-resume (unless a user action intervenes).
+    private func pauseForInterruption() {
+        pausedByInterruption = true
         playerNode.pause()
     }
 
@@ -163,6 +214,8 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
         let remaining = AVAudioFrameCount(file.length - startFrame)
         guard remaining > 0 else { return }
 
+        scheduleGeneration += 1
+        let generation = scheduleGeneration
         playerNode.scheduleSegment(
             file,
             startingFrame: startFrame,
@@ -171,8 +224,11 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
             completionCallbackType: .dataPlayedBack
         ) { [weak self] _ in
             DispatchQueue.main.async {
-                // Only fire finished if we're near the real end (not a seek)
-                guard let self, !self.playerNode.isPlaying else { return }
+                guard let self else { return }
+                // Only a genuine end-of-track: no newer segment scheduled since
+                // (a seek or new song bumps the generation). Avoids the
+                // playerNode.isPlaying race that could drop the finish event.
+                guard self.scheduleGeneration == generation else { return }
                 self.eventSubject.send(.finished(true))
             }
         }
@@ -208,14 +264,23 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
 
         switch type {
         case .began:
-            pause()
+            // Only mark for auto-resume if we were genuinely playing. If we were
+            // already paused (incl. a user pause that just happened), do nothing —
+            // pauseForInterruption is skipped so pausedByInterruption stays false.
+            if playerNode.isPlaying {
+                pauseForInterruption()
+            }
         case .ended:
             let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
             let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
-            if options.contains(.shouldResume) {
-                try? configureSessionIfNeeded()
+            // Resume only if the system suggests it AND the interruption is still
+            // what paused us (no user play/pause intervened — that would have
+            // cleared pausedByInterruption, avoiding the CC pause→play→pause race).
+            if options.contains(.shouldResume), pausedByInterruption {
+                pausedByInterruption = false
                 play()
             }
+            pausedByInterruption = false
         @unknown default:
             break
         }

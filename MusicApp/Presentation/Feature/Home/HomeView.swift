@@ -54,6 +54,12 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
         .padding(.top, 54)
         .scrollContentBackground(.hidden) // 👈 Ẩn background
         .background(Color.backgroundColor)
+        .onAppear {
+            // Recently-played is pushed via refreshHomePubliser when a song starts,
+            // but that fires while the user is on the Now Playing screen, not Home.
+            // Re-fetch on appear so returning to this tab always shows fresh data.
+            viewModel.send(.fetchData)
+        }
     }
     
     @ViewBuilder
@@ -110,27 +116,24 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
     
     @ViewBuilder
     private func recentSongsSection() -> some View {
-        // TODO: RecentSongItem not defined - temporarily disabled
-        EmptyView()
-        /*
-         if viewModel.state.isLoadingRecentSongs {
-         skeletonView(with: .reccent)
-         } else if viewModel.state.recentSongs.isEmpty {
-         // code này ở đây thì gây ra hiện tượng trên, thay bằng empty view thì không bị
-         Text("There are no recently played songs.")
-         .foregroundColor(.gray)
-         .frame(height: 160)
-         } else {
-         LazyVStack(spacing: 16) {
-         ForEach(viewModel.state.recentSongs) { recenSong in
-         SongItemView(song: recenSong.song,
-         onTapPlayAction: {
-         viewModel.send(.play(recenSong))
-         })
-         }
-         }
-         }
-         */
+        if viewModel.state.isLoadingRecentSongs {
+            skeletonView(with: .reccent)
+        } else if viewModel.state.recentSongs.isEmpty {
+            Text("There are no recently played songs.")
+                .foregroundColor(.gray)
+                .frame(height: 160)
+        } else {
+            LazyVStack(spacing: 16) {
+                ForEach(viewModel.state.recentSongs) { recentSong in
+                    SongItemView(
+                        song: recentSong.song,
+                        onTapPlayAction: {
+                            viewModel.send(.play(recentSong))
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 

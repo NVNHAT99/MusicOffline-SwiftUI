@@ -20,12 +20,21 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
         guard !song.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw CoreDataError.invalidTitle
         }
-        
+
         try await coreData.performTransferInTransferContext { context in
+            // A song path maps to a single library row. Re-importing the same
+            // file must not create a duplicate entry.
+            let existingRequest: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
+            existingRequest.predicate = NSPredicate(format: "url == %@", song.urlStr)
+            existingRequest.fetchLimit = 1
+            if try context.fetch(existingRequest).first != nil {
+                return
+            }
+
             let songEntity = SongEntityMapper.makeEntity(song, context: context)
             do {
                 try context.save()
-                print("✓ Saved song: \(songEntity.title ?? "") with ID: \(songEntity.id?.uuidString ?? "")")
+                Logger.debug("Saved song: \(songEntity.title ?? "") with ID: \(songEntity.id?.uuidString ?? "")")
             } catch {
                 context.rollback()
                 throw CoreDataError.saveFailed(error)
@@ -40,7 +49,7 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
             }
             do {
                 try context.save()
-                print("✓ Saved list song success")
+                Logger.debug("Saved list song success")
             } catch {
                 context.rollback()
                 throw CoreDataError.saveFailed(error)
@@ -52,12 +61,20 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
         return try await coreData.performTransferInTransferContext { context in
             let request: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
             request.predicate = NSPredicate(format: "id IN %@", songIdArray)
-            
+
             let result = try context.fetch(request)
-            
-            return result.compactMap { entity in
-                SongEntityMapper.mapToSong(entity)
-            }
+
+            // `id IN %@` returns arbitrary store order; re-sort to the requested
+            // id order so playlist next/previous and shuffle anchor stay correct.
+            let songsByID = Dictionary(
+                result.compactMap { entity -> (UUID, Song)? in
+                    guard let id = entity.id else { return nil }
+                    return (id, SongEntityMapper.mapToSong(entity))
+                },
+                uniquingKeysWith: { first, _ in first }
+            )
+
+            return songIdArray.compactMap { songsByID[$0] }
         }
     }
     
@@ -96,19 +113,18 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
         try await coreData.performTransferInTransferContext { context in
             do {
                 for (oldPath, newPath) in dictionaryFileURLs {
-                    
+
                     let request: NSFetchRequest<SongEntity> = SongEntity.fetchRequest()
                     request.predicate = NSPredicate(format: "url == %@", oldPath)
                     request.fetchLimit = 1
-                    
+
                     guard let song = try context.fetch(request).first else {
                         throw CoreDataError.entityNotFound
                     }
-                    
+
                     song.url = newPath
-                    try context.save()
                 }
-                
+
                 if context.hasChanges {
                     try context.save()
                 }
@@ -179,7 +195,7 @@ final class SongRepository: SongRepositoryProtocol, @unchecked Sendable {
                     let changes: [AnyHashable: Any] = [NSDeletedObjectsKey: objectIDs]
                     NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [self.coreData.viewContext])
                 }
-                print("✓ Deleted all songs")
+                Logger.debug("Deleted all songs")
             } catch {
                 context.rollback()
                 throw CoreDataError.deleteFailed(error)

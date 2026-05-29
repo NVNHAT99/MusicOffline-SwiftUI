@@ -31,6 +31,10 @@ final class HomeStateReducerImpl: HomeStateReducerProtocol {
 
         case .setAlbums(let albums):
             newState.albums = albums
+
+        case .setRecentSongs(let songs):
+            newState.recentSongs = songs
+            newState.isLoadingRecentSongs = false
         }
 
         return newState

@@ -10,8 +10,9 @@ import Combine
 
 // Types extracted to PlayerManagerTypes.swift
 
+@MainActor
 final class PlayerManager: PlayerManagerProtocol {
-    
+
     static let shared = PlayerManager(
         engine: AVAudioPlayerEngineService.shared,
         timerService: GCDTimerService(),
@@ -49,6 +50,13 @@ final class PlayerManager: PlayerManagerProtocol {
     private var shuffledOrder: [Int] = []
     private var playlist: [SongModel] = []
     private var currentPlaylistID: UUID?
+    // Guards against infinite next() recursion when every file is missing
+    // (e.g. after iCloud offload). Reset on any successful load.
+    private var consecutiveLoadFailures: Int = 0
+    // End-of-song can be signalled by both the progress timer reaching duration
+    // and the engine's .finished callback; this dedupes so the song only advances
+    // once per completion.
+    private var isHandlingFinish = false
     // MARK: - Init
     private init(engine: AudioEngineProtocol,
                  timerService: TimerServiceProtocol,
@@ -108,7 +116,20 @@ final class PlayerManager: PlayerManagerProtocol {
         
         progressTimerService.tickPublisher
             .sink { [weak self] time in
-                self?.state.currentTimePlay = time
+                guard let self else { return }
+                let duration = self.state.currentSong?.duration ?? 0
+
+                // The progress timer is a free-running counter, decoupled from the
+                // engine's real playback position. Bound it to the song length and
+                // drive end-of-song here so completion no longer depends solely on
+                // the engine's .finished callback (which can race and be missed,
+                // leaving isPlaying stuck true and the timer running past duration).
+                if duration > 0, time >= duration {
+                    self.state.currentTimePlay = duration
+                    Task { await self.handleSongFinished() }
+                } else {
+                    self.state.currentTimePlay = time
+                }
             }
             .store(in: &cancellables)
     }
@@ -160,7 +181,14 @@ final class PlayerManager: PlayerManagerProtocol {
             return
         }
 
-        Logger.debug("Resuming playback of: \(currentSong.title)")
+        // If the engine has no file loaded (e.g. the song was restored from a
+        // previous session but never loaded — common after a stale path was
+        // re-resolved), resume would silently no-op while the timer still ran,
+        // giving "progress moves but no sound". Do a full load in that case.
+        if engine.currentURL == nil {
+            loadAndPlay(song: currentSong)
+            return
+        }
         engine.play()
         progressTimerService.start(interval: 1.0, from: self.state.currentTimePlay)
         updateState { state in
@@ -353,17 +381,17 @@ final class PlayerManager: PlayerManagerProtocol {
     }
 
     private func loadAndPlay(song: SongModel) {
-        let path = song.urlStr ?? ""
-        guard !path.isEmpty, FileManager.default.fileExists(atPath: path) else {
-            Logger.error("Song file missing: \(path)")
-            missingFileSubject.send(song.title)
-            Task { await next() }
+        guard let path = song.resolvedFilePath() else {
+            Logger.error("Song file missing: \(song.urlStr ?? "")")
+            handleLoadFailure(song: song)
             return
         }
 
         do {
             let url = URL(fileURLWithPath: path)
             try engine.load(url: url)
+            consecutiveLoadFailures = 0
+            isHandlingFinish = false
             RecentSongsManager.add(song, in: self.currentPlaylistID?.uuidString)
             RecentSongsManager.saveCurrentPlaylist(id: self.currentPlaylistID?.uuidString ?? "")
             RecentSongsManager.addRecentPlaylist(id: self.currentPlaylistID?.uuidString ?? String.empty)
@@ -373,23 +401,45 @@ final class PlayerManager: PlayerManagerProtocol {
             progressTimerService.start(interval: 1, from: 0)
         } catch {
             Logger.error("Error loading song: \(error)")
-            missingFileSubject.send(song.title)
-            Task { await next() }
+            handleLoadFailure(song: song)
         }
+    }
+
+    /// Skip to the next song after a load failure, but stop after a full pass
+    /// over the playlist so an all-missing playlist (e.g. iCloud-offloaded
+    /// library) can't recurse forever — especially under repeatMode == .all.
+    private func handleLoadFailure(song: SongModel) {
+        missingFileSubject.send(song.title)
+        consecutiveLoadFailures += 1
+
+        guard consecutiveLoadFailures < playlist.count else {
+            consecutiveLoadFailures = 0
+            progressTimerService.stop()
+            self.state.isPlaying = false
+            missingFileSubject.send("No playable songs")
+            return
+        }
+
+        Task { await next() }
     }
     
     private func loadSong(song: SongModel) {
+        guard let path = song.resolvedFilePath() else {
+            Logger.error("Song file missing: \(song.urlStr ?? "")")
+            return
+        }
         do {
-            let url = URL(fileURLWithPath: song.urlStr ?? "")
-            try engine.load(url: url)
+            try engine.load(url: URL(fileURLWithPath: path))
             self.state.isPlaying = false
             self.progressTimerService.stop()
         } catch {
-            print("⚠️ Error loading song: \(error)")
+            Logger.error("Error loading song: \(error)")
         }
     }
 
     private func handleSongFinished() async {
+        guard !isHandlingFinish else { return }
+        isHandlingFinish = true
         progressTimerService.stop()
         self.state.isPlaying = false
 
@@ -441,7 +491,7 @@ final class PlayerManager: PlayerManagerProtocol {
         timerService.cancel()
     }
     
-    // Thread-safe state updates
+    // State writes are main-actor isolated (class is @MainActor).
     private func updateState(_ update: (inout PlayerManagerState) -> Void) {
         update(&self.state)
     }

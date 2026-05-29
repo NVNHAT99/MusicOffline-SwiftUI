@@ -136,11 +136,19 @@ final class CoreDataManager: CoreDataProtocol, @unchecked Sendable {
     func performTransferInTransferContext<T>(_ operation: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
         return try await withCheckedThrowingContinuation { [weak self] continuation in
             guard let self = self else {
-                continuation.resume(throwing: CoreDataError.entityNotFound) // hoặc error khác phù hợp
+                continuation.resume(throwing: CoreDataError.entityNotFound)
                 return
             }
-            
+
             let block = BlockOperation {
+                // `context.perform` is async, so the operation must not finish
+                // until the perform block completes — otherwise the serial queue
+                // (maxConcurrentOperationCount == 1) overlaps work and
+                // `isTransferQueueIdle` reports idle while saves are still pending.
+                // This runs on a background OperationQueue worker, never main, so
+                // blocking the worker thread here is safe and yields true
+                // serialization. The continuation resumes from inside `perform`.
+                let done = DispatchSemaphore(value: 0)
                 self.transferContext.perform {
                     do {
                         let result = try operation(self.transferContext)
@@ -148,14 +156,16 @@ final class CoreDataManager: CoreDataProtocol, @unchecked Sendable {
                     } catch {
                         continuation.resume(throwing: error)
                     }
+                    done.signal()
                 }
+                done.wait()
             }
-            
+
             self.transferQueue.addOperation(block)
         }
     }
-    
+
     var isTransferQueueIdle: Bool {
-        transferQueue.operations.count == 0
+        transferQueue.operationCount == 0
     }
 }

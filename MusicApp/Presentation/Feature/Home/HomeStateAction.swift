@@ -13,4 +13,5 @@ enum HomeStateAction {
     case setLoadingPlaylist(Bool)
     case setPlaylists([Playlist])
     case setAlbums([Album])
+    case setRecentSongs([RecentSongItem])
 }
