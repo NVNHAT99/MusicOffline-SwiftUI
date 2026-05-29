@@ -13,7 +13,7 @@ struct HomeItemDetailView: View {
         VStack(alignment: .leading) {
             Rectangle()
                 .frame(height: 1)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.separator)
             HStack(spacing: 20) {
                 Image(systemName: data.imageName)
                     .resizable()
@@ -26,7 +26,7 @@ struct HomeItemDetailView: View {
             if !data.isHiddenBottom {
                 Rectangle()
                     .frame(height: 1)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.separator)
             }
         }
         .padding([.leading, .trailing], 20)

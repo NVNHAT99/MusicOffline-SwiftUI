@@ -25,23 +25,27 @@ struct ContainerSwipeView<Content: View>: View {
     
     var body: some View {
         ZStack(alignment: .trailing) {
-            // Dynamic delete background
-            Rectangle()
-                .fill(Color.red)
-            
-            HStack {
-                Image(systemName: "trash")
-                    .foregroundColor(.white)
-                    .font(.system(size: 18, weight: .medium))
-                    .padding(.trailing, 20)
+            // Delete background — only painted while the row is swiped open, so it
+            // never bleeds through the row content at rest (or during entrance fade).
+            if offset < 0 {
+                Rectangle()
+                    .fill(Color.red)
+
+                HStack {
+                    Image(systemName: "trash")
+                        .foregroundColor(.white)
+                        .font(.system(size: 18, weight: .medium))
+                        .padding(.trailing, 20)
+                }
+                .opacity(offset < -minActionWidth ? 1 : 0.7)
+                .onTapGesture {
+                    onDelete()
+                }
             }
-            .opacity(offset < -minActionWidth ? 1 : 0.7)
-            .onTapGesture {
-                onDelete()
-            }
-            
+
             content
                 .frame(maxWidth: .infinity)
+                .background(Color.backgroundColor)
                 .readSize(onchange: { size in
                     self.viewHeight = size.height
                 })

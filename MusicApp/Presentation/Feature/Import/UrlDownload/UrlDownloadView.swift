@@ -30,14 +30,14 @@ struct UrlDownloadView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") { dismiss() }
-                        .foregroundStyle(.white)
+                        .foregroundColor(.primaryText)
                 }
             }
             .overlay(alignment: .bottom) {
                 if let msg = viewModel.state.errorMessage {
                     Text(msg)
-                        .font(.callout)
-                        .foregroundStyle(.white)
+                        .font(AppFont.callout())
+                        .foregroundColor(.primaryText)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
                         .background(Color.red.opacity(0.85))
@@ -47,20 +47,21 @@ struct UrlDownloadView: View {
                 }
             }
         }
+        .sensoryFeedback(.success, trigger: viewModel.state.completedFilename != nil)
     }
 
     private var header: some View {
         HStack(spacing: 12) {
             Image(systemName: "link.circle.fill")
                 .font(.system(size: 36))
-                .foregroundStyle(.cyan)
+                .foregroundColor(.accentPrimary)
             VStack(alignment: .leading, spacing: 4) {
                 Text("Paste a direct audio link")
-                    .font(.headline)
-                    .foregroundStyle(.white)
+                    .font(AppFont.headline())
+                    .foregroundColor(.primaryText)
                 Text("HTTPS only. MP3, M4A, WAV, FLAC, AAC, OGG — up to 200 MB.")
-                    .font(.subheadline)
-                    .foregroundStyle(.gray)
+                    .font(AppFont.callout())
+                    .foregroundColor(.secondaryText)
             }
         }
     }
@@ -75,7 +76,8 @@ struct UrlDownloadView: View {
         .keyboardType(.URL)
         .padding(12)
         .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.1)))
-        .foregroundStyle(.white)
+        .foregroundColor(.primaryText)
+        .font(AppFont.body())
     }
 
     private var startButton: some View {
@@ -86,27 +88,29 @@ struct UrlDownloadView: View {
                 Image(systemName: "arrow.down.circle.fill")
                 Text("Download").bold()
             }
-            .foregroundStyle(.black)
+            .foregroundColor(.primaryText)
+            .font(AppFont.headline())
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
-            .background(Capsule().fill(viewModel.state.canStart ? Color.cyan : Color.gray))
+            .background(Capsule().fill(viewModel.state.canStart ? Color.accentPrimary : Color.mutedText))
         }
         .disabled(!viewModel.state.canStart)
+        .buttonStyle(.pressScale)
     }
 
     private var progressBlock: some View {
         VStack(alignment: .leading, spacing: 10) {
             ProgressView(value: viewModel.state.progress)
                 .progressViewStyle(.linear)
-                .tint(.cyan)
+                .tint(Color.accentPrimary)
             HStack {
                 Text("Downloading… \(Int(viewModel.state.progress * 100))%")
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.7))
+                    .font(AppFont.caption())
+                    .foregroundColor(.secondaryText)
                 Spacer()
                 Button("Cancel") { viewModel.send(.cancel) }
-                    .font(.caption)
-                    .foregroundStyle(.red)
+                    .font(AppFont.caption())
+                    .foregroundColor(.red)
             }
         }
         .padding(12)
@@ -117,17 +121,18 @@ struct UrlDownloadView: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
+                    .foregroundColor(.green)
                 Text("Saved to Library")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(.white)
+                    .font(AppFont.callout())
+                    .foregroundColor(.primaryText)
             }
             Text(name)
-                .font(.caption)
-                .foregroundStyle(.gray)
+                .font(AppFont.caption())
+                .foregroundColor(.secondaryText)
             Button("Download another") { viewModel.send(.clear) }
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(.cyan)
+                .font(AppFont.caption())
+                .foregroundColor(.accentPrimary)
+                .buttonStyle(.pressScale)
         }
         .padding(12)
         .background(RoundedRectangle(cornerRadius: 12).fill(Color.green.opacity(0.12)))
@@ -136,13 +141,14 @@ struct UrlDownloadView: View {
     private var notesBlock: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Tips")
-                .font(.caption.bold())
-                .foregroundStyle(.white.opacity(0.7))
+                .font(AppFont.caption())
+                .fontWeight(.bold)
+                .foregroundColor(.secondaryText)
             Text("• Google Drive *share* links don't work — they redirect to an HTML page. Use a direct file link or download via Drive app + import.")
             Text("• Dropbox links: replace dl=0 with dl=1 in the URL.")
             Text("• HTTPS links only — some archive.org links are HTTP and won't work. Use the https:// variant of the link.")
         }
-        .font(.caption)
-        .foregroundStyle(.gray)
+        .font(AppFont.caption())
+        .foregroundColor(.mutedText)
     }
 }

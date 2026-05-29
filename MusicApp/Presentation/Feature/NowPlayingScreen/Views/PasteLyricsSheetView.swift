@@ -14,13 +14,14 @@ struct PasteLyricsSheetView: View {
         NavigationView {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Paste LRC-formatted lyrics. Lines without [mm:ss.xx] timestamps are skipped during playback.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(AppFont.caption())
+                    .foregroundColor(.secondaryText)
                     .padding(.horizontal)
                     .padding(.top, 8)
 
                 TextEditor(text: $text)
                     .font(.system(.body, design: .monospaced))
+                    .foregroundColor(.primaryText)
                     .padding(.horizontal, 8)
                     .padding(.bottom)
             }
@@ -29,12 +30,17 @@ struct PasteLyricsSheetView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", action: onCancel)
+                        .foregroundColor(.primaryText)
+                        .buttonStyle(.pressScale)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { onSave(text) }
+                        .foregroundColor(.accentPrimary)
                         .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        .buttonStyle(.pressScale)
                 }
             }
         }
+        .sensoryFeedback(.success, trigger: !text.isEmpty)
     }
 }

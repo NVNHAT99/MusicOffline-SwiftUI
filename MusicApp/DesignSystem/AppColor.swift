@@ -15,4 +15,10 @@ extension Color {
     static let progressFill: Color = .white
     static let tabActive: Color = .white
     static let tabInactive: Color = .gray
+
+    // MARK: - Theme fallback aliases
+    // Semantic names resolved against AppColorTheme.default; used by views that
+    // read a static color but want to stay consistent with the theme system.
+    static let surfaceElevated: Color = Color.white.opacity(0.08)
+    static let separator: Color = Color.white.opacity(0.12)
 }

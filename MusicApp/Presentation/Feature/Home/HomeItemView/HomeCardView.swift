@@ -19,11 +19,13 @@ struct HomeCardView: View {
                 .aspectRatio(1, contentMode: .fit)
             
             Text(title)
-                .foregroundStyle(.white)
+                .font(AppFont.callout().weight(.medium))
+                .foregroundStyle(Color.primaryText)
+                .lineLimit(1)
             if !subTitle.isEmpty {
-                Text("Uknow")
-                    .foregroundStyle(.white)
-                    .font(.subheadline)
+                Text(subTitle)
+                    .foregroundStyle(Color.secondaryText)
+                    .font(AppFont.caption())
             } else {
                 Spacer()
             }

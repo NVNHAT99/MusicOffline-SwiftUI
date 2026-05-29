@@ -6,6 +6,7 @@ struct NowPlayingMiniPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
     let uiImage: UIImage?
     let cornerRadius: CGFloat
     @Binding var isExpanded: Bool
+    @Environment(\.appColorTheme) private var theme
 
     var body: some View {
         HStack(spacing: 12) {
@@ -18,14 +19,24 @@ struct NowPlayingMiniPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(Color.black.opacity(0.9))
+                // Tint the bar with the song's surface color so the mini player
+                // echoes the artwork; kept dark for control legibility.
+                .fill(theme.surface.opacity(0.92))
                 .shadow(color: .black.opacity(0.3), radius: DesignToken.Shadow.medium, x: 0, y: -5)
         )
-        .onTapGesture { withAnimation { isExpanded = true } }
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(theme.accent)
+                .frame(height: 2)
+                .opacity(0.9)
+                .padding(.horizontal, DesignToken.Spacing.md)
+        }
+        .onTapGesture { withAnimation(MotionToken.springStandard) { isExpanded = true } }
+        .haptic(.impactLight, trigger: isExpanded)
         .gesture(
             DragGesture().onEnded { gesture in
                 if gesture.translation.height < -50 {
-                    withAnimation { isExpanded = true }
+                    withAnimation(MotionToken.springStandard) { isExpanded = true }
                 }
             }
         )
@@ -53,11 +64,11 @@ struct NowPlayingMiniPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(viewModel.songTitle)
                 .font(AppFont.miniSongTitle())
-                .foregroundColor(.white)
+                .foregroundColor(theme.onSurface)
                 .lineLimit(1)
             Text(viewModel.artistName)
                 .font(AppFont.callout())
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(theme.onSurfaceSecondary)
                 .lineLimit(1)
         }
     }
@@ -66,7 +77,8 @@ struct NowPlayingMiniPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
         Button { viewModel.send(.togglePlay) } label: {
             Image(systemName: viewModel.playButtonIcon)
                 .font(.system(size: DesignToken.IconSize.md))
-                .foregroundColor(.white)
+                .foregroundColor(theme.accent)
         }
+        .buttonStyle(.pressScale)
     }
 }

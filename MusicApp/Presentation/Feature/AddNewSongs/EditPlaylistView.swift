@@ -22,7 +22,7 @@ struct EditPlaylistView<ViewModel: EditPlaylistViewModelProtocol>: View {
         self._router = .init(wrappedValue: router)
         self._isEditCompleted = isEditCompleted
     }
-    
+
     var body: some View {
         VStack {
             CustomNavigationBar(type: .custom(title: "Selection Songs",
@@ -35,7 +35,7 @@ struct EditPlaylistView<ViewModel: EditPlaylistViewModelProtocol>: View {
                 self.viewModel.send(intent: .savePlaylist)
             }))) // custom navigationbar
             .frame(height: 50)
-            
+
             if viewModel.state.isLoading {
                 ProgressView()
             } else {
@@ -43,7 +43,8 @@ struct EditPlaylistView<ViewModel: EditPlaylistViewModelProtocol>: View {
                     VStack(alignment: .center) {
                         Spacer()
                         Text("You don't have any song to add")
-                            .foregroundColor(.white)
+                            .foregroundColor(.primaryText)
+                            .font(AppFont.body())
                             .frame(alignment: .center)
                             .transition(.opacity)
                         Spacer()
@@ -58,9 +59,9 @@ struct EditPlaylistView<ViewModel: EditPlaylistViewModelProtocol>: View {
                                     viewModel.send(intent: .toggleSelectedAt(index: index))
                                 } label: {
                                     SelectedSongItemView(songData: songData)
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.primaryText)
                                         .frame(height: 56)
-                                        
+                                        .entrance(index: index)
                                 }
                             }
                         }
@@ -80,6 +81,7 @@ struct EditPlaylistView<ViewModel: EditPlaylistViewModelProtocol>: View {
                 self.router.dismiss()
             }
         }
+        .sensoryFeedback(.success, trigger: viewModel.state.isSavePlaylistSuccess)
     }
 }
 

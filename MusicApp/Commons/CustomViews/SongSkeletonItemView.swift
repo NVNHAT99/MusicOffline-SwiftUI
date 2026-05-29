@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct SongSkeletonItemView: View {
+    private let base = Color.white.opacity(0.08)
+
     var body: some View {
         HStack(alignment: .center) {
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color.gray.opacity(0.3))
+                .fill(base)
                 .shimmer()
         }
     }
@@ -20,4 +22,5 @@ struct SongSkeletonItemView: View {
 #Preview {
     SongSkeletonItemView()
         .frame(height: 120)
+        .background(Color.backgroundColor)
 }

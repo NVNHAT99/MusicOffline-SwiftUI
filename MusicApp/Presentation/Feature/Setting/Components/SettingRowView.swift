@@ -9,7 +9,7 @@ struct SettingRowView: View {
     let title: String
     var subtitle: String? = nil
     var showChevron: Bool = true
-    var titleColor: Color = .white
+    var titleColor: Color = .primaryText
     let action: (() -> Void)?
 
     var body: some View {
@@ -18,22 +18,22 @@ struct SettingRowView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .foregroundColor(titleColor)
-                        .font(.body)
+                        .font(AppFont.body())
                     if let subtitle {
                         Text(subtitle)
-                            .foregroundColor(.gray)
-                            .font(.caption)
+                            .foregroundColor(.mutedText)
+                            .font(AppFont.caption())
                     }
                 }
                 Spacer()
                 if showChevron {
                     Image(systemName: "chevron.right")
-                        .foregroundColor(.gray)
-                        .font(.caption)
+                        .foregroundColor(.mutedText)
+                        .font(AppFont.caption())
                 }
             }
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressScale)
     }
 }

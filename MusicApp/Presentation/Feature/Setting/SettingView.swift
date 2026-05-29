@@ -18,7 +18,7 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
         VStack(spacing: 0) {
             CustomNavigationBar(type: .large(title: "Setting"))
                 .frame(height: 70)
-                .foregroundColor(.white)
+                .foregroundColor(.primaryText)
                 .padding(.leading, 26)
                 .padding(.top, Helper.shared.safeAreaInsets?.top)
 
@@ -28,7 +28,7 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
                 dangerSection()
             }
             .listStyle(.insetGrouped)
-            .foregroundColor(.white)
+            .foregroundColor(.primaryText)
             .modifier(ListBackgroundModifier())
         }
         .ignoresSafeArea(.all)
@@ -67,10 +67,8 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
 
     @ViewBuilder
     private func generalSection() -> some View {
-        Section(header: Text("General").foregroundColor(.gray)) {
+        Section(header: Text("General").font(AppFont.caption()).foregroundColor(.mutedText)) {
             SettingRowView(title: "Transfer MP3 Files") {
-                // Switch to the dedicated Transfer tab instead of pushing TransferView
-                // onto Settings' nav stack — the destination has no back chrome.
                 NotificationCenter.default.post(name: .switchMainTab, object: MainTab.transfer)
             }
             SettingRowView(title: "Download from URL") {
@@ -83,7 +81,7 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
                 title: "Language",
                 subtitle: viewModel.state.selectedLanguageDisplay,
                 showChevron: false,
-                titleColor: .gray,
+                titleColor: .mutedText,
                 action: nil
             )
         }
@@ -92,7 +90,7 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
 
     @ViewBuilder
     private func aboutSection() -> some View {
-        Section(header: Text("About").foregroundColor(.gray)) {
+        Section(header: Text("About").font(AppFont.caption()).foregroundColor(.mutedText)) {
             SettingRowView(title: "Rate App") {
                 viewModel.send(intent: .rateApp)
             }
@@ -117,7 +115,7 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
 
     @ViewBuilder
     private func dangerSection() -> some View {
-        Section(header: Text("Danger Zone").foregroundColor(.red.opacity(0.8))) {
+        Section(header: Text("Danger Zone").font(AppFont.caption()).foregroundColor(.red.opacity(0.8))) {
             SettingRowView(title: "Delete All Songs", showChevron: false, titleColor: .red) {
                 viewModel.send(intent: .deleteAllSongs)
             }

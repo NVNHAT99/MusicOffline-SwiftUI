@@ -16,24 +16,26 @@ struct SongItemView: View {
     var isPlaying: Bool = false
     let onTapPlayAction: OnTapAction?
 
+    private var highlight: Color { isCurrent ? .accentPrimary : .primaryText }
+
     var body: some View {
         HStack {
             Image(systemName: isCurrent && isPlaying ? "speaker.wave.2.fill" : "music.note")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 22, height: 22)
-                .foregroundStyle(isCurrent ? Color.cyan : .white)
+                .foregroundStyle(highlight)
 
             Text(song.title)
                 .lineLimit(2)
-                .foregroundStyle(isCurrent ? Color.cyan : .white)
-                .font(.system(size: 14, weight: isCurrent ? .semibold : .regular))
+                .foregroundStyle(highlight)
+                .font(AppFont.callout().weight(isCurrent ? .semibold : .regular))
 
             Spacer().frame(width: 8)
 
             Text(song.durationString)
-                .foregroundStyle(.white.opacity(0.7))
-                .font(.system(size: 14))
+                .foregroundStyle(Color.secondaryText)
+                .font(AppFont.callout())
 
             Spacer().frame(width: 16)
             Spacer()
@@ -45,13 +47,14 @@ struct SongItemView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 22, height: 22)
-                    .foregroundStyle(isCurrent ? Color.cyan : .white)
+                    .foregroundStyle(highlight)
             }
+            .buttonStyle(.pressScale)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(Color.backgroundColor)
-        .cornerRadius(16, corners: .allCorners)
+        .padding(.horizontal, DesignToken.Spacing.md)
+        .padding(.vertical, DesignToken.Spacing.sm)
+        .background(isCurrent ? Color.accentPrimary.opacity(0.12) : Color.backgroundColor)
+        .cornerRadius(DesignToken.Radius.lg, corners: .allCorners)
     }
 }
 

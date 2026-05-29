@@ -30,60 +30,65 @@ struct TimerPickerView: View {
                 Picker("hours", selection: $viewModel.hours) {
                     ForEach(0..<24, id: \.self) {
                         Text("\($0)")
-                            .foregroundStyle(.white)
+                            .foregroundColor(.primaryText)
                     }
                 }
                 .frame(width: 80)
                 .clipped()
 
                 Text("Hours")
+                    .font(AppFont.body())
+                    .foregroundColor(.secondaryText)
 
                 Picker("minus", selection: $viewModel.minutes) {
                     ForEach(0..<60, id: \.self) {
                         Text("\($0)")
-                            .foregroundStyle(.white)
+                            .foregroundColor(.primaryText)
                     }
                 }
                 .frame(width: 80)
                 .clipped()
 
                 Text("Mins")
-
+                    .font(AppFont.body())
+                    .foregroundColor(.secondaryText)
 
                 Picker("Second", selection: $viewModel.seconds) {
                     ForEach(0..<60, id: \.self) {
                         Text("\($0)")
-                            .foregroundStyle(.white)
+                            .foregroundColor(.primaryText)
                     }
                 }
                 .frame(width: 80)
                 .clipped()
 
-
                 Text("Secs")
+                    .font(AppFont.body())
+                    .foregroundColor(.secondaryText)
             }
             .frame(maxWidth: .infinity)
             .pickerStyle(.wheel)
-            .foregroundStyle(.white)
+            .foregroundColor(.primaryText)
             .padding(.bottom, 16)
 
             Button {
                 viewModel.save()
             } label: {
                 Text("Save")
-                    .foregroundStyle(.white)
+                    .font(AppFont.headline())
+                    .foregroundColor(.primaryText)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 8)
-                    .background(Color.headerBackground)
+                    .background(Color.accentPrimary)
                     .cornerRadius(8, corners: .allCorners)
             }
+            .buttonStyle(.pressScale)
+            .sensoryFeedback(.success, trigger: viewModel.hours + viewModel.minutes + viewModel.seconds > 0)
             Spacer()
         }
         .background(Color.backgroundColor)
     }
 }
-
-
 
 #Preview {
     let viewModel = TimerPickerViewModel()

@@ -34,7 +34,7 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
                         showGuide = true
                     })
                 ))
-                .foregroundStyle(.white)
+                .foregroundColor(.primaryText)
 
                 // Tab switcher
                 Picker("Method", selection: $selectedTab) {
@@ -84,6 +84,7 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
                 viewModel.send(.toggleServer)
             }
         }
+        .sensoryFeedback(.success, trigger: viewModel.state.isShowToastView)
     }
 
     // MARK: - WiFi section
@@ -96,43 +97,50 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
                     viewModel.send(.toggleServer)
                 } label: {
                     Text(viewModel.state.isServerOn ? "Disconnected Server" : "Connect Server")
+                        .font(AppFont.headline())
                         .frame(width: 160)
                         .padding(16)
-                        .foregroundColor(.white)
-                        .background(.red.opacity(0.8))
+                        .foregroundColor(.primaryText)
+                        .background(Color.accentPrimary.opacity(0.9))
                         .cornerRadius(8, corners: .allCorners)
                 }
+                .buttonStyle(.pressScale)
 
                 Spacer().frame(height: 24)
 
                 if viewModel.state.isServerOn {
                     VStack(alignment: .leading, spacing: 20) {
                         Text("Open your browser with this URL: ")
+                            .font(AppFont.body())
 
                         HStack(spacing: 8) {
                             Text(viewModel.state.ipAdress ?? "")
-                                .foregroundColor(.blue)
+                                .foregroundColor(.accentPrimary)
+                                .font(AppFont.body())
 
                             Button {
                                 viewModel.send(.copyIPAdress)
                             } label: {
                                 Text("Copy URL")
+                                    .font(AppFont.caption())
                                     .frame(width: 100)
                                     .padding(6)
-                                    .foregroundColor(.white)
-                                    .background(.black.opacity(0.8))
+                                    .foregroundColor(.primaryText)
+                                    .background(Color.white.opacity(0.15))
                                     .cornerRadius(8, corners: .allCorners)
                             }
+                            .buttonStyle(.pressScale)
                         }
 
                         Text("Then upload files from your computer.\nplease don't switch to another app or lock your phone while transfering.")
+                            .font(AppFont.callout())
                             .lineLimit(.max)
 
                         Image("transfer_1")
                             .resizable()
                             .aspectRatio(1.0, contentMode: .fit)
                     }
-                    .foregroundColor(.white)
+                    .foregroundColor(.primaryText)
                     .padding(.horizontal, 24)
                     .padding(.bottom, 12)
                     .multilineTextAlignment(.leading)
@@ -141,7 +149,7 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 24)
-            .background(.gray)
+            .background(Color.white.opacity(0.06))
             .cornerRadius(10, corners: .allCorners)
             .padding()
         }
@@ -156,13 +164,13 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
                 VStack(spacing: 8) {
                     Image(systemName: "folder.badge.plus")
                         .font(.system(size: 44))
-                        .foregroundStyle(.cyan)
+                        .foregroundColor(.accentPrimary)
                     Text("Import from Files App")
-                        .font(.headline)
-                        .foregroundStyle(.white)
+                        .font(AppFont.headline())
+                        .foregroundColor(.primaryText)
                     Text("Select audio files (.mp3, .flac, .ogg, etc.) directly from your device or iCloud Drive.")
-                        .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.7))
+                        .font(AppFont.callout())
+                        .foregroundColor(.secondaryText)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
                 }
@@ -171,7 +179,7 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 24)
-            .background(.gray)
+            .background(Color.white.opacity(0.06))
             .cornerRadius(10, corners: .allCorners)
             .padding()
 

@@ -12,6 +12,10 @@ struct TrimHandlesView: View {
     let onEndChange: (Double) -> Void
 
     private let handleWidth: CGFloat = 14
+    /// Tracks active drag on each handle; haptic fires on grab (false→true) and
+    /// release (true→false). No animation during drag to preserve trim precision.
+    @GestureState private var isDraggingStart = false
+    @GestureState private var isDraggingEnd   = false
 
     var body: some View {
         GeometryReader { geo in
@@ -32,33 +36,37 @@ struct TrimHandlesView: View {
 
                 // Selection border
                 Rectangle()
-                    .stroke(Color.cyan, lineWidth: 2)
+                    .stroke(Color.accentPrimary, lineWidth: 2)
                     .frame(width: max(0, endX - startX), height: geo.size.height)
                     .offset(x: startX)
 
-                handle(at: startX) { delta in
+                handle(at: startX, isDragging: $isDraggingStart) { delta in
                     onStartChange(trimStart + delta * secondsPerPoint)
                 }
-                handle(at: endX) { delta in
+                handle(at: endX, isDragging: $isDraggingEnd) { delta in
                     onEndChange(trimEnd + delta * secondsPerPoint)
                 }
             }
         }
+        // Haptic fires on grab and release of either handle; silent during continuous drag.
+        .sensoryFeedback(.impact(weight: .light), trigger: isDraggingStart)
+        .sensoryFeedback(.impact(weight: .light), trigger: isDraggingEnd)
     }
 
-    private func handle(at x: CGFloat, onDelta: @escaping (Double) -> Void) -> some View {
+    private func handle(at x: CGFloat, isDragging: GestureState<Bool>, onDelta: @escaping (Double) -> Void) -> some View {
         Rectangle()
-            .fill(Color.cyan)
+            .fill(Color.accentPrimary)
             .frame(width: handleWidth, height: nil)
             .overlay(
                 Image(systemName: "line.3.horizontal")
                     .rotationEffect(.degrees(90))
                     .font(.system(size: 10))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.primaryText)
             )
             .offset(x: x - handleWidth / 2)
             .gesture(
                 DragGesture(minimumDistance: 0)
+                    .updating(isDragging) { _, state, _ in state = true }
                     .onChanged { value in
                         onDelta(Double(value.translation.width))
                     }

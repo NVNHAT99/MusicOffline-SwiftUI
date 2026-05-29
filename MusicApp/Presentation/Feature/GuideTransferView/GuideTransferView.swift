@@ -13,16 +13,22 @@ struct GuideTransferView: View {
             ScrollView {
                 VStack {
                     Text("Step 1:")
+                        .font(AppFont.headline())
+                        .foregroundColor(.primaryText)
                     Image("demoThumbnail2")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 250, height: 250)
                     Text("Step 1:")
+                        .font(AppFont.headline())
+                        .foregroundColor(.primaryText)
                     Image("demoThumbnail2")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 250, height: 250)
                     Text("Step 1:")
+                        .font(AppFont.headline())
+                        .foregroundColor(.primaryText)
                     Image("demoThumbnail2")
                         .resizable()
                         .scaledToFit()
@@ -30,7 +36,6 @@ struct GuideTransferView: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-            
         }
     }
 }

@@ -15,32 +15,36 @@ struct CloudImportGuideContent: View {
             stepRow(
                 number: "1",
                 title: "Install the cloud app",
-                body: "Install Google Drive, Dropbox, OneDrive, or any cloud app from the App Store."
+                body: "Install Google Drive, Dropbox, OneDrive, or any cloud app from the App Store.",
+                index: 0
             )
             stepRow(
                 number: "2",
                 title: "Open the Files app",
-                body: "Open Apple's Files app, then tap Browse at the bottom."
+                body: "Open Apple's Files app, then tap Browse at the bottom.",
+                index: 1
             )
             stepRow(
                 number: "3",
                 title: "Enable the provider",
-                body: "Tap the … menu at the top, choose Edit, then toggle on Google Drive (or any provider you want)."
+                body: "Tap the … menu at the top, choose Edit, then toggle on Google Drive (or any provider you want).",
+                index: 2
             )
             stepRow(
                 number: "4",
                 title: "Pick the file here",
-                body: "Tap Import from Files below, then switch to your cloud provider from the picker's Browse tab."
+                body: "Tap Import from Files below, then switch to your cloud provider from the picker's Browse tab.",
+                index: 3
             )
 
             Divider().padding(.vertical, 2)
 
             HStack(alignment: .top, spacing: 10) {
                 Image(systemName: "info.circle")
-                    .foregroundColor(.cyan)
+                    .foregroundColor(.accentPrimary)
                 Text("iOS hides third-party cloud providers until you enable them in Files. We can't auto-enable them.")
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .font(AppFont.caption())
+                    .foregroundColor(.secondaryText)
             }
         }
     }
@@ -49,35 +53,37 @@ struct CloudImportGuideContent: View {
         HStack(spacing: 12) {
             Image(systemName: "icloud.and.arrow.down")
                 .font(.system(size: 32))
-                .foregroundColor(.cyan)
+                .foregroundColor(.accentPrimary)
             VStack(alignment: .leading, spacing: 4) {
                 Text("Use Google Drive, Dropbox & more")
-                    .font(.headline)
-                    .foregroundColor(.white)
+                    .font(AppFont.headline())
+                    .foregroundColor(.primaryText)
                 Text("4 quick steps to add cloud providers to the picker.")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .font(AppFont.callout())
+                    .foregroundColor(.secondaryText)
             }
         }
     }
 
-    private func stepRow(number: String, title: String, body: String) -> some View {
+    private func stepRow(number: String, title: String, body: String, index: Int) -> some View {
         HStack(alignment: .top, spacing: 12) {
             Text(number)
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.white)
+                .font(AppFont.caption())
+                .fontWeight(.bold)
+                .foregroundColor(.primaryText)
                 .frame(width: 26, height: 26)
-                .background(Circle().fill(Color.cyan))
+                .background(Circle().fill(Color.accentPrimary))
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.subheadline)
+                    .font(AppFont.callout())
                     .bold()
-                    .foregroundColor(.white)
+                    .foregroundColor(.primaryText)
                 Text(body)
-                    .font(.footnote)
-                    .foregroundColor(.gray)
+                    .font(AppFont.caption())
+                    .foregroundColor(.secondaryText)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+        .entrance(index: index)
     }
 }

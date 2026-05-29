@@ -9,26 +9,26 @@ import SwiftUI
 
 struct SelectedSongItemView: View {
     let songData: SelectedSong
-    
+
     var body: some View {
         HStack {
             Image(systemName: "music.note")
                 .resizable()
                 .scaledToFit()
-                .foregroundStyle(.white)
+                .foregroundColor(.secondaryText)
                 .frame(width: 16, height: 16)
-            
+
             Text(songData.song.title)
-                .foregroundStyle(.white)
+                .foregroundColor(.primaryText)
+                .font(AppFont.body())
             Spacer()
             if songData.isSelected {
                 Image(systemName: "checkmark.circle.fill")
                     .resizable()
                     .scaledToFit()
-                    .foregroundStyle(.white)
+                    .foregroundColor(.accentPrimary)
                     .frame(width: 24, height: 24)
                     .padding(.trailing, 8)
-                
             }
         }
         .padding(.vertical, 8)

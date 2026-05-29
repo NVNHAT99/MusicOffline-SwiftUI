@@ -43,7 +43,7 @@ struct MainTabView: View {
                 }
                 .animation(.easeInOut, value: currentTab)
 
-                customTabBar
+                MainTabBarView(currentTab: $currentTab, bottomSafeArea: bottomSafeArea)
             }
 
             // Mini + full player coordinator. Visible only when a song is loaded.
@@ -62,7 +62,7 @@ struct MainTabView: View {
         }
         .ignoresSafeArea(.all, edges: .bottom)
         .environmentObject(router)
-        .animation(.spring(response: 0.45, dampingFraction: 0.85), value: isNowPlayingExpanded)
+        .animation(MotionToken.springStandard, value: isNowPlayingExpanded)
         .onAppear {
             router.factory = container
             updateSafeArea()
@@ -104,53 +104,6 @@ struct MainTabView: View {
         )
     }
 
-    private var customTabBar: some View {
-        HStack(spacing: 0) {
-            ForEach(MainTab.allCases, id: \.identifier) { tab in
-                tabButton(tab: tab)
-            }
-        }
-        .padding(.bottom, bottomSafeArea == 0 ? 10 : max(0, bottomSafeArea - 10))
-        .frame(height: 100 + (bottomSafeArea == 0 ? 0 : bottomSafeArea - 10))
-        .background(Color.backgroundColor)
-        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: -2)
-    }
-
-    @ViewBuilder
-    private func tabButton(tab: MainTab) -> some View {
-        Button {
-            currentTab = tab
-        } label: {
-            VStack(spacing: 4) {
-                Image(systemName: iconName(for: tab))
-                    .font(.system(size: 24))
-                    .foregroundColor(currentTab == tab ? .white : .gray)
-
-                Text(tabTitle(for: tab))
-                    .font(.system(size: 10))
-                    .foregroundColor(currentTab == tab ? .white : .gray)
-            }
-            .frame(maxWidth: .infinity)
-        }
-    }
-
-    private func iconName(for tab: MainTab) -> String {
-        switch tab {
-        case .home: return "house"
-        case .playlist: return "music.note.list"
-        case .transfer: return "arrow.left.arrow.right"
-        case .setting: return "gearshape"
-        }
-    }
-
-    private func tabTitle(for tab: MainTab) -> String {
-        switch tab {
-        case .home: return "Home"
-        case .playlist: return "Library"
-        case .transfer: return "Transfer"
-        case .setting: return "Settings"
-        }
-    }
 }
 
 // MARK: - Preview

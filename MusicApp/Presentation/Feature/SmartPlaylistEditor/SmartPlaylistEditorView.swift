@@ -18,6 +18,7 @@ struct SmartPlaylistEditorView: View {
         .onChange(of: viewModel.state.isDismissed) { _, dismissed in
             if dismissed { dismiss() }
         }
+        .sensoryFeedback(.success, trigger: viewModel.state.isDismissed)
     }
 
     // MARK: - Content
@@ -41,7 +42,8 @@ struct SmartPlaylistEditorView: View {
                 get: { viewModel.state.name },
                 set: { viewModel.send(.setName($0)) }
             ))
-            .foregroundStyle(.white)
+            .foregroundColor(.primaryText)
+            .font(AppFont.body())
         }
     }
 
@@ -51,6 +53,7 @@ struct SmartPlaylistEditorView: View {
                 SmartPlaylistRuleRowView(rule: rule) { updated in
                     viewModel.send(.updateRule(idx, updated))
                 }
+                .entrance(index: idx)
             }
             .onDelete { offsets in
                 offsets.forEach { viewModel.send(.removeRule($0)) }
@@ -59,17 +62,21 @@ struct SmartPlaylistEditorView: View {
                 viewModel.send(.addRule)
             } label: {
                 Label("Add Rule", systemImage: "plus.circle.fill")
-                    .foregroundStyle(.white)
+                    .foregroundColor(.accentPrimary)
+                    .font(AppFont.body())
             }
+            .buttonStyle(.pressScale)
         } header: {
             Text("Rules (AND)")
+                .font(AppFont.caption())
+                .foregroundColor(.secondaryText)
         }
     }
 
     private var previewSection: some View {
         Section("Preview") {
             Text("\(viewModel.state.matchCount) song\(viewModel.state.matchCount == 1 ? "" : "s") match")
-                .foregroundStyle(.white.opacity(0.7))
+                .foregroundColor(.secondaryText)
                 .font(AppFont.callout())
         }
     }
@@ -80,6 +87,7 @@ struct SmartPlaylistEditorView: View {
                 viewModel.send(.delete)
             } label: {
                 Text("Delete Smart Playlist")
+                    .font(AppFont.body())
                     .frame(maxWidth: .infinity, alignment: .center)
             }
         }
@@ -91,12 +99,14 @@ struct SmartPlaylistEditorView: View {
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
             Button("Cancel") { viewModel.send(.dismiss) }
-                .foregroundStyle(.white)
+                .foregroundColor(.primaryText)
         }
         ToolbarItem(placement: .confirmationAction) {
             Button("Save") { viewModel.send(.save) }
-                .foregroundStyle(.white)
+                .foregroundColor(.accentPrimary)
+                .font(AppFont.headline())
                 .disabled(viewModel.state.isSaving)
+                .buttonStyle(.pressScale)
         }
     }
 }
@@ -118,7 +128,7 @@ private struct SmartPlaylistRuleRowView: View {
                     ForEach(RuleField.allCases, id: \.self) { Text($0.rawValue).tag($0) }
                 }
                 .pickerStyle(.menu)
-                .foregroundStyle(.white)
+                .foregroundColor(.primaryText)
 
                 Picker("Operator", selection: Binding(
                     get: { rule.operator },
@@ -127,14 +137,14 @@ private struct SmartPlaylistRuleRowView: View {
                     ForEach(RuleOperator.allCases, id: \.self) { Text($0.rawValue).tag($0) }
                 }
                 .pickerStyle(.menu)
-                .foregroundStyle(.white)
+                .foregroundColor(.primaryText)
             }
 
             TextField("Value", text: Binding(
                 get: { rule.value },
                 set: { onChange(SmartPlaylistRule(field: rule.field, operator: rule.operator, value: $0)) }
             ))
-            .foregroundStyle(.white)
+            .foregroundColor(.primaryText)
             .font(AppFont.body())
         }
         .padding(.vertical, 4)

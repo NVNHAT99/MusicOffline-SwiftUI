@@ -28,8 +28,8 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
             VStack {
                 VStack {
                     Text("Recently Played Playlists")
-                        .font(.system(size: 24, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .font(AppFont.sectionHeader())
+                        .foregroundStyle(Color.primaryText)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     self.playlistSection()
                 }
@@ -38,8 +38,8 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
                 
                 VStack {
                     Text("Recently Played Songs")
-                        .font(.system(size: 24, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .font(AppFont.sectionHeader())
+                        .foregroundStyle(Color.primaryText)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     recentSongsSection()
                     
@@ -68,7 +68,7 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
             skeletonView()
         } else if viewModel.state.albums.isEmpty {
             Text("Hiện tại chưa có album nào")
-                .foregroundColor(.gray)
+                .foregroundColor(.secondaryText)
                 .frame(height: 160)
         } else {
             ScrollView(.horizontal) {
@@ -93,17 +93,19 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
             skeletonView()
         } else if viewModel.state.playlists.isEmpty {
             Text("There are no recently played playlists.")
-                .foregroundColor(.gray)
+                .foregroundColor(.secondaryText)
                 .frame(height: 160)
         } else {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 16) {
-                    ForEach(viewModel.state.playlists) { playlist in
+                    ForEach(Array(viewModel.state.playlists.enumerated()), id: \.element.id) { index, playlist in
                         HomeCardView(
                             title: playlist.name,
                             imageName: "",
                             subTitle: ""
-                        ).onTapGesture {
+                        )
+                        .entrance(index: index)
+                        .onTapGesture {
                             self.onPlaylistTap(playlist)
                         }
                     }
@@ -120,17 +122,18 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
             skeletonView(with: .reccent)
         } else if viewModel.state.recentSongs.isEmpty {
             Text("There are no recently played songs.")
-                .foregroundColor(.gray)
+                .foregroundColor(.secondaryText)
                 .frame(height: 160)
         } else {
             LazyVStack(spacing: 16) {
-                ForEach(viewModel.state.recentSongs) { recentSong in
+                ForEach(Array(viewModel.state.recentSongs.enumerated()), id: \.element.id) { index, recentSong in
                     SongItemView(
                         song: recentSong.song,
                         onTapPlayAction: {
                             viewModel.send(.play(recentSong))
                         }
                     )
+                    .entrance(index: index)
                 }
             }
         }

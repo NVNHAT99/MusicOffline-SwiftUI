@@ -46,14 +46,19 @@ struct CustomSliderView: View {
                         .fill(progressColor)
                         .frame(width: progressWidth(geometry: geometry), height: trackHeight)
                     
-                    // Thumb
+                    // Thumb — grows while dragging for a tactile feel
                     Circle()
                         .fill(progressColor)
                         .frame(width: thumbSize, height: thumbSize)
+                        .scaleEffect(isDragSliderView ? 1.6 : 1.0)
+                        .shadow(color: progressColor.opacity(0.5),
+                                radius: isDragSliderView ? 6 : 0)
+                        .animation(MotionToken.springSnappy, value: isDragSliderView)
                         .offset(x: thumbOffset(geometry: geometry), y: 0)
                         .gesture(dragGesture(geometry: geometry))
                 }
                 .frame(height: thumbSize) // Ensure consistent height for the slider track
+                .sensoryFeedback(.selection, trigger: isDragSliderView)
                 Spacer()
             }
             .frame(height: max(12, geometry.size.height))

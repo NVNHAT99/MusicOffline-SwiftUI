@@ -30,7 +30,7 @@ struct AudioEditorView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
-                        .foregroundStyle(.white)
+                        .foregroundColor(.primaryText)
                 }
             }
             .onAppear { viewModel.send(.onAppear) }
@@ -41,8 +41,8 @@ struct AudioEditorView: View {
             .overlay(alignment: .bottom) {
                 if let msg = viewModel.state.errorMessage {
                     Text(msg)
-                        .font(.callout)
-                        .foregroundStyle(.white)
+                        .font(AppFont.callout())
+                        .foregroundColor(.primaryText)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
                         .background(Color.red.opacity(0.85))
@@ -52,6 +52,7 @@ struct AudioEditorView: View {
                 }
             }
         }
+        .sensoryFeedback(.success, trigger: viewModel.state.exportedURL != nil)
     }
 
     // MARK: - Waveform + trim
@@ -63,9 +64,9 @@ struct AudioEditorView: View {
             if viewModel.state.isLoadingWaveform {
                 ProgressView()
                     .progressViewStyle(.circular)
-                    .tint(.cyan)
+                    .tint(Color.accentPrimary)
             } else {
-                WaveformView(samples: viewModel.state.waveform, barColor: .cyan)
+                WaveformView(samples: viewModel.state.waveform, barColor: Color.accentPrimary)
                     .padding(.horizontal, 6)
                 TrimHandlesView(
                     trimStart: viewModel.state.trimStart,
@@ -89,7 +90,7 @@ struct AudioEditorView: View {
             Text("End: \(timeString(viewModel.state.trimEnd))")
         }
         .font(.system(size: 12, weight: .medium))
-        .foregroundStyle(.white.opacity(0.8))
+        .foregroundColor(.secondaryText)
         .monospacedDigit()
     }
 
@@ -97,16 +98,8 @@ struct AudioEditorView: View {
 
     private var fadeBlock: some View {
         VStack(spacing: 12) {
-            fadeRow(
-                title: "Fade In",
-                value: viewModel.state.fadeIn,
-                onChange: { viewModel.send(.setFadeIn($0)) }
-            )
-            fadeRow(
-                title: "Fade Out",
-                value: viewModel.state.fadeOut,
-                onChange: { viewModel.send(.setFadeOut($0)) }
-            )
+            fadeRow(title: "Fade In",  value: viewModel.state.fadeIn,  onChange: { viewModel.send(.setFadeIn($0)) })
+            fadeRow(title: "Fade Out", value: viewModel.state.fadeOut, onChange: { viewModel.send(.setFadeOut($0)) })
         }
         .padding(12)
         .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.06)))
@@ -117,19 +110,15 @@ struct AudioEditorView: View {
             HStack {
                 Text(title)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(.white)
+                    .foregroundColor(.primaryText)
                 Spacer()
                 Text(String(format: "%.1fs", value))
                     .font(.system(size: 13))
-                    .foregroundStyle(.cyan)
+                    .foregroundColor(.accentPrimary)
                     .monospacedDigit()
             }
-            Slider(
-                value: Binding(get: { value }, set: { onChange($0) }),
-                in: 0...10,
-                step: 0.1
-            )
-            .tint(.cyan)
+            Slider(value: Binding(get: { value }, set: { onChange($0) }), in: 0...10, step: 0.1)
+                .tint(Color.accentPrimary)
         }
     }
 
@@ -143,13 +132,13 @@ struct AudioEditorView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Normalize Loudness")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(.white)
+                    .foregroundColor(.primaryText)
                 Text("Peak-normalize so quiet tracks reach -0.4 dB headroom.")
                     .font(.caption)
-                    .foregroundStyle(.gray)
+                    .foregroundColor(.secondaryText)
             }
         }
-        .tint(.cyan)
+        .tint(Color.accentPrimary)
         .padding(12)
         .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.06)))
     }
@@ -157,10 +146,10 @@ struct AudioEditorView: View {
     private var formatNote: some View {
         HStack(spacing: 6) {
             Image(systemName: "info.circle")
-                .foregroundStyle(.cyan)
+                .foregroundColor(.accentPrimary)
             Text("Exports as M4A (AAC) into your library. Source file stays unchanged.")
                 .font(.caption)
-                .foregroundStyle(.gray)
+                .foregroundColor(.secondaryText)
         }
     }
 
@@ -172,9 +161,7 @@ struct AudioEditorView: View {
         } label: {
             HStack(spacing: 10) {
                 if viewModel.state.isExporting {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .tint(.black)
+                    ProgressView().progressViewStyle(.circular).tint(.black)
                     Text("Exporting \(Int(viewModel.state.exportProgress * 100))%")
                 } else {
                     Image(systemName: "square.and.arrow.down")
@@ -182,12 +169,13 @@ struct AudioEditorView: View {
                 }
             }
             .font(.system(size: 15, weight: .semibold))
-            .foregroundStyle(.black)
+            .foregroundStyle(Color.black)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
-            .background(Capsule().fill(viewModel.state.isExporting ? Color.gray : Color.cyan))
+            .background(Capsule().fill(viewModel.state.isExporting ? Color.mutedText : Color.accentPrimary))
         }
         .disabled(viewModel.state.isExporting || viewModel.state.isLoadingWaveform)
+        .buttonStyle(.pressScale)
     }
 
     private func timeString(_ t: Double) -> String {

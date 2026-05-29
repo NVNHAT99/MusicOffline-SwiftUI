@@ -30,18 +30,18 @@ struct AddNewPlayListView<ViewModel: AddNewPlaylistViewModelProtocol>: View {
                 ZStack(alignment: .leading) {
                     if viewmodel.state.playlistName.isEmpty {
                         Text("Enter playlist name here")
-                            .foregroundColor(.white.opacity(0.6))
+                            .foregroundColor(.mutedText)
                             .padding(24)
                     }
                     TextField("", text: viewmodel.bindingName())
                         .padding(24)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primaryText)
                 }
 
                 if let nameError = viewmodel.state.nameError {
                     Text(nameError)
                         .foregroundColor(.red)
-                        .font(.caption)
+                        .font(AppFont.caption())
                         .padding(.horizontal, 24)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -54,17 +54,19 @@ struct AddNewPlayListView<ViewModel: AddNewPlaylistViewModelProtocol>: View {
                     }))
                 } label: {
                     Text("Create")
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
+                        .foregroundColor(.primaryText)
+                        .font(AppFont.headline())
                         .frame(width: 200, height: 40)
                         .overlay {
                             RoundedRectangle(cornerRadius: 24)
-                                .stroke(Color.gray, lineWidth: 2)
+                                .stroke(Color.accentPrimary, lineWidth: 2)
                         }
                 }
-                .background(Color.gray)
+                .background(Color.accentPrimary)
                 .cornerRadius(24)
                 .shadow(radius: 2)
+                .buttonStyle(.pressScale)
+                .sensoryFeedback(.success, trigger: viewmodel.state.isShowToastView)
 
                 Spacer().frame(height: 20)
             }

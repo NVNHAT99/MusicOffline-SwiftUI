@@ -75,6 +75,7 @@ struct ImportSongView<ViewModel: ImportSongViewModelProtocol>: View {
         )) {
             resultsSheet()
         }
+        .sensoryFeedback(.success, trigger: viewModel.state.isShowResults)
     }
 
     @ViewBuilder
@@ -83,14 +84,15 @@ struct ImportSongView<ViewModel: ImportSongViewModelProtocol>: View {
             HStack(spacing: 8) {
                 Image(systemName: "square.and.arrow.down")
                 Text("Import from Files")
-                    .fontWeight(.semibold)
+                    .font(AppFont.headline())
             }
-            .foregroundColor(.white)
+            .foregroundColor(.primaryText)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
-            .background(Color.cyan)
+            .background(Color.accentPrimary)
             .cornerRadius(12)
         }
+        .buttonStyle(.pressScale)
     }
 
     @ViewBuilder
@@ -98,10 +100,10 @@ struct ImportSongView<ViewModel: ImportSongViewModelProtocol>: View {
         VStack(spacing: 8) {
             ProgressView(value: Double(viewModel.state.progress), total: Double(max(viewModel.state.total, 1)))
                 .progressViewStyle(.linear)
-                .tint(.blue)
+                .tint(Color.accentPrimary)
             Text("Importing \(viewModel.state.progress) / \(viewModel.state.total)")
-                .foregroundColor(.white.opacity(0.7))
-                .font(.caption)
+                .foregroundColor(.secondaryText)
+                .font(AppFont.caption())
         }
         .padding(.horizontal, 24)
     }
@@ -115,11 +117,11 @@ struct ImportSongView<ViewModel: ImportSongViewModelProtocol>: View {
                         .foregroundColor(result.success ? .green : .red)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(result.fileName)
-                            .font(.subheadline)
+                            .font(AppFont.callout())
                             .foregroundColor(.primary)
                         if let err = result.error {
                             Text(err.localizedDescription)
-                                .font(.caption)
+                                .font(AppFont.caption())
                                 .foregroundColor(.red)
                         }
                     }

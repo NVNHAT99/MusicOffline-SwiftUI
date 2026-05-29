@@ -50,7 +50,8 @@ struct CustomNavigationBar: View {
     // MARK: - Large Title
     private func largeTitleView(_ title: String) -> some View {
         Text(title)
-            .font(.largeTitle.weight(.bold))
+            .font(AppFont.largeTitle())
+            .foregroundStyle(Color.primaryText)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
     }
@@ -71,10 +72,11 @@ struct CustomNavigationBar: View {
                     if let title = title, !title.isEmpty {
                         Text(title)
                             .foregroundColor(tintColor)
-                            .font(.body)
+                            .font(AppFont.body())
                     }
                 }
             }
+            .buttonStyle(.pressScale)
             Spacer()
         }
         .padding(.horizontal, 16)
@@ -93,9 +95,9 @@ struct CustomNavigationBar: View {
             .padding(.horizontal, 16)
 
             Text(title)
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.primaryText)
                 .lineLimit(1)
-                .font(.system(size: 18, weight: .semibold))
+                .font(AppFont.headline())
                 .multilineTextAlignment(.center)
         }
     }
@@ -110,16 +112,16 @@ struct CustomNavigationBar: View {
                             Image(systemName: icon)
                                 .resizable()
                                 .scaledToFit()
-                                .foregroundStyle(.white)
                                 .frame(width: 20, height: 20)
                         }
                         if let title = button.title {
                             Text(title)
-                                .font(.system(size: 18, weight: .semibold))
+                                .font(AppFont.headline())
                         }
                     }
                     .foregroundColor(button.tintColor)
                 }
+                .buttonStyle(.pressScale)
             } else {
                 Spacer().frame(width: 44, height: 44)
             }

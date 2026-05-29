@@ -12,6 +12,9 @@ struct NowPlayingView<ViewModel: NowPlayingViewModelProtocol>: View {
     private let cornerRadius: CGFloat = DesignToken.Radius.md
     private let cache = ImageCacheFactory.shared
     @State private var uiImage: UIImage?
+    /// Per-song color theme derived from artwork. `.default` until extraction
+    /// completes (or when there's no artwork), preserving the original look.
+    @State private var theme: AppColorTheme = .default
 
     init(isExpanded: Binding<Bool>, viewModel: ViewModel) {
         self._isExpanded = isExpanded
@@ -37,11 +40,12 @@ struct NowPlayingView<ViewModel: NowPlayingViewModelProtocol>: View {
                     isExpanded: $isExpanded
                 )
                 .environmentObject(router)
-                .background(Color.backgroundColor.ignoresSafeArea())
+                .dynamicBackground()
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: isExpanded)
+        .appColorTheme(theme)
+        .animation(MotionToken.springStandard, value: isExpanded)
         .task { await loadArtwork() }
         .onChange(of: viewModel.state.currentSong) { _, _ in
             Task { await loadArtwork() }
@@ -55,9 +59,14 @@ struct NowPlayingView<ViewModel: NowPlayingViewModelProtocol>: View {
               let data = await cache.get(for: urlStr),
               let image = UIImage(data: data) else {
             uiImage = UIImage(named: "demoThumbnail2")
+            theme = .default
             return
         }
         uiImage = image
+        // Derive the per-song color theme. Cached per URL by PaletteProvider, so
+        // a revisit doesn't recompute; runs off the main thread.
+        let palette = await PaletteProvider.shared.palette(forKey: urlStr, image: image)
+        theme = .dynamic(from: palette)
     }
 }
 

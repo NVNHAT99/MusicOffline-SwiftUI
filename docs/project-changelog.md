@@ -2,6 +2,26 @@
 
 All significant changes to MusicOffline-SwiftUI are documented here.
 
+## [2.1.0] - UI/UX Design-System Overhaul - 2026-05-29
+
+### Summary
+Replaced the flat dark-grey-only look with a dynamic, artwork-driven color system + tasteful motion across the whole app. Now Playing extracts a per-song color from album art (gradient background + accent), and every screen gains token-based colors/fonts, press feedback, haptics, and entrance animations. Build + contrast unit tests pass. Plan: `plans/260529-1530-ui-design-system-overhaul/`. See `docs/design-guidelines.md`.
+
+### Added
+- **Color token layer** — `AppColorTheme` (Environment-carried), semantic `Color` tokens (primaryText/secondaryText/mutedText/accentPrimary coral #FF6B6B/separator).
+- **Artwork color engine** — `ArtworkColorExtractor` (CIAreaAverage on downscaled art), `PaletteProvider` (per-song NSCache, off-main-thread), `ContrastGuard` (WCAG AA legibility), `AppColorTheme.dynamic(from:)`. Now Playing full/mini player themed per song.
+- **Motion system** — `MotionToken` spring presets, `Haptics` (`.sensoryFeedback`), `.pressScale()`, `.entrance(index:)`, `.dynamicBackground()` modifiers. All honor Reduce Motion.
+- **Dynamic Type** — `AppFont` migrated to relative text styles (scales with system text size).
+- `MusicAppTests/ArtworkColorThemeTests` — 7 tests asserting WCAG contrast guarantee.
+
+### Changed
+- Tab bar: active tab now coral accent + filled SF Symbol + scale + selection haptic (was plain white).
+- Restyled all screens + shared components (SongItemView, nav bar, slider, toast) to tokens + press/haptics/entrance.
+- Now Playing full player split into 5 focused subviews (all <200 LOC).
+
+### Removed
+- 3 orphaned/dead files: `Commons/Tabars/CustomTabBar.swift`, `Commons/CustomViews/CustomTabar.swift`, `Commons/SongItemView.swift`.
+
 ## [2.0.0] - Audio Editing + Import Expansion - 2026-05-29
 
 ### Summary

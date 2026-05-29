@@ -21,21 +21,26 @@ struct SetupTimerSheetView: View {
                 viewModel.navigateToPicker()
             } label: {
                 Text("Set Sleep Time")
+                    .font(AppFont.body())
                     .frame(maxWidth: .infinity)
                     .padding()
             }
-            .foregroundColor(.white)
+            .foregroundColor(.primaryText)
+            .buttonStyle(.pressScale)
 
             Divider()
+                .background(Color.separator)
 
             Button {
                 viewModel.cancelSleepTime()
             } label: {
                 Text("Cancel Sleep Time")
+                    .font(AppFont.body())
                     .frame(maxWidth: .infinity)
                     .padding()
             }
-            .foregroundColor(.white)
+            .foregroundColor(.primaryText)
+            .buttonStyle(.pressScale)
         }
         .presentationDetents([.height(120)])
         .presentationDragIndicator(.visible)

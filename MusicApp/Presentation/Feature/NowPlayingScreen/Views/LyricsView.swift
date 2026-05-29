@@ -15,7 +15,7 @@ struct LyricsView: View {
             if lines.isEmpty {
                 Text("No lyrics available")
                     .font(AppFont.callout())
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundColor(.mutedText)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ScrollViewReader { proxy in
@@ -24,7 +24,7 @@ struct LyricsView: View {
                             ForEach(Array(lines.enumerated()), id: \.offset) { idx, line in
                                 Text(line.text)
                                     .font(idx == activeIndex ? AppFont.songTitle() : AppFont.callout())
-                                    .foregroundStyle(idx == activeIndex ? .white : .white.opacity(0.45))
+                                    .foregroundColor(idx == activeIndex ? .primaryText : .mutedText)
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: .infinity)
                                     .animation(.easeInOut(duration: 0.2), value: activeIndex)
@@ -49,6 +49,7 @@ struct LyricsView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        // Intentional: keep opaque dark background so lyrics stay readable over any player gradient.
         .background(Color.backgroundColor)
     }
 

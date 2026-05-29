@@ -74,8 +74,9 @@ struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
                             .frame(width: 24, height: 24)
                             .foregroundColor(.white)
                             .padding(12)
-                            .background(Circle().fill(Color.cyan).shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3))
+                            .background(Circle().fill(Color.accentPrimary).shadow(color: Color.accentPrimary.opacity(0.4), radius: 8, x: 0, y: 4))
                     }
+                    .buttonStyle(.pressScale)
                     .padding()
                 }
             }
@@ -114,6 +115,7 @@ struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
             List {
                 ForEach(Array(viewModel.state.songs.enumerated()), id: \.element.id) { index, song in
                     songRow(song: song, index: index)
+                        .entrance(index: index)
                         .listRowBackground(Color.backgroundColor)
                         .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                         .listRowSeparator(.hidden)
@@ -129,7 +131,7 @@ struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
             VStack(alignment: .center) {
                 Spacer()
                 Text("The playlist is empty!")
-                    .foregroundColor(.white)
+                    .foregroundColor(.secondaryText)
                 Spacer()
             }
             .frame(maxWidth: .infinity)
@@ -142,7 +144,7 @@ struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
             if viewModel.state.isEditMode {
                 Image(systemName: viewModel.state.selectedSongIDs.contains(song.id)
                       ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(viewModel.state.selectedSongIDs.contains(song.id) ? .blue : .gray)
+                    .foregroundColor(viewModel.state.selectedSongIDs.contains(song.id) ? .accentPrimary : .mutedText)
                     .onTapGesture { viewModel.send(.toggleSongSelection(id: song.id)) }
             }
             SongItemView(
@@ -166,8 +168,8 @@ struct PlaylistDetailView<ViewModel: PlaylistDetailViewModelProtocol>: View {
                 Image(systemName: "arrow.up.arrow.down")
                 Text("Sort")
             }
-            .font(.subheadline)
-            .foregroundColor(.white.opacity(0.8))
+            .font(AppFont.callout())
+            .foregroundColor(.secondaryText)
         }
     }
 }

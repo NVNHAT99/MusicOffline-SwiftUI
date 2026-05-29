@@ -27,7 +27,7 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
             VStack(spacing: 0) {
                 CustomNavigationBar(type: .large(title: "My Libary"))
                     .frame(height: 70)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primaryText)
                 VStack(alignment: .leading, spacing: 0) {
                     Spacer().frame(height: 24)
 
@@ -46,14 +46,15 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
                                 if handler.state.playlist.isEmpty {
                                     emptyLabel("You don't have any playlist yet")
                                 } else {
-                                    ForEach(handler.state.playlist) { item in
+                                    ForEach(Array(handler.state.playlist.enumerated()), id: \.element.id) { index, item in
                                         PlayListItemView(
                                             playListName: item.name,
                                             onDelete: { handler.send(intent: .deletePlaylist(item)) },
                                             ontapItem: { router.route(to: .playlistDetail(id: item.id)) }
                                         )
+                                        .entrance(index: index)
                                         if !handler.isLastItem(item: item) {
-                                            Divider().background(Color.gray)
+                                            Divider().background(Color.separator)
                                         }
                                     }
                                 }
@@ -114,8 +115,9 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
                             .frame(width: 24, height: 24)
                             .foregroundColor(.white)
                             .padding(14)
-                            .background(Circle().fill(Color.cyan).shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3))
+                            .background(Circle().fill(Color.accentPrimary).shadow(color: Color.accentPrimary.opacity(0.4), radius: 8, x: 0, y: 4))
                     }
+                    .buttonStyle(.pressScale)
                     .padding()
                 }
             }
@@ -138,15 +140,15 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
     @ViewBuilder
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
-            .foregroundColor(.white)
-            .font(.system(size: 22, weight: .semibold))
+            .foregroundColor(.primaryText)
+            .font(AppFont.title())
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     @ViewBuilder
     private func emptyLabel(_ text: String) -> some View {
         Text(text)
-            .foregroundColor(.white.opacity(0.6))
+            .foregroundColor(.secondaryText)
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.vertical, 12)
     }

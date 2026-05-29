@@ -27,20 +27,16 @@ struct EffectsSectionView: View {
             title: "Speed",
             value: String(format: "%.2fx", viewModel.state.speed)
         ) {
-            Slider(
-                value: speedBinding,
-                in: 0.5...2.0,
-                step: 0.05
-            )
-            .tint(.cyan)
+            Slider(value: speedBinding, in: 0.5...2.0, step: 0.05)
+                .tint(Color.accentPrimary)
             HStack {
-                Text("0.5x").foregroundStyle(.white.opacity(0.5))
+                Text("0.5x").foregroundColor(.mutedText)
                 Spacer()
                 Button("Reset") { viewModel.send(.setSpeed(1.0)) }
                     .font(.caption2)
-                    .foregroundStyle(.cyan)
+                    .foregroundColor(.accentPrimary)
                 Spacer()
-                Text("2.0x").foregroundStyle(.white.opacity(0.5))
+                Text("2.0x").foregroundColor(.mutedText)
             }
             .font(.caption)
         }
@@ -61,20 +57,16 @@ struct EffectsSectionView: View {
             title: "Pitch",
             value: String(format: "%+.1f st", viewModel.state.pitchSemitones)
         ) {
-            Slider(
-                value: pitchBinding,
-                in: -12...12,
-                step: 0.5
-            )
-            .tint(.cyan)
+            Slider(value: pitchBinding, in: -12...12, step: 0.5)
+                .tint(Color.accentPrimary)
             HStack {
-                Text("-12 st").foregroundStyle(.white.opacity(0.5))
+                Text("-12 st").foregroundColor(.mutedText)
                 Spacer()
                 Button("Reset") { viewModel.send(.setPitch(0)) }
                     .font(.caption2)
-                    .foregroundStyle(.cyan)
+                    .foregroundColor(.accentPrimary)
                 Spacer()
-                Text("+12 st").foregroundStyle(.white.opacity(0.5))
+                Text("+12 st").foregroundColor(.mutedText)
             }
             .font(.caption)
         }
@@ -97,20 +89,11 @@ struct EffectsSectionView: View {
                 ? "Off"
                 : "\(Int(viewModel.state.reverbWetDryMix))%"
         ) {
-            // Wet/dry mix
-            Slider(
-                value: reverbMixBinding,
-                in: 0...100,
-                step: 1
-            )
-            .tint(.cyan)
-
-            // Preset picker
+            Slider(value: reverbMixBinding, in: 0...100, step: 1)
+                .tint(Color.accentPrimary)
             Menu {
                 ForEach(ReverbPreset.allCases, id: \.self) { p in
-                    Button {
-                        viewModel.send(.selectReverbPreset(p))
-                    } label: {
+                    Button { viewModel.send(.selectReverbPreset(p)) } label: {
                         if p == viewModel.state.reverbPreset {
                             Label(p.displayName, systemImage: "checkmark")
                         } else {
@@ -125,7 +108,7 @@ struct EffectsSectionView: View {
                     Image(systemName: "chevron.up.chevron.down")
                         .font(.system(size: 10))
                 }
-                .foregroundStyle(.white)
+                .foregroundColor(.primaryText)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background(Capsule().fill(Color.white.opacity(0.15)))
@@ -148,11 +131,12 @@ struct EffectsSectionView: View {
         } label: {
             Label("Reset All Effects", systemImage: "arrow.counterclockwise")
                 .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(.white)
+                .foregroundColor(.primaryText)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
                 .background(Capsule().fill(Color.white.opacity(0.15)))
         }
+        .buttonStyle(.pressScale)
     }
 }
 
@@ -169,15 +153,15 @@ private struct EffectControlRow<Content: View>: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 10) {
                 Image(systemName: icon)
-                    .foregroundStyle(.cyan)
+                    .foregroundColor(.accentPrimary)
                     .frame(width: 22)
                 Text(title)
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(.white)
+                    .foregroundColor(.primaryText)
                 Spacer()
                 Text(value)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(.cyan)
+                    .foregroundColor(.accentPrimary)
                     .monospacedDigit()
             }
             content()

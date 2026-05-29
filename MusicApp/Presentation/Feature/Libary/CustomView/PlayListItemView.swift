@@ -13,21 +13,26 @@ struct PlayListItemView: View {
     var ontapItem: (() -> Void)?
     var body: some View {
         ContainerSwipeView {
-            HStack {
-                Image (systemName: "music.note.list")
+            HStack(spacing: DesignToken.Spacing.md) {
+                Image(systemName: "music.note.list")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 24, height: 24)
+                    .frame(width: DesignToken.IconSize.md, height: DesignToken.IconSize.md)
+                    .foregroundStyle(Color.accentPrimary)
                 Text(playListName)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .font(.system(size: 20, weight: .semibold))
+                    .font(AppFont.headline())
                     .lineLimit(1)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color.mutedText)
             }
-            .foregroundColor(.white)
-            .padding(.horizontal, 16)
+            .foregroundColor(.primaryText)
+            .padding(.horizontal, DesignToken.Spacing.md)
             .padding(.vertical, 12)
             .frame(maxWidth: .infinity)
             .background(Color.backgroundColor)
+            .contentShape(Rectangle())
             .onTapGesture {
                 ontapItem?()
             }
