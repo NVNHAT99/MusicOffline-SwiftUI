@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 // MARK: - Log Level
 enum LogLevel: Int, CaseIterable {
@@ -14,6 +15,15 @@ enum LogLevel: Int, CaseIterable {
     case info = 2
     case warning = 3
     case error = 4
+
+    var osLogType: OSLogType {
+        switch self {
+        case .verbose, .debug: return .debug
+        case .info: return .info
+        case .warning: return .default
+        case .error: return .error
+        }
+    }
 
     var emoji: String {
         switch self {
@@ -40,17 +50,26 @@ enum LogLevel: Int, CaseIterable {
 struct Logger {
 
     // MARK: - Configuration
-    private static var minimumLevel: LogLevel = .debug
+    #if DEBUG
+    private static let defaultLevel: LogLevel = .debug
+    #else
+    private static let defaultLevel: LogLevel = .warning
+    #endif
+
+    private static var minimumLevel: LogLevel = defaultLevel
     private static var enableColoredOutput: Bool = true
     private static var includeTimestamp: Bool = true
     private static var fileNameShortening: Bool = true
 
     // MARK: - Configuration Methods
-    static func setup(level: LogLevel = .debug,
+    static func setup(level: LogLevel = defaultLevel,
                       colored: Bool = true,
                       timestamp: Bool = true,
                       shortenFileNames: Bool = true) {
-        minimumLevel = level
+        // In release builds never log below .warning, regardless of the
+        // requested level — this keeps file paths / server URL / IP out of
+        // the device console.
+        minimumLevel = level.rawValue >= defaultLevel.rawValue ? level : defaultLevel
         enableColoredOutput = colored
         includeTimestamp = timestamp
         fileNameShortening = shortenFileNames
@@ -161,8 +180,8 @@ struct Logger {
 
         let fileName = getFileName(from: file)
         let messageValue = String(describing: message())
-        let timestamp = includeTimestamp ? "[\(Date())] " : ""
 
+        #if DEBUG
         // Build log message
         var logMessage = ""
 
@@ -192,7 +211,17 @@ struct Logger {
         }
 
         print(logMessage)
+        #else
+        // Release: route warning/error to the unified log with PRIVATE
+        // interpolation so dynamic content (file paths, URLs, IPs) is redacted
+        // by the system instead of printed to stdout.
+        osLog.log(level: level.osLogType, "[\(fileName, privacy: .public)] \(messageValue, privacy: .private)")
+        #endif
     }
+
+    #if !DEBUG
+    private static let osLog = os.Logger(subsystem: Bundle.main.bundleIdentifier ?? "MusicApp", category: "app")
+    #endif
 
     private static func getFileName(from path: String) -> String {
         let fileName = URL(fileURLWithPath: path).lastPathComponent

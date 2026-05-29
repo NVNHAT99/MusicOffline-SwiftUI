@@ -8,8 +8,11 @@ struct UrlDownloadState {
     var errorMessage: String? = nil
 
     var canStart: Bool {
-        !isDownloading &&
-        urlText.lowercased().hasPrefix("https://") &&
-        urlText.count > 10
+        guard !isDownloading else { return false }
+        let trimmed = urlText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let components = URLComponents(string: trimmed),
+              components.scheme?.lowercased() == "https",
+              let host = components.host, !host.isEmpty else { return false }
+        return true
     }
 }

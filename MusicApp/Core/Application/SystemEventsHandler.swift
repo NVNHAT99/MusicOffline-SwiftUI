@@ -38,6 +38,11 @@ public final class RealSystemEventsHandler: SystemEventsHandler {
 
     public func sceneWillResignActive() {
         Logger.debug("Scene will resign active", module: "SystemEvents")
+
+        // Stop the unauthenticated upload server as soon as the app stops being
+        // active (control center, incoming call, app switcher) — not only when
+        // it is fully backgrounded — so it never lingers on Wi-Fi unattended.
+        webServerService.stopWebUploader()
     }
 
     public func sceneDidEnterBackground() {
