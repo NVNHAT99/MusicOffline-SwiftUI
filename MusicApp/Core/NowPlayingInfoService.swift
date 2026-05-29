@@ -66,6 +66,10 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         var info = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
         info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+        // A custom AVAudioEngine player (unlike AVPlayer/AVAudioPlayer) must
+        // declare its media type, otherwise iOS may not treat it as an audio
+        // now-playing app and can ignore PlaybackRate for the CC button state.
+        info[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
     }
 
@@ -81,6 +85,7 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
             var info = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
             info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
             info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+            info[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
             MPNowPlayingInfoCenter.default().nowPlayingInfo = info
             return
         }
@@ -95,6 +100,7 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = song.duration
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+        nowPlayingInfo[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
 
         Task { [weak self] in
@@ -117,6 +123,7 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         guard var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo else { return }
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+        nowPlayingInfo[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
     
@@ -145,8 +152,6 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         commandCenter.togglePlayPauseCommand.addTarget { [weak self, weak playerManager] _ in
             guard let playerManager else { return .commandFailed }
             let willPlay = !playerManager.state.isPlaying
-            // Push the NEW state to the system synchronously so Control Center
-            // doesn't keep interpolating the old rate and flip the button back.
             self?.pushPlaybackState(isPlaying: willPlay, currentTime: playerManager.state.currentTimePlay)
             Task { @MainActor in
                 if willPlay { await playerManager.play() } else { await playerManager.pause() }

@@ -166,6 +166,18 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
         // so a racing interruption can't later auto-resume over the user's intent.
         pausedByInterruption = false
         playerNode.pause()
+        // With a custom AVAudioEngine, leaving the session active + engine running
+        // while only the node is paused makes iOS still consider the app "playing",
+        // so Control Center keeps showing pause and only sends pauseCommand. Pause
+        // the engine and yield the audio session so the system sees us as paused
+        // and the Control Center button toggles correctly. play() re-activates the
+        // session and restarts the engine on resume.
+        engine.pause()
+        do {
+            try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        } catch {
+            Logger.error("Audio session deactivate on pause failed: \(error)")
+        }
     }
 
     /// Pause specifically because of a system interruption — marks the state so
