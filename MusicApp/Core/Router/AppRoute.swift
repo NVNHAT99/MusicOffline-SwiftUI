@@ -45,6 +45,9 @@ public enum AppRoute: Routable {
     // MARK: - Import Hub
     case importHub
 
+    // MARK: - Paywall
+    case paywall
+
     // MARK: - Presentation Style
     public var presentationStyle: PresentationStyle {
         switch self {
@@ -86,6 +89,9 @@ public enum AppRoute: Routable {
 
         case .importHub:
             return .sheet
+
+        case .paywall:
+            return .fullScreen
         }
     }
 
@@ -124,6 +130,8 @@ public enum AppRoute: Routable {
             return "urlDownload"
         case .importHub:
             return "importHub"
+        case .paywall:
+            return "paywall"
         }
     }
 }

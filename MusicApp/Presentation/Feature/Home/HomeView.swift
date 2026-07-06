@@ -24,35 +24,40 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
     }
     
     var body: some View {
-        ScrollView(content: {
-            VStack {
+        VStack(spacing: 0) {
+            ScrollView(content: {
                 VStack {
-                    Text("Recently Played Playlists")
-                        .font(AppFont.sectionHeader())
-                        .foregroundStyle(Color.primaryText)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    self.playlistSection()
+                    VStack {
+                        Text("Recently Played Playlists")
+                            .font(AppFont.sectionHeader())
+                            .foregroundStyle(Color.primaryText)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        self.playlistSection()
+                    }
+
+                    // recent play
+
+                    VStack {
+                        Text("Recently Played Songs")
+                            .font(AppFont.sectionHeader())
+                            .foregroundStyle(Color.primaryText)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        recentSongsSection()
+
+                    } // VStack - playlist section
+                    .padding(.trailing, 16)
+
+                    // recent play
+                    Spacer()
                 }
-                
-                // recent play
-                
-                VStack {
-                    Text("Recently Played Songs")
-                        .font(AppFont.sectionHeader())
-                        .foregroundStyle(Color.primaryText)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    recentSongsSection()
-                    
-                } // VStack - playlist section
-                .padding(.trailing, 16)
-                
-                // recent play
-                Spacer()
-            }
-        })
-        .padding(.leading, 16)
-        .padding(.top, 54)
-        .scrollContentBackground(.hidden) // 👈 Ẩn background
+            })
+            .padding(.leading, 16)
+            .padding(.top, 54)
+            .scrollContentBackground(.hidden) // 👈 Ẩn background
+
+            // Bottom banner ad
+            AdBanner()
+        }
         .background(Color.backgroundColor)
         .onAppear {
             // Recently-played is pushed via refreshHomePubliser when a song starts,

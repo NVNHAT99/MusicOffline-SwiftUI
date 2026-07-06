@@ -12,6 +12,9 @@ import SwiftUI
 struct MusicApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
+    // Hosts Mobile Ads SDK start + app-open interstitial (see AppDelegate).
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     // MARK: - App Environment
     @StateObject private var environment = AppEnvironment.bootstrap()
 

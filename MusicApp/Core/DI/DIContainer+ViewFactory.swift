@@ -82,6 +82,10 @@ extension DIContainer: ViewFactory {
         // Import Hub
         case .importHub:
             ImportHubView()
+
+        // Paywall
+        case .paywall:
+            PaywallView()
         }
     }
 }

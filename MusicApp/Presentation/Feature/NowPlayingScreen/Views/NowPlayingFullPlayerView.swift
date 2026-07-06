@@ -37,6 +37,11 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
             }
             .scrollIndicators(.hidden)
         }
+        .safeAreaInset(edge: .bottom) {
+            // Bottom banner ad (full player, expanded state only)
+            AdBanner()
+                .padding(.bottom, Helper.shared.safeAreaInsets?.bottom)
+        }
         .overlay(alignment: .bottom) {
             if let errorMsg = viewModel.state.errorMessage ?? viewModel.state.lyricsErrorMessage {
                 Text(errorMsg)

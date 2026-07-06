@@ -32,6 +32,8 @@ public final class AppEnvironment: ObservableObject {
     }
 
     // MARK: - Scene Phase Handling
+    // App-open interstitial + Mobile Ads SDK start live in AppDelegate
+    // (UIApplication.didBecomeActiveNotification), mirroring EZTranslate.
     public func handleScenePhaseChange(_ phase: ScenePhase) {
         switch phase {
         case .background:
@@ -116,7 +118,12 @@ extension AppEnvironment {
 
         Logger.info("✨ AppEnvironment bootstrap completed successfully")
 
-        // 9. Setup initial state
+        // 9. Configure IAP + sync entitlement (fire-and-forget)
+        Task { @MainActor in
+            await IAPService.shared.configure()
+        }
+
+        // 10. Setup initial state
         Task { @MainActor in
             // Simulate initial loading check
             try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds

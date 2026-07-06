@@ -9,6 +9,7 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
     @StateObject var viewModel: ViewModel
     @StateObject private var router = Router<AppRoute>()
     @EnvironmentObject private var container: DIContainer
+    @ObservedObject private var appState = AppState.shared
 
     init(viewModel: ViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -68,6 +69,19 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
     @ViewBuilder
     private func generalSection() -> some View {
         Section(header: Text("General").font(AppFont.caption()).foregroundColor(.mutedText)) {
+            if appState.isPremium {
+                SettingRowView(
+                    title: "Premium",
+                    subtitle: "Ads removed — thank you!",
+                    showChevron: false,
+                    titleColor: .accentPrimary,
+                    action: nil
+                )
+            } else {
+                SettingRowView(title: "Remove Ads", titleColor: .accentPrimary) {
+                    router.route(to: .paywall)
+                }
+            }
             SettingRowView(title: "Transfer MP3 Files") {
                 NotificationCenter.default.post(name: .switchMainTab, object: MainTab.transfer)
             }

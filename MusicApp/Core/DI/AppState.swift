@@ -33,8 +33,13 @@ public final class AppState: AppStateProtocol {
     @Published public var isLoading: Bool = false
     @Published public var isChecking: Bool = true // Splash screen check
 
+    /// True when the user owns the lifetime "Remove Ads" premium. Persisted so
+    /// the entitlement survives offline launches; re-synced from StoreKit at start.
+    @Published public var isPremium: Bool = false
+
     // MARK: - Private Properties
     private let userDefaults: UserDefaults
+    private static let isPremiumKey = "isPremium"
 
     // MARK: - Initialization
     private init(userDefaults: UserDefaults = .standard) {
@@ -43,6 +48,7 @@ public final class AppState: AppStateProtocol {
         // Load persisted state
         self.isOnboardingCompleted = userDefaults.bool(forKey: "isOnboardingCompleted")
         self.isAuthenticated = userDefaults.bool(forKey: "isAuthenticated")
+        self.isPremium = userDefaults.bool(forKey: Self.isPremiumKey)
 
         // Simulate checking - in real app, check auth, onboarding, etc.
         Task { @MainActor in
@@ -66,5 +72,11 @@ public final class AppState: AppStateProtocol {
 
     public func setLoading(_ isLoading: Bool) {
         self.isLoading = isLoading
+    }
+
+    /// Update premium entitlement (from a purchase, restore, or startup sync).
+    public func setPremium(_ isPremium: Bool) {
+        userDefaults.set(isPremium, forKey: Self.isPremiumKey)
+        self.isPremium = isPremium
     }
 }
