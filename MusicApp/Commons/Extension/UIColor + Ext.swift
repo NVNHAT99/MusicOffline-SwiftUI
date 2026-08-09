@@ -84,11 +84,13 @@ public extension Color {
 //MARK: - Extenstion Color
 
 extension Color {
-    static let backgroundColor: Color = Color(hexString: "#1C1C1E", alpha: 1.0)
+    // Rich dark base tinted with the brand violet — brighter and warmer than the
+    // old flat near-black, so the UI reads fresh but stays comfortable for music.
+    static let backgroundColor: Color = Color(hexString: "#1E1A2E", alpha: 1.0)
     static let whiteAlpha30: Color = Color(hexString: "#FFFFFF", alpha: 0.3)
-    static let headerBackground: Color = Color(hexString: "#26292D", alpha: 1.0)
-    static let bottomBackground: Color = Color(hexString: "#41464B", alpha: 1.0)
+    static let headerBackground: Color = Color(hexString: "#2A2440", alpha: 1.0)
+    static let bottomBackground: Color = Color(hexString: "#413A5C", alpha: 1.0)
     static let cyan: Color = Color(hexString: "#4DD0E1")
-    static let color292C2E: Color = Color(hexString: "#292C2E")
+    static let color292C2E: Color = Color(hexString: "#282341")
 }
 

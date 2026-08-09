@@ -1,9 +1,8 @@
 import SwiftUI
 
 // MARK: - PressScale
-// A ButtonStyle that scales the label down while pressed and fires a light
-// haptic on press. Honors Reduce Motion by skipping the scale (haptic stays).
-// Use via `.buttonStyle(.pressScale)`.
+// A ButtonStyle that scales the label down while pressed. Honors Reduce Motion
+// by skipping the scale. Use via `.buttonStyle(.pressScale)`.
 
 struct PressScaleButtonStyle: ButtonStyle {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -13,9 +12,6 @@ struct PressScaleButtonStyle: ButtonStyle {
         configuration.label
             .scaleEffect(reduceMotion ? 1.0 : (configuration.isPressed ? scale : 1.0))
             .animation(MotionToken.springSnappy, value: configuration.isPressed)
-            .sensoryFeedback(.impact(weight: .light), trigger: configuration.isPressed) { _, pressed in
-                pressed
-            }
     }
 }
 

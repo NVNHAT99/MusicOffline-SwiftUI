@@ -24,8 +24,9 @@ enum Haptic {
 }
 
 extension View {
-    /// Fire a haptic whenever `trigger` changes to a new value.
+    /// Haptic feedback is disabled app-wide — this is now a no-op so existing
+    /// `.haptic(...)` call sites keep compiling without emitting any feedback.
     func haptic<T: Equatable>(_ haptic: Haptic, trigger: T) -> some View {
-        sensoryFeedback(haptic.feedback, trigger: trigger)
+        self
     }
 }

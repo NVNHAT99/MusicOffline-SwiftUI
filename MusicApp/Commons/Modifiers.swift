@@ -163,11 +163,8 @@ struct DelaysTouches: ViewModifier {
             shouldShowHighlight = true
         }
         
-        // Haptic feedback khi bắt đầu touch
-        if let hapticStyle = hapticStyle {
-            let impactFeedback = UIImpactFeedbackGenerator(style: hapticStyle)
-            impactFeedback.impactOccurred()
-        }
+        // Haptic feedback intentionally disabled app-wide.
+        _ = hapticStyle
     }
     
     private func handleTouchMoved(isInsideBounds: Bool) {

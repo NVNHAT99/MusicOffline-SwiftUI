@@ -34,12 +34,14 @@ struct AppColorTheme: Equatable {
         self.gradientStops = gradientStops
     }
 
-    /// Safe fallback matching the existing flat dark look. Accent = coral token.
+    /// Fallback theme used until artwork colors are extracted (or when a song has
+    /// no artwork). Brand gradient gives the default look energy instead of a flat
+    /// dark fill; per-song dynamic themes still override this on the player subtree.
     static let `default` = AppColorTheme(
         surface: Color.backgroundColor,
         accent: .accentPrimary,
         onSurface: .white,
-        onSurfaceSecondary: Color.white.opacity(0.7),
-        gradientStops: []
+        onSurfaceSecondary: Color.white.opacity(0.72),
+        gradientStops: Color.brandGradientStops
     )
 }
