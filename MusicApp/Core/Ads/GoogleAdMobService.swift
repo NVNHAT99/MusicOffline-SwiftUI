@@ -67,6 +67,7 @@ final class GoogleAdMobService {
         }
 
         guard let ad = interstitial, let rootVC = topViewController() else {
+            Logger.debug("[Ads] showInterstitial ABORT — ad=\(interstitial != nil), rootVC=\(String(describing: topViewController()))")
             return false
         }
 
@@ -74,14 +75,29 @@ final class GoogleAdMobService {
         isShowingAd = true
         lastShownAt = Date()
 
+        // If the topmost VC is already presenting something (a SwiftUI sheet /
+        // fullScreenCover), presenting the ad on top of it can leave the ad's
+        // close button unresponsive. Log the chain so we can see it on device.
+        Logger.debug("[Ads] presenting interstitial from \(type(of: rootVC)) — alreadyPresenting=\(rootVC.presentedViewController != nil) view.window=\(rootVC.view.window != nil)")
+
         let result = await withCheckedContinuation { continuation in
-            let delegate = InterstitialPresentationDelegate { [weak self] in
-                self?.isShowingAd = false
-                self?.presentationDelegate = nil
-                continuation.resume(returning: true)
-            }
+            let delegate = InterstitialPresentationDelegate(
+                onFinished: { [weak self] in
+                    Logger.debug("[Ads] interstitial dismissed (adDidDismiss)")
+                    self?.isShowingAd = false
+                    self?.presentationDelegate = nil
+                    continuation.resume(returning: true)
+                },
+                onPresent: {
+                    Logger.debug("[Ads] interstitial DID present full screen")
+                },
+                onFail: { err in
+                    Logger.debug("[Ads] interstitial FAILED to present: \(err)")
+                }
+            )
             self.presentationDelegate = delegate
             ad.fullScreenContentDelegate = delegate
+            Logger.debug("[Ads] calling ad.present(from:)")
             ad.present(from: rootVC)
         }
 
@@ -132,9 +148,15 @@ final class GoogleAdMobService {
 private final class InterstitialPresentationDelegate: NSObject, FullScreenContentDelegate {
 
     private var onFinished: (() -> Void)?
+    private let onPresent: (() -> Void)?
+    private let onFail: ((Error) -> Void)?
 
-    init(onFinished: @escaping () -> Void) {
+    init(onFinished: @escaping () -> Void,
+         onPresent: (() -> Void)? = nil,
+         onFail: ((Error) -> Void)? = nil) {
         self.onFinished = onFinished
+        self.onPresent = onPresent
+        self.onFail = onFail
     }
 
     private func finish() {
@@ -143,11 +165,16 @@ private final class InterstitialPresentationDelegate: NSObject, FullScreenConten
         callback?()
     }
 
+    func adWillPresentFullScreenContent(_ ad: FullScreenPresentingAd) {
+        onPresent?()
+    }
+
     func adDidDismissFullScreenContent(_ ad: FullScreenPresentingAd) {
         finish()
     }
 
     func ad(_ ad: FullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+        onFail?(error)
         finish()
     }
 }

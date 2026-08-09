@@ -45,6 +45,13 @@ final class LogFileWriter {
         }
     }
 
+    /// Human-readable current size of the log file, e.g. "0 KB" / "42 KB".
+    var sizeDescription: String {
+        let bytes = (try? FileManager.default.attributesOfItem(atPath: fileURL.path)[.size] as? Int) ?? 0
+        let kb = (bytes ?? 0) / 1024
+        return "\(kb) KB"
+    }
+
     /// Empty the log (used by Settings before starting a fresh capture).
     func clear() {
         queue.async { [weak self] in
