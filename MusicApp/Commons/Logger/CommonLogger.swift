@@ -211,6 +211,13 @@ struct Logger {
         }
 
         print(logMessage)
+
+        // Also persist a color-free line to the exportable debug log file so
+        // Settings → "Share Log File" can hand it off for offline debugging.
+        var fileLine = ""
+        if includeTimestamp { fileLine += "[\(Date())] " }
+        fileLine += "\(level.emoji) [\(fileName)] \(function)() Line \(line) → \(messageValue)"
+        LogFileWriter.shared.append(fileLine)
         #else
         // Release: route warning/error to the unified log with PRIVATE
         // interpolation so dynamic content (file paths, URLs, IPs) is redacted

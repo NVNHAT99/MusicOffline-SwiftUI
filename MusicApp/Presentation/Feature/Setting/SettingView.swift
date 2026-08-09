@@ -11,6 +11,10 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
     @EnvironmentObject private var container: DIContainer
     @ObservedObject private var appState = AppState.shared
 
+    #if DEBUG
+    @State private var isShowLogShare = false
+    #endif
+
     init(viewModel: ViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
@@ -27,6 +31,9 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
                 generalSection()
                 aboutSection()
                 dangerSection()
+                #if DEBUG
+                debugSection()
+                #endif
             }
             .listStyle(.insetGrouped)
             .foregroundColor(.primaryText)
@@ -53,6 +60,12 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
         )) {
             ShareSheet(items: [SettingConstants.shareURL])
         }
+        #if DEBUG
+        // Debug-only log export sheet.
+        .sheet(isPresented: $isShowLogShare) {
+            ShareSheet(items: [LogFileWriter.shared.fileURL])
+        }
+        #endif
         .overlay(alignment: .bottom) {
             if viewModel.state.isShowToastView {
                 ToastView(isShowView: viewModel.isShowToastView(),
@@ -126,6 +139,21 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
         }
         .listRowBackground(Color.headerBackground)
     }
+
+    #if DEBUG
+    @ViewBuilder
+    private func debugSection() -> some View {
+        Section(header: Text("Debug").font(AppFont.caption()).foregroundColor(.mutedText)) {
+            SettingRowView(title: "Share Log File", titleColor: .accentPrimary) {
+                isShowLogShare = true
+            }
+            SettingRowView(title: "Clear Log File", showChevron: false, titleColor: .red) {
+                LogFileWriter.shared.clear()
+            }
+        }
+        .listRowBackground(Color.headerBackground)
+    }
+    #endif
 
     @ViewBuilder
     private func dangerSection() -> some View {

@@ -44,6 +44,7 @@
 		5DFA6593C6E14C1F8D017605 /* EqualizerStateAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFA6592C6E14C1F8D017605 /* EqualizerStateAction.swift */; };
 		5F0AB6FAFCA64971A2714BDE /* SmartPlaylistRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0AB6F9FCA64971A2714BDE /* SmartPlaylistRepositoryProtocol.swift */; };
 		5F34F963E7086BC97CCF73DF /* AudioEditorIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87534181CA10644520F1E5A7 /* AudioEditorIntent.swift */; };
+		6072AD0134D9E13C216B8CAC /* LogFileWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE457CBCF4D502095418301 /* LogFileWriter.swift */; };
 		6090FBBB7D604126BFEB2E4D /* EqualizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6090FBBA7D604126BFEB2E4D /* EqualizerView.swift */; };
 		6114153BB5808DE9AB950654 /* UserEQPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A628F335C23D0368166D34 /* UserEQPreset.swift */; };
 		618AE81288EE7556A5AC2C24 /* ComputeNormalizationGainUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80DBFFA02960296F97719A8 /* ComputeNormalizationGainUseCase.swift */; };
@@ -610,6 +611,7 @@
 		C672EF413FACE723F0E79418 /* AudioEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEditorViewModel.swift; sourceTree = "<group>"; };
 		C8C84251420B8A107A48926C /* AdMobConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AdMobConfig.swift; sourceTree = "<group>"; };
 		CBCA36F0A5F6C51052F41FBC /* AttachLyricsToSongUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachLyricsToSongUseCase.swift; sourceTree = "<group>"; };
+		CDE457CBCF4D502095418301 /* LogFileWriter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LogFileWriter.swift; sourceTree = "<group>"; };
 		D17433EE15A3EBE2D7927E99 /* AudioEditConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEditConfig.swift; sourceTree = "<group>"; };
 		D2FD7AC3B35A6650B598314E /* Pods-MusicApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MusicApp.debug.xcconfig"; path = "Target Support Files/Pods-MusicApp/Pods-MusicApp.debug.xcconfig"; sourceTree = "<group>"; };
 		D4830BFF2F5B900B73C87D7A /* EQBandSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EQBandSliderView.swift; sourceTree = "<group>"; };
@@ -1158,6 +1160,7 @@
 			children = (
 				642390312E7C462900961C8A /* CommonLogger.swift */,
 				642390332E7C462900961C8A /* README.md */,
+				CDE457CBCF4D502095418301 /* LogFileWriter.swift */,
 			);
 			path = Logger;
 			sourceTree = "<group>";
@@ -2211,6 +2214,7 @@
 				11340A728C2BA9987101D0C4 /* IAPService.swift in Sources */,
 				C76BCA4CEE5E8BA657693CAF /* PaywallView.swift in Sources */,
 				88AA1DA4774A0C9A9AF82C7D /* AppProductId.swift in Sources */,
+				6072AD0134D9E13C216B8CAC /* LogFileWriter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
