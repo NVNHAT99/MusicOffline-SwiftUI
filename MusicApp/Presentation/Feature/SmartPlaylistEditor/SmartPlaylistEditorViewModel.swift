@@ -58,6 +58,7 @@ final class SmartPlaylistEditorViewModel: ObservableObject {
             let playlist = SmartPlaylist(id: state.id, name: state.name, rules: state.rules, createdAt: Date())
             do {
                 try saveUseCase.execute(playlist)
+                PlaylistEventCenter.shared.smartSubject.send(.added(playlist.id))
                 state = reducer.reduce(state, with: .setDismissed(true))
             } catch {
                 state = reducer.reduce(state, with: .setError(error.localizedDescription))
@@ -66,6 +67,7 @@ final class SmartPlaylistEditorViewModel: ObservableObject {
 
         case .delete:
             try? saveUseCase.delete(id: state.id)
+            PlaylistEventCenter.shared.smartSubject.send(.deleted(state.id))
             state = reducer.reduce(state, with: .setDismissed(true))
 
         case .dismiss:

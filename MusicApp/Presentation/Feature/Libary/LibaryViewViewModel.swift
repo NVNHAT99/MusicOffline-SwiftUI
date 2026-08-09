@@ -59,6 +59,15 @@ final class LibaryViewViewModel: LibaryViewViewModelProtocol {
                 }
             }
             .store(in: &cancellables)
+
+        // Smart playlists are saved in a separate store; reload on any change
+        // so a newly created one shows up immediately in the Library.
+        PlaylistEventCenter.shared.smartSubject
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.loadSmartPlaylists()
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Intent Handler
