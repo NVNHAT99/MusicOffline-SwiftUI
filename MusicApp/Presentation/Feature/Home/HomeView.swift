@@ -24,40 +24,50 @@ struct HomeView<ViewModel: HomeViewModelProtocol>: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView(content: {
+        ScrollView(content: {
+            VStack {
                 VStack {
-                    VStack {
-                        Text("Recently Played Playlists")
-                            .font(AppFont.sectionHeader())
-                            .foregroundStyle(Color.primaryText)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        self.playlistSection()
-                    }
-
-                    // recent play
-
-                    VStack {
-                        Text("Recently Played Songs")
-                            .font(AppFont.sectionHeader())
-                            .foregroundStyle(Color.primaryText)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        recentSongsSection()
-
-                    } // VStack - playlist section
-                    .padding(.trailing, 16)
-
-                    // recent play
-                    Spacer()
+                    Text("Recently Played Playlists")
+                        .font(AppFont.sectionHeader())
+                        .foregroundStyle(Color.primaryText)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    self.playlistSection()
                 }
-            })
-            .padding(.leading, 16)
-            .padding(.top, 54)
-            .scrollContentBackground(.hidden) // 👈 Ẩn background
 
-            // Bottom banner ad
-            AdBanner()
-        }
+                // MREC 300x250 banner between the two sections — larger, higher-eCPM
+                // format, kept viewable (above the fold) so impressions count.
+                // Centered in a themed card to blend with the dark palette.
+                // Hidden for premium.
+                AdBanner(size: .mediumRect)
+                    .frame(maxWidth: .infinity)
+                    .padding(10)
+                    .background(Color.cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignToken.Radius.md, style: .continuous))
+                    .padding(.trailing, 16)
+                    .padding(.vertical, 10)
+
+                // recent play
+
+                VStack {
+                    Text("Recently Played Songs")
+                        .font(AppFont.sectionHeader())
+                        .foregroundStyle(Color.primaryText)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    recentSongsSection()
+
+                } // VStack - playlist section
+                .padding(.trailing, 16)
+
+                // Bottom inset so the last row clears the floating mini player
+                // (80pt) stacked above the tab bar (~96pt) — otherwise the final
+                // songs sit hidden behind the Now Playing bar.
+                Color.clear
+                    .frame(height: DesignToken.Player.miniPlayerHeight + 96)
+            }
+        })
+        .padding(.leading, 16)
+        .padding(.top, 54)
+        .scrollContentBackground(.hidden) // 👈 Ẩn background
         .background(Color.backgroundColor)
         .onAppear {
             // Recently-played is pushed via refreshHomePubliser when a song starts,

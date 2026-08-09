@@ -83,18 +83,38 @@ public struct RootView: View {
     }
 
     // MARK: - Splash View
-    private var splashView: some View {
-        VStack {
-            Image(systemName: "music.note")
-                .font(.system(size: 80))
-                .foregroundColor(.white)
+    @State private var splashAnimating = false
 
-            Text("Music App")
-                .font(.title)
-                .foregroundColor(.white)
-                .padding(.top, 20)
+    private var splashView: some View {
+        ZStack {
+            // Brand gradient backdrop, echoing the app icon.
+            LinearGradient(
+                colors: Color.brandGradientStops,
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .overlay(Color.black.opacity(0.12))
+
+            VStack(spacing: 22) {
+                Image("splash_logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 150)
+                    .shadow(color: .black.opacity(0.25), radius: 16, x: 0, y: 8)
+                    .scaleEffect(splashAnimating ? 1.0 : 0.86)
+                    .opacity(splashAnimating ? 1.0 : 0.0)
+
+                Text("OffMusic Player")
+                    .font(.system(.title, design: .rounded).weight(.bold))
+                    .foregroundStyle(.white)
+                    .opacity(splashAnimating ? 1.0 : 0.0)
+            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.backgroundColor)
+        .ignoresSafeArea()
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+                splashAnimating = true
+            }
+        }
     }
 }

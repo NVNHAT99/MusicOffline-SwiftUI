@@ -66,7 +66,6 @@ struct AddNewPlayListView<ViewModel: AddNewPlaylistViewModelProtocol>: View {
                 .cornerRadius(24)
                 .shadow(radius: 2)
                 .buttonStyle(.pressScale)
-                .sensoryFeedback(.success, trigger: viewmodel.state.isShowToastView)
 
                 Spacer().frame(height: 20)
             }

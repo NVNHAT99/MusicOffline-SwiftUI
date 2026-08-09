@@ -18,7 +18,6 @@ struct SmartPlaylistEditorView: View {
         .onChange(of: viewModel.state.isDismissed) { _, dismissed in
             if dismissed { dismiss() }
         }
-        .sensoryFeedback(.success, trigger: viewModel.state.isDismissed)
     }
 
     // MARK: - Content

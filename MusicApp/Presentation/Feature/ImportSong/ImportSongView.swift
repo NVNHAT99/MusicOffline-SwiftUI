@@ -75,7 +75,6 @@ struct ImportSongView<ViewModel: ImportSongViewModelProtocol>: View {
         )) {
             resultsSheet()
         }
-        .sensoryFeedback(.success, trigger: viewModel.state.isShowResults)
     }
 
     @ViewBuilder

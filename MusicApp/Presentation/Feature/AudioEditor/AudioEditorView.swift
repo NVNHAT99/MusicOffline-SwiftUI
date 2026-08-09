@@ -52,7 +52,6 @@ struct AudioEditorView: View {
                 }
             }
         }
-        .sensoryFeedback(.success, trigger: viewModel.state.exportedURL != nil)
     }
 
     // MARK: - Waveform + trim

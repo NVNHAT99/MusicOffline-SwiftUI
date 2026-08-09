@@ -84,7 +84,6 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
                 viewModel.send(.toggleServer)
             }
         }
-        .sensoryFeedback(.success, trigger: viewModel.state.isShowToastView)
     }
 
     // MARK: - WiFi section
@@ -96,15 +95,23 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
                 Button {
                     viewModel.send(.toggleServer)
                 } label: {
-                    Text(viewModel.state.isServerOn ? "Disconnected Server" : "Connect Server")
+                    Text(viewModel.state.isServerOn ? "Stop Server" : "Connect Server")
                         .font(AppFont.headline())
-                        .frame(width: 160)
-                        .padding(16)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                         .foregroundColor(.primaryText)
-                        .background(Color.accentPrimary.opacity(0.9))
-                        .cornerRadius(8, corners: .allCorners)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .padding(.horizontal, 24)
+                        .background(
+                            (viewModel.state.isServerOn
+                             ? Color.red
+                             : Color.accentPrimary).opacity(0.9)
+                        )
+                        .cornerRadius(12, corners: .allCorners)
                 }
                 .buttonStyle(.pressScale)
+                .padding(.horizontal, 24)
 
                 Spacer().frame(height: 24)
 
@@ -138,7 +145,9 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
 
                         Image("transfer_1")
                             .resizable()
-                            .aspectRatio(1.0, contentMode: .fit)
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity)
+                            .cornerRadius(8, corners: .allCorners)
                     }
                     .foregroundColor(.primaryText)
                     .padding(.horizontal, 24)

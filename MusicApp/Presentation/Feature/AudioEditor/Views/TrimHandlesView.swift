@@ -49,8 +49,6 @@ struct TrimHandlesView: View {
             }
         }
         // Haptic fires on grab and release of either handle; silent during continuous drag.
-        .sensoryFeedback(.impact(weight: .light), trigger: isDraggingStart)
-        .sensoryFeedback(.impact(weight: .light), trigger: isDraggingEnd)
     }
 
     private func handle(at x: CGFloat, isDragging: GestureState<Bool>, onDelta: @escaping (Double) -> Void) -> some View {

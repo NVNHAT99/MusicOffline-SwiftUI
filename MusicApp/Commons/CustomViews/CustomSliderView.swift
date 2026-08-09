@@ -58,7 +58,6 @@ struct CustomSliderView: View {
                         .gesture(dragGesture(geometry: geometry))
                 }
                 .frame(height: thumbSize) // Ensure consistent height for the slider track
-                .sensoryFeedback(.selection, trigger: isDragSliderView)
                 Spacer()
             }
             .frame(height: max(12, geometry.size.height))

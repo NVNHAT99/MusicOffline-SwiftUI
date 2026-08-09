@@ -35,7 +35,6 @@ struct EQBandSliderView: View {
                 .frame(width: 44)
         }
         // Fire haptic only when crossing the 0 dB detent, not on every tick.
-        .sensoryFeedback(.selection, trigger: detentCrossing)
     }
 
     private var binding: Binding<Double> {

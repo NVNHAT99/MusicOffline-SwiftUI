@@ -83,7 +83,6 @@ struct TimerPickerView: View {
                     .cornerRadius(8, corners: .allCorners)
             }
             .buttonStyle(.pressScale)
-            .sensoryFeedback(.success, trigger: viewModel.hours + viewModel.minutes + viewModel.seconds > 0)
             Spacer()
         }
         .background(Color.backgroundColor)

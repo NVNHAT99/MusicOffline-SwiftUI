@@ -81,7 +81,6 @@ struct EditPlaylistView<ViewModel: EditPlaylistViewModelProtocol>: View {
                 self.router.dismiss()
             }
         }
-        .sensoryFeedback(.success, trigger: viewModel.state.isSavePlaylistSuccess)
     }
 }
 

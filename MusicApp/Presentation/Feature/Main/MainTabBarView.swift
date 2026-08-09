@@ -20,7 +20,6 @@ struct MainTabBarView: View {
         .frame(height: 100 + (bottomSafeArea == 0 ? 0 : bottomSafeArea - 10))
         .background(Color.backgroundColor)
         .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: -2)
-        .sensoryFeedback(.selection, trigger: currentTab)
     }
 
     @ViewBuilder

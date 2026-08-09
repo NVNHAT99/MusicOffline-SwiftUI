@@ -41,7 +41,6 @@ struct SavePresetSheetView: View {
             }
             .onAppear { focused = true }
         }
-        .sensoryFeedback(.success, trigger: submitted)
     }
 
     private func submit() {

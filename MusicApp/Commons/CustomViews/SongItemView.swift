@@ -19,26 +19,34 @@ struct SongItemView: View {
     private var highlight: Color { isCurrent ? .accentPrimary : .primaryText }
 
     var body: some View {
-        HStack {
-            Image(systemName: isCurrent && isPlaying ? "speaker.wave.2.fill" : "music.note")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 22, height: 22)
-                .foregroundStyle(highlight)
+        HStack(spacing: 12) {
+            // Album artwork thumbnail (extracted from the file, brand fallback).
+            SongArtworkThumbnail(song: song, size: 50)
+                .overlay {
+                    // Subtle now-playing badge over the artwork.
+                    if isCurrent {
+                        RoundedRectangle(cornerRadius: DesignToken.Player.artworkCornerRadius, style: .continuous)
+                            .fill(Color.black.opacity(0.35))
+                        Image(systemName: isPlaying ? "speaker.wave.2.fill" : "pause.fill")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                }
 
-            Text(song.title)
-                .lineLimit(2)
-                .foregroundStyle(highlight)
-                .font(AppFont.callout().weight(isCurrent ? .semibold : .regular))
+            VStack(alignment: .leading, spacing: 3) {
+                Text(song.title)
+                    .lineLimit(1)
+                    .foregroundStyle(highlight)
+                    .font(AppFont.callout().weight(isCurrent ? .semibold : .medium))
 
-            Spacer().frame(width: 8)
+                Text(song.artist.isEmpty ? song.durationString
+                                        : "\(song.artist) · \(song.durationString)")
+                    .lineLimit(1)
+                    .foregroundStyle(Color.secondaryText)
+                    .font(AppFont.caption())
+            }
 
-            Text(song.durationString)
-                .foregroundStyle(Color.secondaryText)
-                .font(AppFont.callout())
-
-            Spacer().frame(width: 16)
-            Spacer()
+            Spacer(minLength: 8)
 
             Button {
                 onTapPlayAction?()
@@ -46,14 +54,14 @@ struct SongItemView: View {
                 Image(systemName: isCurrent && isPlaying ? "pause.circle.fill" : "play.circle.fill")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 22, height: 22)
+                    .frame(width: 30, height: 30)
                     .foregroundStyle(highlight)
             }
             .buttonStyle(.pressScale)
         }
         .padding(.horizontal, DesignToken.Spacing.md)
         .padding(.vertical, DesignToken.Spacing.sm)
-        .background(isCurrent ? Color.accentPrimary.opacity(0.12) : Color.backgroundColor)
+        .background(isCurrent ? Color.accentPrimary.opacity(0.14) : Color.cardBackground)
         .cornerRadius(DesignToken.Radius.lg, corners: .allCorners)
     }
 }

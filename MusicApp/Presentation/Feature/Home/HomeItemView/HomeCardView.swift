@@ -12,14 +12,16 @@ struct HomeCardView: View {
     let imageName: String
     let subTitle: String
     var body: some View {
-        VStack {
+        VStack(alignment: .leading, spacing: 8) {
             Image("demoThumbnail2")
                 .resizable()
-                .scaledToFit()
+                .scaledToFill()
                 .aspectRatio(1, contentMode: .fit)
-            
+                .clipShape(RoundedRectangle(cornerRadius: DesignToken.Radius.md, style: .continuous))
+                .shadow(color: Color.accentPrimary.opacity(0.25), radius: 10, x: 0, y: 6)
+
             Text(title)
-                .font(AppFont.callout().weight(.medium))
+                .font(AppFont.callout().weight(.semibold))
                 .foregroundStyle(Color.primaryText)
                 .lineLimit(1)
             if !subTitle.isEmpty {

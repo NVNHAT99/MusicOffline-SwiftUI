@@ -47,7 +47,6 @@ struct UrlDownloadView: View {
                 }
             }
         }
-        .sensoryFeedback(.success, trigger: viewModel.state.completedFilename != nil)
     }
 
     private var header: some View {
