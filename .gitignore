@@ -82,9 +82,28 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
+# Fastlane secrets + build artifacts (NEVER commit)
+fastlane/.env
+*.p8
+AuthKey_*.p8
+/build/
+*.ipa
+*.dSYM.zip
+
 # Code Injection
 #
 # After new code Injection tools there's a generated folder /iOSInjectionProject
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+
+# Distribution cert + private key downloaded by 'certs' lane (NEVER commit)
+fastlane/certs/
+*.cer
+*.p12
+*.certSigningRequest
+
+# Local tooling artifacts (not part of the app)
+repomix-output.xml
+.claude/agent-memory/
+.claude/scheduled_tasks.lock

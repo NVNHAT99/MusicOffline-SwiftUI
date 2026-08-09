@@ -243,7 +243,9 @@
 		A0DBC62248AEE7B6020410B9 /* BackgroundDownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60DC39C5252AD25FCE179D /* BackgroundDownloadService.swift */; };
 		A3FCA6BB704B3D24A97A5CA8 /* ImportSongFromFilesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C0A433BBD9B3EB6F4A96AEF /* ImportSongFromFilesUseCase.swift */; };
 		A4669CE61F708A847EFC07D7 /* UrlDownloadStateReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C9E463B878C94132AA60802 /* UrlDownloadStateReducer.swift */; };
+		A57AA7A7B01A57AA7B01A5701 /* SongArtworkThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57AA7A7B01A57AA7B01A5702 /* SongArtworkThumbnail.swift */; };
 		A7429AEC47021262357207A0 /* SavePresetSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FFC8733AFFA868783612BC /* SavePresetSheetView.swift */; };
+		A77A11A511A511A511A50001 /* ATTrackingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77A11A511A511A511A50002 /* ATTrackingService.swift */; };
 		A894DBE478CA41CA9CD37B78 /* ParseLrcContentUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8748A5ADA89C4FE78BDB36EA /* ParseLrcContentUseCase.swift */; };
 		AB7F1713F8F9F62CD815DCB9 /* SaveUserEQPresetUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C65C63FB3BFB29FE44AE55CC /* SaveUserEQPresetUseCase.swift */; };
 		AD59EB889958D93B851205D6 /* UrlDownloadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2662C93A2FB8FC751F05DEC /* UrlDownloadView.swift */; };
@@ -558,7 +560,9 @@
 		9F7A774719E7FA09AA0EED8B /* CloudImportGuideSheetView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CloudImportGuideSheetView.swift; path = ImportSong/CloudImportGuideSheetView.swift; sourceTree = "<group>"; };
 		A2662C93A2FB8FC751F05DEC /* UrlDownloadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlDownloadView.swift; sourceTree = "<group>"; };
 		A2E38E6758EAAF7DA21EFBEF /* ImportSongViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImportSongViewModel.swift; path = ImportSong/ImportSongViewModel.swift; sourceTree = "<group>"; };
+		A57AA7A7B01A57AA7B01A5702 /* SongArtworkThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongArtworkThumbnail.swift; sourceTree = "<group>"; };
 		A73A4B6F2792DBF7A28C345A /* LoadUserEQPresetsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadUserEQPresetsUseCase.swift; sourceTree = "<group>"; };
+		A77A11A511A511A511A50002 /* ATTrackingService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ATTrackingService.swift; sourceTree = "<group>"; };
 		A80DBFFA02960296F97719A8 /* ComputeNormalizationGainUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputeNormalizationGainUseCase.swift; sourceTree = "<group>"; };
 		A95644E8DEBF23B304671958 /* RateAppHelper.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RateAppHelper.swift; path = Helpers/RateAppHelper.swift; sourceTree = "<group>"; };
 		AA0000010000000000000001 /* DesignToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignToken.swift; sourceTree = "<group>"; };
@@ -1344,6 +1348,7 @@
 				64953EBE2A1383FA0028FC3D /* CustomNavigationBar.swift */,
 				64D4FBDF2E279FEA00B88085 /* SearchView.swift */,
 				641875222E333224006726C3 /* SongItemView.swift */,
+				A57AA7A7B01A57AA7B01A5702 /* SongArtworkThumbnail.swift */,
 				6464E1EE2E48D31F00FDDD43 /* SongSkeletonItemView.swift */,
 				645E70C82E657D30004941A0 /* TimerPickerView.swift */,
 				649F01502E6717E5009F5E0A /* ContainerSwipeView.swift */,
@@ -1491,6 +1496,7 @@
 			children = (
 				C8C84251420B8A107A48926C /* AdMobConfig.swift */,
 				C6344BEF98E57E9894BB3C59 /* GoogleAdMobService.swift */,
+				A77A11A511A511A511A50002 /* ATTrackingService.swift */,
 				B71C363824D88E523D9D4620 /* AdCounterService.swift */,
 				6E3DC791DC252F6733D8A0A2 /* AdBanner.swift */,
 				E887FD5784EC7116F8E8F021 /* IAPService.swift */,
@@ -2062,6 +2068,7 @@
 				6464E1D32E45035B00FDDD43 /* PlaylistEntityMapper.swift in Sources */,
 				6464E1DD2E465AC400FDDD43 /* SongMetadataRepositoryProtocol.swift in Sources */,
 				641875232E333224006726C3 /* SongItemView.swift in Sources */,
+				A57AA7A7B01A57AA7B01A5701 /* SongArtworkThumbnail.swift in Sources */,
 				641874EF2E313DBE006726C3 /* PortalRoute.swift in Sources */,
 				641874F02E313DBE006726C3 /* Routable.swift in Sources */,
 				6464E1D12E45033E00FDDD43 /* PlaylistRepositoryProtocol.swift in Sources */,
@@ -2197,6 +2204,7 @@
 				0E1315D0CCA4EF7F61572EF2 /* ImportHubView.swift in Sources */,
 				D5756FFBA37D9D7946AAD959 /* AdMobConfig.swift in Sources */,
 				96B744C6D1BB3C558ED74A48 /* GoogleAdMobService.swift in Sources */,
+				A77A11A511A511A511A50001 /* ATTrackingService.swift in Sources */,
 				F31154848ADEB01220379D2A /* AdCounterService.swift in Sources */,
 				7772B22F911D3AA51F54FB37 /* AdBanner.swift in Sources */,
 				40C0DD30A233430408F150D7 /* AppDelegate.swift in Sources */,
@@ -2365,13 +2373,13 @@
 				CODE_SIGN_ENTITLEMENTS = MusicApp/MusicApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MusicApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 755CXQS973;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MusicApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Off IMuzik Box";
+				INFOPLIST_KEY_CFBundleDisplayName = "OffMusic Player";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -2384,7 +2392,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nph.OffIMuzikBox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "c9f94323-8f04-4af0-b89a-ef6a28ba544d";
@@ -2407,13 +2415,13 @@
 				CODE_SIGN_ENTITLEMENTS = MusicApp/MusicApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MusicApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 755CXQS973;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MusicApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Off IMuzik Box";
+				INFOPLIST_KEY_CFBundleDisplayName = "OffMusic Player";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -2426,7 +2434,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nph.OffIMuzikBox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "c9f94323-8f04-4af0-b89a-ef6a28ba544d";
@@ -2447,11 +2455,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 755CXQS973;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nph.OffIMuzikBox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "c9f94323-8f04-4af0-b89a-ef6a28ba544d";
@@ -2470,11 +2478,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 755CXQS973;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nph.OffIMuzikBox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "c9f94323-8f04-4af0-b89a-ef6a28ba544d";
@@ -2493,10 +2501,10 @@
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 755CXQS973;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nph.OffIMuzikBox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "c9f94323-8f04-4af0-b89a-ef6a28ba544d";
@@ -2515,10 +2523,10 @@
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 755CXQS973;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nph.OffIMuzikBox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "c9f94323-8f04-4af0-b89a-ef6a28ba544d";
