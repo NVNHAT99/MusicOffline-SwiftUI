@@ -41,6 +41,5 @@ struct PasteLyricsSheetView: View {
                 }
             }
         }
-        .sensoryFeedback(.success, trigger: !text.isEmpty)
     }
 }

@@ -38,8 +38,9 @@ struct NowPlayingFullPlayerView<ViewModel: NowPlayingViewModelProtocol>: View {
             .scrollIndicators(.hidden)
         }
         .safeAreaInset(edge: .bottom) {
-            // Bottom banner ad (full player, expanded state only)
-            AdBanner()
+            // Bottom banner ad (full player, expanded state only).
+            // Standard height here — MREC would crowd the player controls.
+            AdBanner(size: .standard)
                 .padding(.bottom, Helper.shared.safeAreaInsets?.bottom)
         }
         .overlay(alignment: .bottom) {
