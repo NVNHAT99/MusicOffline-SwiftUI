@@ -1,0 +1,5 @@
+app_identifier("com.nph.OffIMuzikBox")
+team_id("755CXQS973")
+# Apple ID / App Store Connect auth is resolved at runtime via the
+# App Store Connect API key (.env: ASC_KEY_ID / ASC_ISSUER_ID / ASC_KEY_PATH).
+# See fastlane/README-fastlane.md. No Apple ID or password is stored here.

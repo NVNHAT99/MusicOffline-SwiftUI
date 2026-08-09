@@ -1,0 +1,192 @@
+default_platform(:ios)
+
+WORKSPACE = "MusicApp.xcworkspace"
+SCHEME = "MusicApp"
+APP_ID = "com.nph.OffIMuzikBox"
+
+platform :ios do
+  # Loads the App Store Connect API key from env vars (set in fastlane/.env,
+  # which is git-ignored). Used by beta/release for auth without an Apple ID.
+  def asc_api_key
+    app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_filepath: ENV.fetch("ASC_KEY_PATH"),
+      in_house: false
+    )
+  end
+
+  # Ensure an Apple Distribution cert + App Store provisioning profile exist
+  # locally (created via the API key if missing). Returns the profile name so
+  # build_app can sign manually — more reliable for headless export than
+  # automatic signing. Sets ENV the export step reads.
+  def prepare_signing(api_key)
+    get_certificates(
+      api_key: api_key,
+      development: false,
+      output_path: "fastlane/certs"
+    )
+    profile_name = get_provisioning_profile(
+      api_key: api_key,
+      app_identifier: APP_ID,
+      output_path: "fastlane/certs",
+      filename: "MusicApp_AppStore.mobileprovision"
+    )
+    profile_name
+  end
+
+  desc "Create/fetch the Apple Distribution cert + App Store profile via API key"
+  lane :certs do
+    prepare_signing(asc_api_key)
+  end
+
+  desc "Upload App Store screenshots only (no binary/metadata/submit)"
+  lane :screenshots do
+    upload_to_app_store(
+      api_key: asc_api_key,
+      app_identifier: APP_ID,
+      skip_binary_upload: true,
+      skip_metadata: true,
+      overwrite_screenshots: true,
+      submit_for_review: false,
+      force: true,
+      run_precheck_before_submit: false,
+      screenshots_path: "./fastlane/screenshots"
+    )
+  end
+
+  desc "Run the unit test suite"
+  lane :test do
+    run_tests(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      destination: "platform=iOS Simulator,name=iPhone 17 Pro",
+      only_testing: ["MusicAppTests"]
+    )
+  end
+
+  # Shared archive step: manual signing with the App Store profile.
+  def archive_appstore(profile_name)
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "MusicApp.xcodeproj",
+      team_id: "755CXQS973",
+      bundle_identifier: APP_ID,
+      profile_name: profile_name,
+      code_sign_identity: "Apple Distribution"
+    )
+    build_app(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      configuration: "Release",
+      output_directory: "build",
+      output_name: "MusicApp.ipa",
+      clean: true,
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: { APP_ID => profile_name }
+      }
+    )
+  end
+
+  desc "Build + archive a signed IPA locally (no upload)"
+  lane :build do
+    profile_name = prepare_signing(asc_api_key)
+    archive_appstore(profile_name)
+  end
+
+  desc "Build + upload to TestFlight (internal testing)"
+  lane :beta do
+    api_key = asc_api_key
+    test
+    profile_name = prepare_signing(api_key)
+    # Bump build # relative to the latest on the CURRENT version train. For a
+    # brand-new version train (no builds yet) this falls back to 0 → build 1.
+    version = get_version_number(xcodeproj: "MusicApp.xcodeproj", target: SCHEME)
+    latest = latest_testflight_build_number(
+      api_key: api_key,
+      app_identifier: APP_ID,
+      version: version,
+      initial_build_number: 0
+    )
+    increment_build_number(
+      build_number: latest + 1,
+      xcodeproj: "MusicApp.xcodeproj"
+    )
+    archive_appstore(profile_name)
+    upload_to_testflight(
+      api_key: api_key,
+      skip_waiting_for_build_processing: true,
+      distribute_external: false
+    )
+  end
+
+  desc "Build + upload to App Store + submit for review"
+  lane :release do
+    api_key = asc_api_key
+    test
+    profile_name = prepare_signing(api_key)
+    archive_appstore(profile_name)
+    upload_to_app_store(
+      api_key: api_key,
+      submit_for_review: true,
+      automatic_release: false,
+      force: true,                 # skip the interactive HTML preview
+      precheck_include_in_app_purchases: false,
+      skip_screenshots: true,      # manage screenshots in App Store Connect for now
+      skip_metadata: false
+    )
+  end
+
+  desc "Upload App Privacy (data collection) details for AdMob + ATT. Apple has "\
+       "no API-key endpoint for this yet, so it uses Apple ID session login — "\
+       "you'll be prompted for your Apple ID and a 2FA code. Answers live in "\
+       "fastlane/app_privacy_details.json."
+  lane :privacy do
+    upload_app_privacy_details_to_app_store(
+      username: ENV.fetch("ASC_APPLE_ID"),
+      app_identifier: APP_ID,
+      json_path: "fastlane/app_privacy_details.json"
+    )
+  end
+
+  desc "Push ONLY the age-rating declaration (advertising = true, required "\
+       "because the app shows AdMob ads). Uses the API key. Does not submit."
+  lane :age_rating do
+    upload_to_app_store(
+      api_key: asc_api_key,
+      app_identifier: APP_ID,
+      app_rating_config_path: "fastlane/rating_config.json",
+      submit_for_review: false,
+      automatic_release: false,
+      force: true,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      skip_metadata: false,   # age rating is processed with metadata; keep on
+      precheck_include_in_app_purchases: false,
+      run_precheck_before_submit: false
+    )
+  end
+
+  desc "Create the App Store version + push ONLY the release notes, attach the "\
+       "uploaded build, but DO NOT submit for review (finish IAP + submit "\
+       "manually). deliver only uploads fields that exist as files, so the "\
+       "metadata folder holds just release_notes.txt — description, keywords, "\
+       "etc. on App Store Connect are left untouched."
+  lane :prepare_release do
+    api_key = asc_api_key
+    version = get_version_number(xcodeproj: "MusicApp.xcodeproj", target: SCHEME)
+    upload_to_app_store(
+      api_key: api_key,
+      app_version: version,
+      submit_for_review: false,       # leave it for manual submit
+      automatic_release: false,
+      force: true,                    # skip the interactive HTML preview
+      skip_binary_upload: true,       # build already on TestFlight
+      skip_screenshots: true,         # managed in App Store Connect
+      skip_metadata: false,           # push What's New (only file present)
+      precheck_include_in_app_purchases: false,
+      run_precheck_before_submit: false
+    )
+  end
+end

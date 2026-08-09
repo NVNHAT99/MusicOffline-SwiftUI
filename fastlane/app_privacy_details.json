@@ -1,0 +1,27 @@
+[
+  {
+    "category": "DEVICE_ID",
+    "purposes": ["THIRD_PARTY_ADVERTISING", "ANALYTICS"],
+    "data_protections": ["DATA_NOT_LINKED_TO_YOU", "DATA_USED_TO_TRACK_YOU"]
+  },
+  {
+    "category": "PRODUCT_INTERACTION",
+    "purposes": ["THIRD_PARTY_ADVERTISING", "ANALYTICS"],
+    "data_protections": ["DATA_NOT_LINKED_TO_YOU", "DATA_USED_TO_TRACK_YOU"]
+  },
+  {
+    "category": "ADVERTISING_DATA",
+    "purposes": ["THIRD_PARTY_ADVERTISING"],
+    "data_protections": ["DATA_NOT_LINKED_TO_YOU", "DATA_USED_TO_TRACK_YOU"]
+  },
+  {
+    "category": "CRASH_DATA",
+    "purposes": ["APP_FUNCTIONALITY"],
+    "data_protections": ["DATA_NOT_LINKED_TO_YOU"]
+  },
+  {
+    "category": "PERFORMANCE_DATA",
+    "purposes": ["APP_FUNCTIONALITY"],
+    "data_protections": ["DATA_NOT_LINKED_TO_YOU"]
+  }
+]

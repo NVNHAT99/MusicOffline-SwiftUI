@@ -1,0 +1,668 @@
+[15:17:17]: [32m------------------------------[0m
+[15:17:17]: [32m--- Step: default_platform ---[0m
+[15:17:17]: [32m------------------------------[0m
+[15:17:17]: [32mDriving the lane 'ios release' 🚀[0m
+[15:17:17]: [32m---------------------------------------[0m
+[15:17:17]: [32m--- Step: app_store_connect_api_key ---[0m
+[15:17:17]: [32m---------------------------------------[0m
+[15:17:17]: [32m-------------------------------------[0m
+[15:17:17]: [32m--- Step: Switch to ios test lane ---[0m
+[15:17:17]: [32m-------------------------------------[0m
+[15:17:17]: Cruising over to lane 'ios test' 🚖
+[15:17:18]: [32m-----------------------[0m
+[15:17:18]: [32m--- Step: run_tests ---[0m
+[15:17:18]: [32m-----------------------[0m
+[15:17:18]: [33mResolving Swift Package Manager dependencies...[0m
+[15:17:18]: [36m$ xcodebuild -resolvePackageDependencies -workspace MusicApp.xcworkspace -scheme MusicApp -destination platform\=iOS\ Simulator,name\=iPhone\ 17\ Pro[0m
+[15:17:19]: ▸ [35mCommand line invocation:[0m
+[15:17:19]: ▸ [35m    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -resolvePackageDependencies -workspace MusicApp.xcworkspace -scheme MusicApp -destination "platform=iOS Simulator,name=iPhone 17 Pro"[0m
+[15:17:19]: ▸ [35mResolve Package Graph[0m
+[15:17:23]: ▸ [35mResolved source packages:[0m
+[15:17:23]: ▸ [35m  GoogleMobileAds: https://github.com/googleads/swift-package-manager-google-mobile-ads.git @ 13.3.0[0m
+[15:17:23]: ▸ [35m  MonetizeKit: /Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MonetizeKit @ local[0m
+[15:17:23]: ▸ [35m  GoogleUserMessagingPlatform: https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git @ 3.1.0[0m
+[15:17:23]: ▸ [35mresolved source packages: GoogleMobileAds, MonetizeKit, GoogleUserMessagingPlatform[0m
+[15:17:23]: [36m$ xcodebuild -showBuildSettings -workspace MusicApp.xcworkspace -scheme MusicApp -destination platform\=iOS\ Simulator,name\=iPhone\ 17\ Pro 2>&1[0m
+[15:17:26]: Found simulator "iPhone 17 Pro (26.3)"
+
++-----------------------------------------------------------------------------+
+|                          [32mSummary for scan 2.235.0[0m                           |
++--------------------------------------+--------------------------------------+
+| workspace                            | MusicApp.xcworkspace                 |
+| scheme                               | MusicApp                             |
+| only_testing                         | ["MusicAppTests"]                    |
+| skip_detect_devices                  | false                                |
+| ensure_devices_found                 | false                                |
+| force_quit_simulator                 | false                                |
+| reset_simulator                      | false                                |
+| disable_slide_to_type                | true                                 |
+| reinstall_app                        | false                                |
+| app_identifier                       | com.nph.OffIMuzikBox                 |
+| clean                                | false                                |
+| open_report                          | false                                |
+| output_directory                     | ./fastlane/test_output               |
+| output_types                         | html,junit                           |
+| buildlog_path                        | ~/Library/Logs/scan                  |
+| include_simulator_logs               | false                                |
+| xcodebuild_formatter                 | xcpretty                             |
+| output_remove_retry_attempts         | false                                |
+| derived_data_path                    | /Users/nhat/Library/Developer/Xcode  |
+|                                      | /DerivedData/MusicApp-fmglkzinoammi  |
+|                                      | fdmbfpogrlbiyrh                      |
+| should_zip_build_products            | false                                |
+| output_xctestrun                     | false                                |
+| result_bundle                        | false                                |
+| use_clang_report_name                | false                                |
+| disable_concurrent_testing           | false                                |
+| skip_build                           | false                                |
+| slack_use_webhook_configured_userna  | false                                |
+| me_and_icon                          |                                      |
+| slack_username                       | fastlane                             |
+| slack_icon_url                       | https://fastlane.tools/assets/img/f  |
+|                                      | astlane_icon.png                     |
+| skip_slack                           | false                                |
+| slack_only_on_failure                | false                                |
+| run_rosetta_simulator                | false                                |
+| xcodebuild_command                   | env NSUnbufferedIO=YES xcodebuild    |
+| skip_package_dependencies_resolutio  | false                                |
+| n                                    |                                      |
+| disable_package_automatic_updates    | false                                |
+| skip_package_repository_fetches      | false                                |
+| use_system_scm                       | false                                |
+| number_of_retries                    | 0                                    |
+| fail_build                           | true                                 |
+| xcode_path                           | /Applications/Xcode.app              |
++--------------------------------------+--------------------------------------+
+
+[15:17:26]: Disabling 'Slide to Type' iPhone 17 Pro
+[15:17:26]: [36m$ /usr/libexec/PlistBuddy -c "Add :KeyboardContinuousPathEnabled bool false" /Users/nhat/Library/Developer/CoreSimulator/Devices/BBE84574-41F5-45C3-AE2B-229B66D8AC3D/data/Library/Preferences/com.apple.keyboard.ContinuousPath.plist >/dev/null 2>&1[0m
+[15:17:26]: [36m$ set -o pipefail && env NSUnbufferedIO=YES xcodebuild -workspace MusicApp.xcworkspace -scheme MusicApp -derivedDataPath /Users/nhat/Library/Developer/Xcode/DerivedData/MusicApp-fmglkzinoammifdmbfpogrlbiyrh -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:MusicAppTests build test | tee '/Users/nhat/Library/Logs/scan/MusicApp-MusicApp.log' | xcpretty  --report html --output '/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/fastlane/test_output/report.html' --report junit --output '/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/fastlane/test_output/report.junit' --report junit --output '/var/folders/hc/_9h36w5d7h75dsxyqbt1pf9r0000gn/T/junit_report20260630-69588-ssslyd' [0m
+[15:17:26]: ▸ [35mLoading...[0m
+[15:17:29]: ▸ [35m--- xcodebuild: WARNING: Using the first of multiple matching destinations:[0m
+[15:17:29]: ▸ [35m{ platform:iOS Simulator, arch:arm64, id:16062156-33AE-447E-8541-1D5DE8F31980, OS:26.4, name:iPhone 17 Pro }[0m
+[15:17:29]: ▸ [35m{ platform:iOS Simulator, arch:x86_64, id:16062156-33AE-447E-8541-1D5DE8F31980, OS:26.4, name:iPhone 17 Pro }[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m Pods-MusicApp-umbrella.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerPrivate.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerURLEncodedFormRequest.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebUploader.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerStreamedResponse.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerResponse.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerRequest.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerMultiPartFormRequest.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerHTTPStatusCodes.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerFunctions.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerFileResponse.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerFileRequest.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerErrorResponse.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerDataResponse.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerDataRequest.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerConnection.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServer.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServer-umbrella.h[0m
+[15:17:32]: [35m[33m▸[0m [39;1mProcessing[0m GCDWebServer-Info.plist[0m
+[15:17:32]: [35m[33m▸[0m [39;1mCopying[0m /Users/nhat/Library/Developer/Xcode/DerivedData/MusicApp-fmglkzinoammifdmbfpogrlbiyrh/Build/Products/Debug-iphonesimulator/GCDWebServer/GCDWebServer.framework/GCDWebUploader.bundle[0m
+[15:17:33]: [35m[33m▸[0m [39;1mCompiling[0m placeholder.m[0m
+[15:17:33]: [35m[33m▸[0m [39;1mCompiling[0m Pods_MusicApp_vers.c[0m
+[15:17:33]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServer_vers.c[0m
+[15:17:33]: [35m[33m▸[0m [39;1mLinking[0m UserMessagingPlatformTarget.o[0m
+[15:17:33]: [35m[33m▸[0m [39;1mLinking[0m GoogleMobileAdsTarget.o[0m
+[15:17:34]: [35m[33m▸[0m [39;1mCompiling[0m Pods-MusicApp-dummy.m[0m
+[15:17:34]: [35m[33m▸[0m [39;1mLinking[0m MonetizeKit.o[0m
+[15:17:34]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerDataResponse.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerDataRequest.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebUploader.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServer.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerConnection.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerURLEncodedFormRequest.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerStreamedResponse.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerResponse.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerRequest.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerMultiPartFormRequest.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerFunctions.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerFileResponse.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerFileRequest.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerErrorResponse.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServer-dummy.m[0m
+[15:17:35]: [35m[33m▸[0m [39;1mLinking[0m GCDWebServer[0m
+[15:17:35]: [35mRunning Tests: [33m▸[0m [39;1mTouching[0m GCDWebServer.framework (in target 'GCDWebServer' from project 'Pods')[0m
+[15:17:35]: [35m[33m▸[0m [39;1mProcessing[0m Pods-MusicApp-Info.plist[0m
+[15:17:35]: [35mRunning Tests: [33m▸[0m [39;1mTouching[0m Pods_MusicApp.framework (in target 'Pods-MusicApp' from project 'Pods')[0m
+[15:17:35]: [35m[33m▸[0m [39;1mRunning script[0m '[CP] Check Pods Manifest.lock'[0m
+[15:17:35]: [35m[33m▸[0m [39;1mLinking[0m __preview.dylib[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCopying[0m /Users/nhat/Library/Developer/Xcode/DerivedData/MusicApp-fmglkzinoammifdmbfpogrlbiyrh/Build/Products/Debug-iphonesimulator/MusicApp.app/UseCasesFixesSummary.md[0m
+[15:17:35]: [35m[33m▸[0m [39;1mCopying[0m /Users/nhat/Library/Developer/Xcode/DerivedData/MusicApp-fmglkzinoammifdmbfpogrlbiyrh/Build/Products/Debug-iphonesimulator/MusicApp.app/README.md[0m
+[15:17:36]: [35m[33m▸[0m [39;1mCompiling[0m AppLaunchScreen.storyboard[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Presentation/Feature/NowPlayingScreen/NowPlayingViewModel.swift:53:66: [33mmain actor-isolated static property 'shared' can not be referenced from a nonisolated context; this is an error in the Swift 6 language mode[0m
+[15:17:48]: ▸ [35m        playerManager: any PlayerManagerProtocol = PlayerManager.shared,[0m
+[15:17:48]: ▸ [35m[36m                                                                 ^[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/Router/Router.swift:28:34: [33muse of protocol 'BaseRouterProtocol' as a type must be written 'any BaseRouterProtocol'; this will be an error in a future Swift language mode[0m
+[15:17:48]: ▸ [35m    public var presentingRouter: BaseRouterProtocol?[0m
+[15:17:48]: ▸ [35m[36m               ^[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/Router/Router.swift:36:27: [33muse of protocol 'BaseRouterProtocol' as a type must be written 'any BaseRouterProtocol'; this will be an error in a future Swift language mode[0m
+[15:17:48]: ▸ [35m        presentingRouter: BaseRouterProtocol? = nil,[0m
+[15:17:48]: ▸ [35m[36m                                 ^~~~~~~~~~~~~~~~~~[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/Router/BaseRouterProtocol.swift:19:27: [33muse of protocol 'BaseRouterProtocol' as a type must be written 'any BaseRouterProtocol'; this will be an error in a future Swift language mode[0m
+[15:17:48]: ▸ [35m    var presentingRouter: BaseRouterProtocol? { get set }[0m
+[15:17:48]: ▸ [35m[36m                          ^~~~~~~~~~~~~~~~~~[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/DI/AppState.swift:26:30: [33mconformance of 'AppState' to protocol 'AppStateProtocol' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode[0m
+[15:17:48]: ▸ [35mpublic final class AppState: AppStateProtocol {[0m
+[15:17:48]: ▸ [35m[36m                          ^~~~~~~~~~~~~~~~~~[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Presentation/Feature/NowPlayingScreen/Views/FullPlayerLyricsMenu.swift:62:32: [33mleft side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used[0m
+[15:17:48]: ▸ [35m        let title = song.title ?? url.deletingPathExtension().lastPathComponent[0m
+[15:17:48]: ▸ [35m[36m                ^[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Presentation/Feature/App/MusicApp.swift:41:10: [33m'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.[0m
+[15:17:48]: ▸ [35m        .onChange(of: scenePhase) { newPhase in[0m
+[15:17:48]: ▸ [35m[36m                    ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Presentation/Feature/NowPlayingScreen/NowPlayingViewModel.swift:53:66: [33mmain actor-isolated static property 'shared' can not be referenced from a nonisolated context; this is an error in the Swift 6 language mode[0m
+[15:17:48]: ▸ [35m        playerManager: any PlayerManagerProtocol = PlayerManager.shared,[0m
+[15:17:48]: ▸ [35m[36m         ^[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/Router/Router.swift:28:34: [33muse of protocol 'BaseRouterProtocol' as a type must be written 'any BaseRouterProtocol'; this will be an error in a future Swift language mode[0m
+[15:17:48]: ▸ [35m    public var presentingRouter: BaseRouterProtocol?[0m
+[15:17:48]: ▸ [35m[36m               ^[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/Router/Router.swift:36:27: [33muse of protocol 'BaseRouterProtocol' as a type must be written 'any BaseRouterProtocol'; this will be an error in a future Swift language mode[0m
+[15:17:48]: ▸ [35m        presentingRouter: BaseRouterProtocol? = nil,[0m
+[15:17:48]: ▸ [35m[36m                                 ^~~~~~~~~~~~~~~~~~[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/Router/BaseRouterProtocol.swift:19:27: [33muse of protocol 'BaseRouterProtocol' as a type must be written 'any BaseRouterProtocol'; this will be an error in a future Swift language mode[0m
+[15:17:48]: ▸ [35m    var presentingRouter: BaseRouterProtocol? { get set }[0m
+[15:17:48]: ▸ [35m[36m                          ^~~~~~~~~~~~~~~~~~[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Presentation/Feature/NowPlayingScreen/NowPlayingViewModel.swift:53:66: [33mmain actor-isolated static property 'shared' can not be referenced from a nonisolated context; this is an error in the Swift 6 language mode[0m
+[15:17:48]: ▸ [35m        playerManager: any PlayerManagerProtocol = PlayerManager.shared,[0m
+[15:17:48]: ▸ [35m[36m                          ^~~~~~~~~~~~~~~~~~[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/DI/AppState.swift:26:30: [33mconformance of 'AppState' to protocol 'AppStateProtocol' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode[0m
+[15:17:48]: ▸ [35mpublic final class AppState: AppStateProtocol {[0m
+[15:17:48]: ▸ [35m[36m               ^[0m
+[15:17:48]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/DI/DIContainer.swift:84:62: [33mmain actor-isolated static property 'shared' can not be referenced from a nonisolated context; this is an error in the Swift 6 language mode[0m
+[15:17:48]: ▸ [35m                nowPlayingInfoService: NowPlayingInfoService.shared,[0m
+[15:17:48]: ▸ [35m[36m                ^[0m
+[15:17:48]: [35m[33m▸[0m [39;1mLinking[0m MusicApp.debug.dylib[0m
+[15:17:48]: [35m[33m▸[0m [39;1mLinking[0m MusicApp[0m
+[15:17:48]: [35m[33m▸[0m [39;1mProcessing[0m Info.plist[0m
+[15:17:48]: [35m[33m▸[0m [39;1mRunning script[0m '[CP] Embed Pods Frameworks'[0m
+[15:17:49]: [35mRunning Tests: [33m▸[0m [39;1mTouching[0m MusicApp.app (in target 'MusicApp' from project 'MusicApp')[0m
+[15:17:49]: [35m[33m▸[0m [39;1mBuild[0m Succeeded[0m
+[15:17:49]: ▸ [35m--- xcodebuild: WARNING: Using the first of multiple matching destinations:[0m
+[15:17:49]: ▸ [35m{ platform:iOS Simulator, arch:arm64, id:16062156-33AE-447E-8541-1D5DE8F31980, OS:26.4, name:iPhone 17 Pro }[0m
+[15:17:49]: ▸ [35m{ platform:iOS Simulator, arch:x86_64, id:16062156-33AE-447E-8541-1D5DE8F31980, OS:26.4, name:iPhone 17 Pro }[0m
+[15:18:41]: [35m[33m▸[0m [39;1mCopying[0m Pods-MusicAppTests-umbrella.h[0m
+[15:18:41]: [35m[33m▸[0m [39;1mCopying[0m Pods-MusicApp-MusicAppUITests-umbrella.h[0m
+[15:18:41]: [35m[33m▸[0m [39;1mProcessing[0m GCDWebServer-Info.plist[0m
+[15:18:42]: [35m[33m▸[0m [39;1mProcessing[0m Pods-MusicApp-Info.plist[0m
+[15:18:42]: [35m[33m▸[0m [39;1mProcessing[0m Pods-MusicApp-MusicAppUITests-Info.plist[0m
+[15:18:42]: [35m[33m▸[0m [39;1mLinking[0m MusicApp.debug.dylib[0m
+[15:18:42]: [35m[33m▸[0m [39;1mProcessing[0m Pods-MusicAppTests-Info.plist[0m
+[15:18:42]: [35m[33m▸[0m [39;1mProcessing[0m Info.plist[0m
+[15:18:42]: [35m[33m▸[0m [39;1mCompiling[0m Pods_MusicApp_MusicAppUITests_vers.c[0m
+[15:18:42]: [35m[33m▸[0m [39;1mCompiling[0m Pods_MusicAppTests_vers.c[0m
+[15:18:42]: [35m[33m▸[0m [39;1mLinking[0m MusicApp[0m
+[15:18:42]: [35m[33m▸[0m [39;1mCompiling[0m Pods-MusicAppTests-dummy.m[0m
+[15:18:42]: [35m[33m▸[0m [39;1mCompiling[0m Pods-MusicApp-MusicAppUITests-dummy.m[0m
+[15:18:42]: [35m[33m▸[0m [39;1mRunning script[0m '[CP] Embed Pods Frameworks'[0m
+[15:18:42]: [35mRunning Tests: [33m▸[0m [39;1mTouching[0m Pods_MusicAppTests.framework (in target 'Pods-MusicAppTests' from project 'Pods')[0m
+[15:18:42]: [35mRunning Tests: [33m▸[0m [39;1mTouching[0m Pods_MusicApp_MusicAppUITests.framework (in target 'Pods-MusicApp-MusicAppUITests' from project 'Pods')[0m
+[15:18:42]: [35m[33m▸[0m [39;1mProcessing[0m empty-MusicAppTests.plist[0m
+[15:18:42]: [35m[33m▸[0m [39;1mRunning script[0m '[CP] Check Pods Manifest.lock'[0m
+[15:18:44]: [35m[33m▸[0m [39;1mLinking[0m MusicAppTests[0m
+[15:18:44]: [35m[33m▸[0m [39;1mRunning script[0m '[CP] Embed Pods Frameworks'[0m
+[15:18:45]: [35mRunning Tests: [33m▸[0m [39;1mTouching[0m MusicAppTests.xctest (in target 'MusicAppTests' from project 'MusicApp')[0m
+[15:18:45]: [35m[33m▸[0m [39;1mRunning script[0m '[CP] Check Pods Manifest.lock'[0m
+[15:18:46]: [35m[33m▸[0m [39;1mProcessing[0m empty-MusicAppUITests.plist[0m
+[15:18:46]: [35m[33m▸[0m [39;1mLinking[0m MusicAppUITests[0m
+[15:18:46]: [35m[33m▸[0m [39;1mRunning script[0m '[CP] Embed Pods Frameworks'[0m
+[15:18:47]: [35m[33m▸[0m [39;1mCopying[0m Info.plist[0m
+[15:18:47]: [35mRunning Tests: [33m▸[0m [39;1mTouching[0m MusicAppUITests.xctest (in target 'MusicAppUITests' from project 'MusicApp')[0m
+[15:19:48]: ▸ [35m2026-06-30 15:19:48.741 xcodebuild[69684:750300] [MT] IDETestOperationsObserverDebug: 61.000 elapsed -- Testing started completed.[0m
+[15:19:48]: ▸ [35m2026-06-30 15:19:48.741 xcodebuild[69684:750300] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start[0m
+[15:19:48]: ▸ [35m2026-06-30 15:19:48.741 xcodebuild[69684:750300] [MT] IDETestOperationsObserverDebug: 61.000 sec, +61.000 sec -- end[0m
+[15:19:49]: [35m[33m▸[0m [39;1mTest[0m Succeeded[0m
++-------------------------+
+|      Test Results       |
++--------------------+----+
+| Number of tests    | 20 |
+| Number of failures | [32m0[0m  |
++--------------------+----+
+
+[15:19:54]: Cruising back to lane 'ios release' 🚘
+[15:19:54]: [32m------------------------------[0m
+[15:19:54]: [32m--- Step: get_certificates ---[0m
+[15:19:54]: [32m------------------------------[0m
+
++----------------------------------------------------------------+
+|                    [32mSummary for cert 2.235.0[0m                    |
++-------------------------+--------------------------------------+
+| api_key                 | ********                             |
+| development             | false                                |
+| force                   | false                                |
+| generate_apple_certs    | true                                 |
+| team_id                 | 755CXQS973                           |
+| keychain_path           | /Users/nhat/Library/Keychains/login  |
+|                         | .keychain-db                         |
+| skip_set_partition_list | false                                |
+| platform                | ios                                  |
++-------------------------+--------------------------------------+
+
+[15:19:54]: Creating authorization token for App Store Connect API
+[15:19:56]: [33mKeychain password for /Users/nhat/Library/Keychains/login.keychain-db was not specified and not found in your keychain. Specify the 'keychain_password' option to prevent the UI permission popup when code signing[0m
+security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain.
+[15:19:56]: 
+[15:19:56]: [33mCould not configure imported keychain item (certificate) to prevent UI permission popup when code signing
+Check if you supplied the correct `keychain_password` for keychain: `/Users/nhat/Library/Keychains/login.keychain-db`
+security: SecKeychainItemSetAccessWithPassword: The user name or passphrase you entered is not correct.[0m
+[15:19:56]: 
+[15:19:56]: [33mPlease look at the following docs to see how to set a keychain password:[0m
+[15:19:56]: [33m - https://docs.fastlane.tools/actions/sync_code_signing[0m
+[15:19:56]: [33m - https://docs.fastlane.tools/actions/get_certificates[0m
+[15:19:56]: [33mKeychain password for /Users/nhat/Library/Keychains/login.keychain-db was not specified and not found in your keychain. Specify the 'keychain_password' option to prevent the UI permission popup when code signing[0m
+security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain.
+[15:19:56]: 
+[15:19:56]: [33mCould not configure imported keychain item (certificate) to prevent UI permission popup when code signing
+Check if you supplied the correct `keychain_password` for keychain: `/Users/nhat/Library/Keychains/login.keychain-db`
+security: SecKeychainItemSetAccessWithPassword: The user name or passphrase you entered is not correct.[0m
+[15:19:56]: 
+[15:19:56]: [33mPlease look at the following docs to see how to set a keychain password:[0m
+[15:19:56]: [33m - https://docs.fastlane.tools/actions/sync_code_signing[0m
+[15:19:56]: [33m - https://docs.fastlane.tools/actions/get_certificates[0m
+[15:19:56]: [32mFound the cached certificate 4QZ387B7KU (Nhat Nguyen Van). Using this one.[0m
+[15:19:56]: Verifying the certificate is properly installed locally...
+[15:19:57]: [32mSuccessfully installed certificate 4QZ387B7KU[0m
+[15:19:57]: [32mUse signing certificate '4QZ387B7KU' from now on![0m
+[15:19:57]: [32m--------------------------------------[0m
+[15:19:57]: [32m--- Step: get_provisioning_profile ---[0m
+[15:19:57]: [32m--------------------------------------[0m
+
++-------------------------------------------------------------------------+
+|                        [32mSummary for sigh 2.235.0[0m                         |
++-------------------------------------+-----------------------------------+
+| api_key                             | ********                          |
+| app_identifier                      | com.nph.OffIMuzikBox              |
+| filename                            | MusicApp_AppStore.mobileprovision |
+| adhoc                               | false                             |
+| developer_id                        | false                             |
+| development                         | false                             |
+| skip_install                        | false                             |
+| force                               | false                             |
+| include_mac_in_profiles             | false                             |
+| team_id                             | 755CXQS973                        |
+| ignore_profiles_with_different_name | false                             |
+| cert_id                             | 4QZ387B7KU                        |
+| skip_fetch_profiles                 | false                             |
+| include_all_certificates            | false                             |
+| skip_certificate_verification       | false                             |
+| platform                            | ios                               |
+| readonly                            | false                             |
+| fail_on_name_taken                  | false                             |
++-------------------------------------+-----------------------------------+
+
+[15:19:57]: Creating authorization token for App Store Connect API
+[15:19:57]: Fetching profiles...
+[15:19:58]: Verifying certificates...
+[15:19:59]: [32mFound 1 matching profile(s)[0m
+[15:19:59]: [33mDownloading provisioning profile...[0m
+[15:19:59]: [32mSuccessfully downloaded provisioning profile...[0m
+[15:19:59]: Installing provisioning profile...
+[32m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/fastlane/certs/MusicApp_AppStore.mobileprovision[0m
+[15:19:59]: Setting Provisioning Profile type to 'app-store'
+[15:19:59]: [32m------------------------------------------[0m
+[15:19:59]: [32m--- Step: update_code_signing_settings ---[0m
+[15:19:59]: [32m------------------------------------------[0m
+
++--------------------------------------------------------------+
+|              [32mSummary for code signing settings[0m               |
++-----------------------+--------------------------------------+
+| use_automatic_signing | false                                |
+| path                  | MusicApp.xcodeproj                   |
+| team_id               | 755CXQS973                           |
+| bundle_identifier     | com.nph.OffIMuzikBox                 |
+| profile_name          | c9f94323-8f04-4af0-b89a-ef6a28ba544  |
+|                       | d                                    |
+| code_sign_identity    | Apple Distribution                   |
++-----------------------+--------------------------------------+
+
+[15:19:59]: Updating the Automatic Codesigning flag to disabled for the given project '/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp.xcodeproj/project.pbxproj'
+[15:19:59]: [33mSet Team id to: 755CXQS973 for target: MusicApp for build configuration: Debug[0m
+[15:19:59]: [33mSet Code Sign identity to: Apple Distribution for target: MusicApp for build configuration: Debug[0m
+[15:19:59]: [33mSet Provisioning Profile name to: c9f94323-8f04-4af0-b89a-ef6a28ba544d for target: MusicApp for build configuration: Debug[0m
+[15:19:59]: [33mSet Bundle identifier to: com.nph.OffIMuzikBox for target: MusicApp for build configuration: Debug[0m
+[15:19:59]: [33mSet Team id to: 755CXQS973 for target: MusicApp for build configuration: Release[0m
+[15:19:59]: [33mSet Code Sign identity to: Apple Distribution for target: MusicApp for build configuration: Release[0m
+[15:19:59]: [33mSet Provisioning Profile name to: c9f94323-8f04-4af0-b89a-ef6a28ba544d for target: MusicApp for build configuration: Release[0m
+[15:19:59]: [33mSet Bundle identifier to: com.nph.OffIMuzikBox for target: MusicApp for build configuration: Release[0m
+[15:19:59]: [33mSet Team id to: 755CXQS973 for target: MusicAppTests for build configuration: Debug[0m
+[15:19:59]: [33mSet Code Sign identity to: Apple Distribution for target: MusicAppTests for build configuration: Debug[0m
+[15:19:59]: [33mSet Provisioning Profile name to: c9f94323-8f04-4af0-b89a-ef6a28ba544d for target: MusicAppTests for build configuration: Debug[0m
+[15:19:59]: [33mSet Bundle identifier to: com.nph.OffIMuzikBox for target: MusicAppTests for build configuration: Debug[0m
+[15:19:59]: [33mSet Team id to: 755CXQS973 for target: MusicAppTests for build configuration: Release[0m
+[15:19:59]: [33mSet Code Sign identity to: Apple Distribution for target: MusicAppTests for build configuration: Release[0m
+[15:19:59]: [33mSet Provisioning Profile name to: c9f94323-8f04-4af0-b89a-ef6a28ba544d for target: MusicAppTests for build configuration: Release[0m
+[15:19:59]: [33mSet Bundle identifier to: com.nph.OffIMuzikBox for target: MusicAppTests for build configuration: Release[0m
+[15:19:59]: [33mSet Team id to: 755CXQS973 for target: MusicAppUITests for build configuration: Debug[0m
+[15:19:59]: [33mSet Code Sign identity to: Apple Distribution for target: MusicAppUITests for build configuration: Debug[0m
+[15:19:59]: [33mSet Provisioning Profile name to: c9f94323-8f04-4af0-b89a-ef6a28ba544d for target: MusicAppUITests for build configuration: Debug[0m
+[15:19:59]: [33mSet Bundle identifier to: com.nph.OffIMuzikBox for target: MusicAppUITests for build configuration: Debug[0m
+[15:19:59]: [33mSet Team id to: 755CXQS973 for target: MusicAppUITests for build configuration: Release[0m
+[15:19:59]: [33mSet Code Sign identity to: Apple Distribution for target: MusicAppUITests for build configuration: Release[0m
+[15:19:59]: [33mSet Provisioning Profile name to: c9f94323-8f04-4af0-b89a-ef6a28ba544d for target: MusicAppUITests for build configuration: Release[0m
+[15:19:59]: [33mSet Bundle identifier to: com.nph.OffIMuzikBox for target: MusicAppUITests for build configuration: Release[0m
+[15:19:59]: [32mSuccessfully updated project settings to use Code Sign Style = 'Manual'[0m
+[15:19:59]: [32mModified Targets:[0m
+[15:19:59]: [32m	 * MusicApp[0m
+[15:19:59]: [32m	 * MusicAppTests[0m
+[15:19:59]: [32m	 * MusicAppUITests[0m
+[15:19:59]: [32mModified Build Configurations:[0m
+[15:19:59]: [32m	 * Debug[0m
+[15:19:59]: [32m	 * Release[0m
+[15:19:59]: [32m	 * Debug[0m
+[15:19:59]: [32m	 * Release[0m
+[15:19:59]: [32m	 * Debug[0m
+[15:19:59]: [32m	 * Release[0m
+[15:19:59]: [32m-----------------------[0m
+[15:19:59]: [32m--- Step: build_app ---[0m
+[15:19:59]: [32m-----------------------[0m
+[15:19:59]: [33mResolving Swift Package Manager dependencies...[0m
+[15:19:59]: [36m$ xcodebuild -resolvePackageDependencies -workspace MusicApp.xcworkspace -scheme MusicApp -configuration Release[0m
+[15:20:00]: ▸ [35mCommand line invocation:[0m
+[15:20:00]: ▸ [35m    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -resolvePackageDependencies -workspace MusicApp.xcworkspace -scheme MusicApp -configuration Release[0m
+[15:20:00]: ▸ [35mResolve Package Graph[0m
+[15:20:03]: ▸ [35mResolved source packages:[0m
+[15:20:03]: ▸ [35m  GoogleUserMessagingPlatform: https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git @ 3.1.0[0m
+[15:20:03]: ▸ [35m  MonetizeKit: /Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MonetizeKit @ local[0m
+[15:20:03]: ▸ [35m  GoogleMobileAds: https://github.com/googleads/swift-package-manager-google-mobile-ads.git @ 13.3.0[0m
+[15:20:03]: ▸ [35mresolved source packages: GoogleUserMessagingPlatform, MonetizeKit, GoogleMobileAds[0m
+[15:20:03]: [36m$ xcodebuild -showBuildSettings -workspace MusicApp.xcworkspace -scheme MusicApp -configuration Release 2>&1[0m
+[15:20:06]: Detected provisioning profile mapping: {"com.nph.OffIMuzikBox": "com.nph.OffIMuzikBox AppStore"}
+
++-----------------------------------------------------------------------------+
+|                           [32mSummary for gym 2.235.0[0m                           |
++--------------------------------------+--------------------------------------+
+| workspace                            | MusicApp.xcworkspace                 |
+| scheme                               | MusicApp                             |
+| configuration                        | Release                              |
+| output_directory                     | build                                |
+| output_name                          | MusicApp                             |
+| clean                                | true                                 |
+| export_method                        | app-store                            |
+| export_options.provisioningProfiles  | com.nph.OffIMuzikBox AppStore        |
+| .com.nph.OffIMuzikBox                |                                      |
+| silent                               | false                                |
+| skip_package_ipa                     | false                                |
+| skip_package_pkg                     | false                                |
+| build_path                           | /Users/nhat/Library/Developer/Xcode  |
+|                                      | /Archives/2026-06-30                 |
+| result_bundle                        | false                                |
+| buildlog_path                        | ~/Library/Logs/gym                   |
+| destination                          | generic/platform=iOS                 |
+| xcodebuild_formatter                 | xcpretty                             |
+| build_timing_summary                 | false                                |
+| skip_profile_detection               | false                                |
+| xcodebuild_command                   | xcodebuild                           |
+| skip_package_dependencies_resolutio  | false                                |
+| n                                    |                                      |
+| disable_package_automatic_updates    | false                                |
+| skip_package_repository_fetches      | false                                |
+| use_system_scm                       | false                                |
+| generate_appstore_info               | false                                |
+| xcode_path                           | /Applications/Xcode.app              |
++--------------------------------------+--------------------------------------+
+
+[15:20:06]: [36m$ set -o pipefail && xcodebuild -workspace MusicApp.xcworkspace -scheme MusicApp -configuration Release -destination 'generic/platform=iOS' -archivePath /Users/nhat/Library/Developer/Xcode/Archives/2026-06-30/MusicApp\ 2026-06-30\ 15.20.06.xcarchive clean archive | tee /Users/nhat/Library/Logs/gym/MusicApp-MusicApp.log | xcpretty[0m
+[15:20:07]: [35m[33m▸[0m [39;1mClean[0m Succeeded[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m Pods-MusicApp-umbrella.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebUploader.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerPrivate.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerURLEncodedFormRequest.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerStreamedResponse.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerResponse.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerRequest.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerMultiPartFormRequest.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerHTTPStatusCodes.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerFunctions.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerFileResponse.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerFileRequest.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerErrorResponse.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerDataResponse.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerDataRequest.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServerConnection.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServer.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m GCDWebServer-umbrella.h[0m
+[15:20:11]: [35m[33m▸[0m [39;1mProcessing[0m GCDWebServer-Info.plist[0m
+[15:20:11]: [35m[33m▸[0m [39;1mCopying[0m /Users/nhat/Library/Developer/Xcode/DerivedData/MusicApp-fmglkzinoammifdmbfpogrlbiyrh/Build/Intermediates.noindex/ArchiveIntermediates/MusicApp/IntermediateBuildFilesPath/UninstalledProducts/iphoneos/GCDWebServer.framework/GCDWebUploader.bundle[0m
+[15:20:12]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServer_vers.c[0m
+[15:20:12]: [35m[33m▸[0m [39;1mCompiling[0m Pods_MusicApp_vers.c[0m
+[15:20:12]: [35m[33m▸[0m [39;1mCompiling[0m placeholder.m[0m
+[15:20:12]: [35m[33m▸[0m [39;1mLinking[0m UserMessagingPlatformTarget.o[0m
+[15:20:12]: [35m[33m▸[0m [39;1mLinking[0m GoogleMobileAdsTarget.o[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m Pods-MusicApp-dummy.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServer-dummy.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServer.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerDataRequest.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerConnection.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerURLEncodedFormRequest.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerStreamedResponse.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebUploader.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerResponse.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerRequest.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerMultiPartFormRequest.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerFunctions.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerFileResponse.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerFileRequest.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerErrorResponse.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mCompiling[0m GCDWebServerDataResponse.m[0m
+[15:20:14]: [35m[33m▸[0m [39;1mLinking[0m GCDWebServer[0m
+[15:20:14]: [35m[33m▸[0m [39;1mGenerating 'GCDWebServer.framework.dSYM'[0m
+[15:20:14]: [35m[33m▸[0m [39;1mTouching[0m GCDWebServer.framework (in target 'GCDWebServer' from project 'Pods')[0m
+[15:20:14]: [35m[33m▸[0m [39;1mProcessing[0m Pods-MusicApp-Info.plist[0m
+[15:20:14]: [35m[33m▸[0m [39;1mTouching[0m Pods_MusicApp.framework (in target 'Pods-MusicApp' from project 'Pods')[0m
+[15:20:14]: [35m[33m▸[0m [39;1mLinking[0m MonetizeKit.o[0m
+[15:20:15]: [35m[33m▸[0m [39;1mRunning script[0m '[CP] Check Pods Manifest.lock'[0m
+[15:20:25]: [35m[33m▸[0m [39;1mCopying[0m /Users/nhat/Library/Developer/Xcode/DerivedData/MusicApp-fmglkzinoammifdmbfpogrlbiyrh/Build/Intermediates.noindex/ArchiveIntermediates/MusicApp/InstallationBuildProductsLocation/Applications/MusicApp.app/UseCasesFixesSummary.md[0m
+[15:20:25]: [35m[33m▸[0m [39;1mCopying[0m /Users/nhat/Library/Developer/Xcode/DerivedData/MusicApp-fmglkzinoammifdmbfpogrlbiyrh/Build/Intermediates.noindex/ArchiveIntermediates/MusicApp/InstallationBuildProductsLocation/Applications/MusicApp.app/README.md[0m
+[15:20:25]: [35m[33m▸[0m [39;1mCompiling[0m AppLaunchScreen.storyboard[0m
+[15:20:33]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Presentation/Feature/NowPlayingScreen/Views/FullPlayerLyricsMenu.swift:62:32: [33mleft side of nil coalescing operator '??' has non-optional type 'String', so the right side is never used[0m
+[15:20:33]: ▸ [35m        let title = song.title ?? url.deletingPathExtension().lastPathComponent[0m
+[15:20:33]: ▸ [35m[36m                    ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[15:20:33]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Presentation/Feature/NowPlayingScreen/NowPlayingViewModel.swift:53:66: [33mmain actor-isolated static property 'shared' can not be referenced from a nonisolated context; this is an error in the Swift 6 language mode[0m
+[15:20:33]: ▸ [35m        playerManager: any PlayerManagerProtocol = PlayerManager.shared,[0m
+[15:20:33]: ▸ [35m[36m                                                                 ^[0m
+[15:20:33]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/Router/Router.swift:28:34: [33muse of protocol 'BaseRouterProtocol' as a type must be written 'any BaseRouterProtocol'; this will be an error in a future Swift language mode[0m
+[15:20:33]: ▸ [35m    public var presentingRouter: BaseRouterProtocol?[0m
+[15:20:33]: ▸ [35m[36m               ^[0m
+[15:20:33]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/Router/Router.swift:36:27: [33muse of protocol 'BaseRouterProtocol' as a type must be written 'any BaseRouterProtocol'; this will be an error in a future Swift language mode[0m
+[15:20:33]: ▸ [35m        presentingRouter: BaseRouterProtocol? = nil,[0m
+[15:20:33]: ▸ [35m[36m                                 ^~~~~~~~~~~~~~~~~~[0m
+[15:20:33]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/Router/BaseRouterProtocol.swift:19:27: [33muse of protocol 'BaseRouterProtocol' as a type must be written 'any BaseRouterProtocol'; this will be an error in a future Swift language mode[0m
+[15:20:33]: ▸ [35m    var presentingRouter: BaseRouterProtocol? { get set }[0m
+[15:20:33]: ▸ [35m[36m                          ^~~~~~~~~~~~~~~~~~[0m
+[15:20:33]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Presentation/Feature/App/MusicApp.swift:41:10: [33m'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.[0m
+[15:20:33]: ▸ [35m        .onChange(of: scenePhase) { newPhase in[0m
+[15:20:33]: ▸ [35m[36m                          ^~~~~~~~~~~~~~~~~~[0m
+[15:20:33]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/DI/AppState.swift:26:30: [33mconformance of 'AppState' to protocol 'AppStateProtocol' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode[0m
+[15:20:33]: ▸ [35mpublic final class AppState: AppStateProtocol {[0m
+[15:20:33]: ▸ [35m[36m         ^[0m
+[15:20:33]: ▸ [35m[33m⚠️  [0m/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/MusicApp/Core/DI/DIContainer.swift:84:62: [33mmain actor-isolated static property 'shared' can not be referenced from a nonisolated context; this is an error in the Swift 6 language mode[0m
+[15:20:33]: ▸ [35m                nowPlayingInfoService: NowPlayingInfoService.shared,[0m
+[15:20:33]: ▸ [35m[36m                ^[0m
+[15:20:33]: [35m[33m▸[0m [39;1mProcessing[0m Info.plist[0m
+[15:20:33]: [35m[33m▸[0m [39;1mLinking[0m MusicApp[0m
+[15:20:34]: [35m[33m▸[0m [39;1mRunning script[0m '[CP] Embed Pods Frameworks'[0m
+[15:20:34]: [35m[33m▸[0m [39;1mGenerating 'MusicApp.app.dSYM'[0m
+[15:20:34]: [35m[33m▸[0m [39;1mTouching[0m MusicApp.app (in target 'MusicApp' from project 'MusicApp')[0m
+[15:20:34]: [35m[33m▸[0m [39;1mArchive[0m Succeeded[0m
+[15:20:34]: [33mGenerated plist file with the following values:[0m
+[15:20:34]: ▸ [35m-----------------------------------------[0m
+[15:20:34]: ▸ [35m{[0m
+[15:20:34]: ▸ [35m  "provisioningProfiles": {[0m
+[15:20:34]: ▸ [35m    "com.nph.OffIMuzikBox": "com.nph.OffIMuzikBox AppStore"[0m
+[15:20:34]: ▸ [35m  },[0m
+[15:20:34]: ▸ [35m  "method": "app-store",[0m
+[15:20:34]: ▸ [35m  "signingStyle": "manual"[0m
+[15:20:34]: ▸ [35m}[0m
+[15:20:34]: ▸ [35m-----------------------------------------[0m
+[15:20:34]: [36m$ /usr/bin/xcrun /opt/homebrew/lib/ruby/gems/4.0.0/gems/fastlane-2.235.0/gym/lib/assets/wrap_xcodebuild/xcbuild-safe.sh -exportArchive -exportOptionsPlist '/var/folders/hc/_9h36w5d7h75dsxyqbt1pf9r0000gn/T/gym_config20260630-69588-5tnc8h.plist' -archivePath /Users/nhat/Library/Developer/Xcode/Archives/2026-06-30/MusicApp\ 2026-06-30\ 15.20.06.xcarchive -exportPath '/var/folders/hc/_9h36w5d7h75dsxyqbt1pf9r0000gn/T/gym_output20260630-69588-pd5ygi' [0m
+[15:20:50]: Compressing 2 dSYM(s)
+[15:20:50]: [36m$ cd '/Users/nhat/Library/Developer/Xcode/Archives/2026-06-30/MusicApp 2026-06-30 15.20.06.xcarchive/dSYMs' && zip -r '/Users/nhat/Dev/IOS/MusicOffline-SwiftUI/build/MusicApp.app.dSYM.zip' *.dSYM[0m
+[15:20:51]: ▸ [35mupdating: GCDWebServer.framework.dSYM/ (stored 0%)[0m
+[15:20:51]: ▸ [35mupdating: GCDWebServer.framework.dSYM/Contents/ (stored 0%)[0m
+[15:20:51]: ▸ [35mupdating: GCDWebServer.framework.dSYM/Contents/Resources/ (stored 0%)[0m
+[15:20:51]: ▸ [35mupdating: GCDWebServer.framework.dSYM/Contents/Resources/Relocations/ (stored 0%)[0m
+[15:20:51]: ▸ [35mupdating: GCDWebServer.framework.dSYM/Contents/Resources/Relocations/aarch64/ (stored 0%)[0m
+[15:20:51]: ▸ [35mupdating: GCDWebServer.framework.dSYM/Contents/Resources/Relocations/aarch64/GCDWebServer.yml (deflated 86%)[0m
+[15:20:51]: ▸ [35mupdating: GCDWebServer.framework.dSYM/Contents/Resources/DWARF/ (stored 0%)[0m
+[15:20:51]: ▸ [35mupdating: GCDWebServer.framework.dSYM/Contents/Resources/DWARF/GCDWebServer (deflated 63%)[0m
+[15:20:51]: ▸ [35mupdating: GCDWebServer.framework.dSYM/Contents/Info.plist (deflated 51%)[0m
+[15:20:51]: ▸ [35mupdating: MusicApp.app.dSYM/ (stored 0%)[0m
+[15:20:51]: ▸ [35mupdating: MusicApp.app.dSYM/Contents/ (stored 0%)[0m
+[15:20:51]: ▸ [35mupdating: MusicApp.app.dSYM/Contents/Resources/ (stored 0%)[0m
+[15:20:51]: ▸ [35mupdating: MusicApp.app.dSYM/Contents/Resources/Relocations/ (stored 0%)[0m
+[15:20:51]: ▸ [35mupdating: MusicApp.app.dSYM/Contents/Resources/Relocations/aarch64/ (stored 0%)[0m
+[15:20:51]: ▸ [35mupdating: MusicApp.app.dSYM/Contents/Resources/Relocations/aarch64/MusicApp.yml (deflated 88%)[0m
+[15:20:51]: ▸ [35mupdating: MusicApp.app.dSYM/Contents/Resources/DWARF/ (stored 0%)[0m
+[15:20:51]: ▸ [35mupdating: MusicApp.app.dSYM/Contents/Resources/DWARF/MusicApp (deflated 72%)[0m
+[15:20:51]: ▸ [35mupdating: MusicApp.app.dSYM/Contents/Info.plist (deflated 52%)[0m
+
+[15:20:51]: [32mSuccessfully exported and compressed dSYM file[0m
+[15:20:51]: [32mSuccessfully exported and signed the ipa file:[0m
+[15:20:51]: /Users/nhat/Dev/IOS/MusicOffline-SwiftUI/build/MusicApp.ipa
+[15:20:51]: [32m---------------------------------[0m
+[15:20:51]: [32m--- Step: upload_to_app_store ---[0m
+[15:20:51]: [32m---------------------------------[0m
+[15:20:51]: Creating authorization token for App Store Connect API
+
++-----------------------------------------------------------------------------+
+|                           [32mdeliver 2.235.0 Summary[0m                           |
++--------------------------------------+--------------------------------------+
+| api_key                              | ********                             |
+| submit_for_review                    | true                                 |
+| automatic_release                    | false                                |
+| force                                | true                                 |
+| precheck_include_in_app_purchases    | false                                |
+| skip_screenshots                     | true                                 |
+| skip_metadata                        | false                                |
+| ipa                                  | /Users/nhat/Dev/IOS/MusicOffline-Sw  |
+|                                      | iftUI/build/MusicApp.ipa             |
+| screenshots_path                     | ./fastlane/screenshots               |
+| metadata_path                        | ./fastlane/metadata                  |
+| app_version                          | 1.1.1                                |
+| app_identifier                       | com.nph.OffIMuzikBox                 |
+| platform                             | ios                                  |
+| edit_live                            | false                                |
+| use_live_version                     | false                                |
+| preview_frame_time_code              | 00:00:05:00                          |
+| overwrite_preview_videos             | false                                |
+| skip_binary_upload                   | false                                |
+| skip_app_version_update              | false                                |
+| overwrite_screenshots                | false                                |
+| screenshot_processing_timeout        | 3600                                 |
+| sync_screenshots                     | false                                |
+| verify_only                          | false                                |
+| reject_if_possible                   | false                                |
+| version_check_wait_retry_limit       | 7                                    |
+| phased_release                       | false                                |
+| reset_ratings                        | false                                |
+| dev_portal_team_id                   | 755CXQS973                           |
+| run_precheck_before_submit           | true                                 |
+| precheck_default_rule_level          | warn                                 |
+| ignore_language_directory_validatio  | false                                |
+| n                                    |                                      |
++--------------------------------------+--------------------------------------+
+
+[15:20:53]: Making sure the latest version on App Store Connect matches '1.1.1'...
+[15:20:54]: [32m'1.1.1' is the latest version on App Store Connect[0m
+[15:20:57]: No changes to localized App Info detected. Skipping upload.
+[15:20:58]: [33mWill begin uploading metadata for '1.1.1' on App Store Connect[0m
+[15:20:58]: Uploading metadata to App Store Connect for version
+[15:21:05]: Uploading binary to App Store Connect
+[15:21:05]: Going to upload updated app to App Store Connect
+[15:21:05]: [32mThis might take a few minutes. Please don't interrupt the script.[0m
+[15:22:25]: [32m--------------------------------------------------------------------[0m
+[15:22:25]: [32mSuccessfully uploaded package to App Store Connect. It might take a few minutes until it's visible online.[0m
+[15:22:25]: [32m--------------------------------------------------------------------[0m
+[15:22:25]: [32mFinished the upload to App Store Connect[0m
+[15:22:25]: Running precheck before submitting to review, if you'd like to disable this check you can set run_precheck_before_submit to false
+[15:22:25]: Making sure we pass precheck 👮‍♀️ 👮 before we submit  🛫
+
++-------------------------------------------------+
+|          [32mSummary for precheck 2.235.0[0m           |
++--------------------------+----------------------+
+| default_rule_level       | warn                 |
+| include_in_app_purchases | false                |
+| app_identifier           | com.nph.OffIMuzikBox |
+| api_key                  | ********             |
+| platform                 | ios                  |
+| use_live                 | false                |
++--------------------------+----------------------+
+
+[15:22:25]: Creating authorization token for App Store Connect API
+[15:22:25]: Checking app for precheck rule violations
+[15:22:35]: ✅  Passed: No negative  sentiment
+[15:22:35]: ✅  Passed: No placeholder text
+[15:22:35]: ✅  Passed: No mentioning  competitors
+[15:22:35]: ✅  Passed: No future functionality promises
+[15:22:35]: ✅  Passed: No words indicating test content
+[15:22:35]: ✅  Passed: No curse words
+[15:22:35]: ✅  Passed: No words indicating your IAP is free
+[15:22:35]: [33m😵  Failed: Incorrect, or missing copyright date-> using a copyright date that is any different from this current year, or missing a date[0m
+[15:22:36]: ✅  Passed: No broken urls
++----------------------------+
+|     [33mPotential problems[0m     |
++-----------+----------------+
+| Field     | Failure reason |
++-----------+----------------+
+| copyright | [33mmissing: 2026[0m  |
++-----------+----------------+
+[15:22:36]: [33m[33mprecheck 👮‍♀️ 👮  found one or more potential metadata problems, but this won't prevent fastlane from completing 👍[0m
+[15:22:37]: Selecting the latest build...
+[15:22:37]: Waiting for processing on... app_id: 6752614254, app_version: 1.1.1, build_version: 2, platform: IOS
+[15:22:38]: [33mRead more information on why this build isn't showing up yet - https://github.com/fastlane/fastlane/issues/14997[0m
+[15:22:38]: Waiting for the build to show up in the build list - this may take a few minutes (check your email for processing issues if this continues)
+[15:22:53]: Waiting for the build to show up in the build list - this may take a few minutes (check your email for processing issues if this continues)
+[15:23:09]: Waiting for the build to show up in the build list - this may take a few minutes (check your email for processing issues if this continues)
+[15:23:25]: Waiting for the build to show up in the build list - this may take a few minutes (check your email for processing issues if this continues)
+[15:23:40]: Waiting for the build to show up in the build list - this may take a few minutes (check your email for processing issues if this continues)
+[15:23:58]: [32mSuccessfully finished processing the build 1.1.1 - 2 for IOS[0m
+[15:23:58]: Selecting build 1.1.1 (2)...
+[15:24:00]: [32mSuccessfully selected build[0m
+[15:24:15]: [32mSuccessfully submitted the app for review![0m
+
++---------------------------------------------+
+|              [32mfastlane summary[0m               |
++------+------------------------+-------------+
+| Step | Action                 | Time (in s) |
++------+------------------------+-------------+
+| 1    | default_platform       | 0           |
+| 2    | app_store_connect_api  | 0           |
+|      | _key                   |             |
+| 3    | Switch to ios test     | 0           |
+|      | lane                   |             |
+| 4    | run_tests              | 156         |
+| 5    | get_certificates       | 3           |
+| 6    | get_provisioning_prof  | 1           |
+|      | ile                    |             |
+| 7    | update_code_signing_s  | 0           |
+|      | ettings                |             |
+| 8    | build_app              | 51          |
+| 9    | upload_to_app_store    | 204         |
++------+------------------------+-------------+
+
+[15:24:15]: [32mfastlane.tools just saved you 7 minutes! 🎉[0m
+
+#######################################################################
+# fastlane 2.236.1 is available. You are on 2.235.0.
+# You should use the latest version.
+# Please update using `bundle update fastlane`.
+#######################################################################
+
+[32m2.236.1 Improvements[0m
+* Revert "[transporter] Decode Base64 key content for .p8 file generation in Al…" (#30066) via Connor Tumbleson (@iBotPeaches)
+
+[32m2.236.0 Improvements[0m
+* [ci] fix: add 'multi_json' as direct dep due to upstream googleapis bug. (#30062) via Connor Tumbleson (@iBotPeaches)
+* Fix --copy_to_clipboard flag for spaceauth command (#29888) via owurman (@owurman)
+* [transporter] Decode Base64 key content for .p8 file generation in Al… (#30057) via Kaan Çembertaş (@kaancembertas)
+* [ci] remove xcode 16.3 as CircleCI dropped it (#30058) via Connor Tumbleson (@iBotPeaches)
+* [action] Add update_app_age_rating action for standalone age rating updates (#30025) via Pratik Patil (@PratikPatil131)
+* [core] Set ruby-jwt gem to v2.10.3 minimum.  (#30056) via Nakshatra Singh (@nakshatrasinghh)
+* [snapshot] run simulator using Rosetta2 for Apple Silicon (#21559) via Iceman (@sidepelican)
+* [snapshot] use simulator UDIDs for destinations (#30054) via Philip Niedertscheider (@philprime)
+* [spaceship] remove dots from names (#30052) via Tim Shedor (@tshedor)
+* [docs] keep docs assets moving along during update_docs (#30051) via Connor Tumbleson (@iBotPeaches)
+
+[32mPlease update using `bundle update fastlane`[0m
