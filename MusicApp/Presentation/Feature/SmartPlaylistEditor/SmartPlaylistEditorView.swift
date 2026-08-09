@@ -118,25 +118,33 @@ private struct SmartPlaylistRuleRowView: View {
     let onChange: (SmartPlaylistRule) -> Void
 
     var body: some View {
-        VStack(spacing: 8) {
-            HStack {
-                Picker("Field", selection: Binding(
-                    get: { rule.field },
-                    set: { onChange(SmartPlaylistRule(field: $0, operator: rule.operator, value: rule.value)) }
-                )) {
-                    ForEach(RuleField.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+        VStack(alignment: .leading, spacing: 12) {
+            // Two labelled columns share the row evenly so the pickers stay
+            // aligned instead of the menu labels drifting out of place.
+            HStack(alignment: .top, spacing: 12) {
+                labeledColumn("Field") {
+                    Picker("Field", selection: Binding(
+                        get: { rule.field },
+                        set: { onChange(SmartPlaylistRule(field: $0, operator: rule.operator, value: rule.value)) }
+                    )) {
+                        ForEach(RuleField.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
+                    .tint(.accentPrimary)
                 }
-                .pickerStyle(.menu)
-                .foregroundColor(.primaryText)
 
-                Picker("Operator", selection: Binding(
-                    get: { rule.operator },
-                    set: { onChange(SmartPlaylistRule(field: rule.field, operator: $0, value: rule.value)) }
-                )) {
-                    ForEach(RuleOperator.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                labeledColumn("Operator") {
+                    Picker("Operator", selection: Binding(
+                        get: { rule.operator },
+                        set: { onChange(SmartPlaylistRule(field: rule.field, operator: $0, value: rule.value)) }
+                    )) {
+                        ForEach(RuleOperator.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
+                    .tint(.accentPrimary)
                 }
-                .pickerStyle(.menu)
-                .foregroundColor(.primaryText)
             }
 
             TextField("Value", text: Binding(
@@ -145,7 +153,21 @@ private struct SmartPlaylistRuleRowView: View {
             ))
             .foregroundColor(.primaryText)
             .font(AppFont.body())
+            .textFieldStyle(.roundedBorder)
         }
         .padding(.vertical, 4)
+    }
+
+    // A small caption label stacked above its control, taking equal row width.
+    @ViewBuilder
+    private func labeledColumn<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(AppFont.caption())
+                .foregroundColor(.secondaryText)
+            content()
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
