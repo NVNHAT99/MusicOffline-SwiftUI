@@ -14,6 +14,10 @@ import UIKit
 protocol NowPlayingInfoServiceProtocol {
     func bind(to playerManager: any PlayerManagerProtocol)
     func updateProgress(currentTime: TimeInterval, isPlaying: Bool)
+    /// Remove the lock-screen / Control Center now-playing entry if the user
+    /// has never started playback this session. Clears the ghost card that
+    /// iOS otherwise leaves behind across app launches.
+    func clearIfNeverPlayed()
 }
 
 @MainActor
@@ -29,15 +33,54 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
     private var lastSongID: String?
     private var lastArtwork: MPMediaItemArtwork?
 
+    // Don't publish Now Playing info until the user actually starts playback.
+    // Before the audio session is ever activated, iOS renders a default PLAY
+    // button on the lock screen regardless of the paused state we send — which
+    // looks like "playing" while nothing is. So we stay silent until first play.
+    private var hasStartedPlayback = false
+
     // private init để tránh tạo instance khác
     private init() {}
 
     func bind(to playerManager: any PlayerManagerProtocol) {
+        Logger.debug("[NowPlaying] ===== bind() called — NEW SESSION START =====")
+        let before = MPNowPlayingInfoCenter.default().nowPlayingInfo
+        Logger.debug("[NowPlaying] bind: existing nowPlayingInfo before wipe = \(before == nil ? "nil" : "\(before!.count) keys, title=\(before?[MPMediaItemPropertyTitle] ?? "nil")")")
+        // Wipe any ghost now-playing info left over from a previous app session
+        // (MPNowPlayingInfoCenter is system-wide and persists across launches).
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+        MPNowPlayingInfoCenter.default().playbackState = .stopped
+        Logger.debug("[NowPlaying] bind: after wipe = \(MPNowPlayingInfoCenter.default().nowPlayingInfo == nil ? "nil ✅" : "STILL SET ❌")")
+
         // Lắng nghe state thay đổi
         playerManager.statePublisher
             .sink { [weak self] state in
                 guard let self else { return }
-                Logger.debug("[NowPlaying] statePublisher → song=\(state.currentSong?.title ?? "nil") isPlaying=\(state.isPlaying) time=\(String(format: "%.1f", state.currentTimePlay))")
+                Logger.debug("[NowPlaying] statePublisher → song=\(state.currentSong?.title ?? "nil") isPlaying=\(state.isPlaying) time=\(String(format: "%.1f", state.currentTimePlay)) started=\(self.hasStartedPlayback)")
+
+                // Latch on the first real play; once latched we keep updating
+                // (so pause/resume still reflect correctly afterwards). Registering
+                // remote-command handlers is what makes iOS show the lock-screen
+                // media widget, so we defer that until playback actually starts —
+                // otherwise a blank "playing" card appears before anything plays.
+                if state.isPlaying, !self.hasStartedPlayback {
+                    self.hasStartedPlayback = true
+                    self.activateRemoteControls(playerManager: playerManager)
+                }
+
+                // Before the first play, actively CLEAR the now-playing info.
+                // MPNowPlayingInfoCenter is system-wide and survives app kills,
+                // so a previous session can leave stale metadata + a stuck
+                // "playing" state on the lock screen. Wiping it here removes
+                // that ghost until the user actually starts playback.
+                guard self.hasStartedPlayback else {
+                    self.lastSongID = nil
+                    self.lastArtwork = nil
+                    MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+                    MPNowPlayingInfoCenter.default().playbackState = .stopped
+                    return
+                }
+
                 if let song = state.currentSong {
                     self.updateNowPlaying(song: song,
                                           currentTime: state.currentTimePlay,
@@ -51,11 +94,18 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
                 }
             }
             .store(in: &cancellables)
+    }
 
-        // Required for the app to receive remote-control events reliably and be
-        // recognized as the active now-playing app.
+    private var remoteControlsActivated = false
+
+    /// Register for remote-control events and wire up the command center. Called
+    /// lazily on the first play so the lock-screen widget only appears once the
+    /// user actually starts audio (not on a cold launch with nothing playing).
+    private func activateRemoteControls(playerManager: any PlayerManagerProtocol) {
+        guard !remoteControlsActivated else { return }
+        remoteControlsActivated = true
+        Logger.debug("[NowPlaying] activateRemoteControls — first play, enabling lock-screen controls")
         UIApplication.shared.beginReceivingRemoteControlEvents()
-
         setupRemoteTransportControls(playerManager: playerManager)
     }
 
@@ -136,6 +186,15 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         }
     }
     
+    func clearIfNeverPlayed() {
+        guard !hasStartedPlayback else { return }
+        Logger.debug("[NowPlaying] clearIfNeverPlayed → wiping ghost now-playing info")
+        lastSongID = nil
+        lastArtwork = nil
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+        MPNowPlayingInfoCenter.default().playbackState = .stopped
+    }
+
     func updateProgress(currentTime: TimeInterval, isPlaying: Bool) {
         Logger.debug("[NowPlaying] updateProgress isPlaying=\(isPlaying) time=\(String(format: "%.1f", currentTime))")
         guard var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo else { return }

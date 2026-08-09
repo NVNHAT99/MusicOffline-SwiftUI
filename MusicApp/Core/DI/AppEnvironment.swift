@@ -39,6 +39,9 @@ public final class AppEnvironment: ObservableObject {
         case .background:
             Logger.info("📱 App entering background")
             systemEventsHandler.sceneDidEnterBackground()
+            // If nothing was ever played, don't leave a ghost now-playing card
+            // on the lock screen that survives the app being killed.
+            Task { @MainActor in NowPlayingInfoService.shared.clearIfNeverPlayed() }
 
         case .inactive:
             Logger.info("📱 App inactive")
