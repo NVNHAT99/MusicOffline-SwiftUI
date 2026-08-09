@@ -1,0 +1,11 @@
+# Batch Processing Results
+
+## 1. generated
+
+**Status**: error
+
+**Error**: 1 validation error for ImageConfig
+image_size
+  Extra inputs are not permitted [type=extra_forbidden, input_value='2K', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+

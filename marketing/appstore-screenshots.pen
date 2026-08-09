@@ -1,0 +1,1035 @@
+{
+  "version": "2.9",
+  "children": [
+    {
+      "type": "frame",
+      "id": "zzYvf",
+      "x": 0,
+      "y": 0,
+      "name": "01_Home",
+      "clip": true,
+      "width": 1290,
+      "height": 2796,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#2A1410",
+            "position": 0
+          },
+          {
+            "color": "#1C1C1E",
+            "position": 1
+          }
+        ]
+      },
+      "layout": "vertical",
+      "gap": 60,
+      "padding": [
+        110,
+        90,
+        0,
+        90
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Vam63",
+          "name": "cap1",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 18,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "y0x7O",
+              "name": "h1",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Your music, your colors",
+              "lineHeight": 1.1,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 76,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "XRdEO",
+              "name": "s1",
+              "fill": "#FF8A80",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Every song paints the screen with art-driven color",
+              "lineHeight": 1.2,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 38
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "oy7BK",
+          "name": "phone1",
+          "clip": true,
+          "width": 980,
+          "height": 2120,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./sources/01_home.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 56,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000080",
+            "offset": {
+              "x": 0,
+              "y": 30
+            },
+            "blur": 80
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "CV24W",
+      "x": 1390,
+      "y": 0,
+      "name": "02_NowPlaying",
+      "clip": true,
+      "width": 1290,
+      "height": 2796,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#2A1410",
+            "position": 0
+          },
+          {
+            "color": "#1C1C1E",
+            "position": 1
+          }
+        ]
+      },
+      "layout": "vertical",
+      "gap": 60,
+      "padding": [
+        110,
+        90,
+        0,
+        90
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "OvBY1",
+          "name": "cap1",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 18,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "qceGC",
+              "name": "h1",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Lyrics that move with you",
+              "lineHeight": 1.1,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 76,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "Yugap",
+              "name": "s1",
+              "fill": "#FF8A80",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Synced lyrics over a living gradient backdrop",
+              "lineHeight": 1.2,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 38
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "fQlWy",
+          "name": "phone1",
+          "clip": true,
+          "width": 980,
+          "height": 2120,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./sources/02_nowplaying.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 56,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000080",
+            "offset": {
+              "x": 0,
+              "y": 30
+            },
+            "blur": 80
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "fyv3y",
+      "x": 2780,
+      "y": 0,
+      "name": "03_Transfer",
+      "clip": true,
+      "width": 1290,
+      "height": 2796,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#2A1410",
+            "position": 0
+          },
+          {
+            "color": "#1C1C1E",
+            "position": 1
+          }
+        ]
+      },
+      "layout": "vertical",
+      "gap": 60,
+      "padding": [
+        110,
+        90,
+        0,
+        90
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "SGP4X",
+          "name": "cap1",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 18,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "bLo7t",
+              "name": "h1",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Add songs over Wi-Fi",
+              "lineHeight": 1.1,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 76,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "fx8y1",
+              "name": "s1",
+              "fill": "#FF8A80",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Send music from your computer, no cable needed",
+              "lineHeight": 1.2,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 38
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "oRhHg",
+          "name": "phone1",
+          "clip": true,
+          "width": 980,
+          "height": 2120,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./sources/03_transfer_wifi.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 56,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000080",
+            "offset": {
+              "x": 0,
+              "y": 30
+            },
+            "blur": 80
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Ib0Wb",
+      "x": 4170,
+      "y": 0,
+      "name": "04_Import",
+      "clip": true,
+      "width": 1290,
+      "height": 2796,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#2A1410",
+            "position": 0
+          },
+          {
+            "color": "#1C1C1E",
+            "position": 1
+          }
+        ]
+      },
+      "layout": "vertical",
+      "gap": 60,
+      "padding": [
+        110,
+        90,
+        0,
+        90
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "SeHbJ",
+          "name": "cap1",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 18,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "vm8dD",
+              "name": "h1",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Import from anywhere",
+              "lineHeight": 1.1,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 76,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "HX67v",
+              "name": "s1",
+              "fill": "#FF8A80",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Files, iCloud, Google Drive, Dropbox & more",
+              "lineHeight": 1.2,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 38
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "bImP2",
+          "name": "phone1",
+          "clip": true,
+          "width": 980,
+          "height": 2120,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./sources/04_transfer_files.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 56,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000080",
+            "offset": {
+              "x": 0,
+              "y": 30
+            },
+            "blur": 80
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "LBrfs",
+      "x": 5560,
+      "y": 0,
+      "name": "05_Settings",
+      "clip": true,
+      "width": 1290,
+      "height": 2796,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#2A1410",
+            "position": 0
+          },
+          {
+            "color": "#1C1C1E",
+            "position": 1
+          }
+        ]
+      },
+      "layout": "vertical",
+      "gap": 60,
+      "padding": [
+        110,
+        90,
+        0,
+        90
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "WEg70",
+          "name": "cap1",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 18,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Wq0ZH",
+              "name": "h1",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Tuned to your taste",
+              "lineHeight": 1.1,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 76,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "jdsm1",
+              "name": "s1",
+              "fill": "#FF8A80",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "10-band EQ, effects, and a polished player",
+              "lineHeight": 1.2,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 38
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "DSPek",
+          "name": "phone1",
+          "clip": true,
+          "width": 980,
+          "height": 2120,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./sources/05_settings.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 56,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000080",
+            "offset": {
+              "x": 0,
+              "y": 30
+            },
+            "blur": 80
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ebPC9",
+      "x": 0,
+      "y": 3000,
+      "name": "iPad_01_Home",
+      "clip": true,
+      "width": 2064,
+      "height": 2752,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#2A1410",
+            "position": 0
+          },
+          {
+            "color": "#1C1C1E",
+            "position": 1
+          }
+        ]
+      },
+      "layout": "vertical",
+      "gap": 80,
+      "padding": [
+        150,
+        200,
+        0,
+        200
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "I5xjd",
+          "name": "icap1",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "q8DTp",
+              "name": "ih1",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Your music, your colors",
+              "lineHeight": 1.1,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 96,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "l1hoz",
+              "name": "is1",
+              "fill": "#FF8A80",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Every song paints the screen with art-driven color",
+              "lineHeight": 1.2,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 46
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "fjE6e",
+          "name": "ipadphone1",
+          "clip": true,
+          "width": 1020,
+          "height": 2208,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./sources/01_home.png",
+            "mode": "fit"
+          },
+          "cornerRadius": 60,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000099",
+            "offset": {
+              "x": 0,
+              "y": 36
+            },
+            "blur": 100
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "3zuiA",
+      "x": 2264,
+      "y": 3000,
+      "name": "iPad_02_NowPlaying",
+      "clip": true,
+      "width": 2064,
+      "height": 2752,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#2A1410",
+            "position": 0
+          },
+          {
+            "color": "#1C1C1E",
+            "position": 1
+          }
+        ]
+      },
+      "layout": "vertical",
+      "gap": 80,
+      "padding": [
+        150,
+        200,
+        0,
+        200
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "7ZQ6Q",
+          "name": "icap1",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "5NbaV",
+              "name": "ih1",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Lyrics that move with you",
+              "lineHeight": 1.1,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 96,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "0T0eq",
+              "name": "is1",
+              "fill": "#FF8A80",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Synced lyrics over a living gradient backdrop",
+              "lineHeight": 1.2,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 46
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "hTl8G",
+          "name": "ipadphone1",
+          "clip": true,
+          "width": 1020,
+          "height": 2208,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./sources/02_nowplaying.png",
+            "mode": "fit"
+          },
+          "cornerRadius": 60,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000099",
+            "offset": {
+              "x": 0,
+              "y": 36
+            },
+            "blur": 100
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ENrV9",
+      "x": 4528,
+      "y": 3000,
+      "name": "iPad_03_Transfer",
+      "clip": true,
+      "width": 2064,
+      "height": 2752,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#2A1410",
+            "position": 0
+          },
+          {
+            "color": "#1C1C1E",
+            "position": 1
+          }
+        ]
+      },
+      "layout": "vertical",
+      "gap": 80,
+      "padding": [
+        150,
+        200,
+        0,
+        200
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "nr9J0",
+          "name": "icap1",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "CjlWP",
+              "name": "ih1",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Add songs over Wi-Fi",
+              "lineHeight": 1.1,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 96,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "JWs3u",
+              "name": "is1",
+              "fill": "#FF8A80",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Send music from your computer, no cable needed",
+              "lineHeight": 1.2,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 46
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "z6MSW",
+          "name": "ipadphone1",
+          "clip": true,
+          "width": 1020,
+          "height": 2208,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./sources/03_transfer_wifi.png",
+            "mode": "fit"
+          },
+          "cornerRadius": 60,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000099",
+            "offset": {
+              "x": 0,
+              "y": 36
+            },
+            "blur": 100
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "bRmLh",
+      "x": 6792,
+      "y": 3000,
+      "name": "iPad_04_Import",
+      "clip": true,
+      "width": 2064,
+      "height": 2752,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#2A1410",
+            "position": 0
+          },
+          {
+            "color": "#1C1C1E",
+            "position": 1
+          }
+        ]
+      },
+      "layout": "vertical",
+      "gap": 80,
+      "padding": [
+        150,
+        200,
+        0,
+        200
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "vXohz",
+          "name": "icap1",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "t34zs",
+              "name": "ih1",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Import from anywhere",
+              "lineHeight": 1.1,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 96,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "aW2mR",
+              "name": "is1",
+              "fill": "#FF8A80",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Files, iCloud, Google Drive, Dropbox & more",
+              "lineHeight": 1.2,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 46
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "u4nrz",
+          "name": "ipadphone1",
+          "clip": true,
+          "width": 1020,
+          "height": 2208,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./sources/04_transfer_files.png",
+            "mode": "fit"
+          },
+          "cornerRadius": 60,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000099",
+            "offset": {
+              "x": 0,
+              "y": 36
+            },
+            "blur": 100
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "HMnpC",
+      "x": 9056,
+      "y": 3000,
+      "name": "iPad_05_Settings",
+      "clip": true,
+      "width": 2064,
+      "height": 2752,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 180,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#2A1410",
+            "position": 0
+          },
+          {
+            "color": "#1C1C1E",
+            "position": 1
+          }
+        ]
+      },
+      "layout": "vertical",
+      "gap": 80,
+      "padding": [
+        150,
+        200,
+        0,
+        200
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "jt3pX",
+          "name": "icap1",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Y8DKa",
+              "name": "ih1",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Tuned to your taste",
+              "lineHeight": 1.1,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 96,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "LlwAQ",
+              "name": "is1",
+              "fill": "#FF8A80",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "10-band EQ, effects, and a polished player",
+              "lineHeight": 1.2,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 46
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "8eh5f",
+          "name": "ipadphone1",
+          "clip": true,
+          "width": 1020,
+          "height": 2208,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./sources/05_settings.png",
+            "mode": "fit"
+          },
+          "cornerRadius": 60,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000099",
+            "offset": {
+              "x": 0,
+              "y": 36
+            },
+            "blur": 100
+          }
+        }
+      ]
+    }
+  ]
+}
