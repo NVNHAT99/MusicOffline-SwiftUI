@@ -83,16 +83,18 @@ final class PlayerManager: PlayerManagerProtocol {
     }
 
     private func initData() {
+        Logger.debug("[Player] initData start — isPlaying=\(state.isPlaying)")
         if let playlistID = UUID(uuidString: RecentSongsManager.fetchCurrentPlaylist() ?? "") {
             Task {
                 await reloadPlaylist(id: playlistID)
                 if let recentSong = RecentSongsManager.fetchRecentSongs().first, self.playlist.contains(recentSong.song) {
                     self.state.currentSong = recentSong.song
-                    
+
                 } else {
                     self.state.currentSong = self.playlist.first
                 }
-                
+
+                Logger.debug("[Player] initData restored currentSong='\(self.state.currentSong?.title ?? "nil")' isPlaying=\(self.state.isPlaying)")
                 if let currentSong = self.state.currentSong {
                     loadSong(song: currentSong)
                 }
@@ -110,6 +112,16 @@ final class PlayerManager: PlayerManagerProtocol {
                     if success {
                         Task { await self.handleSongFinished() }
                     }
+                case .pausedBySystem:
+                    // Headphones unplugged or an interruption stopped audio.
+                    // Reflect it in state so the mini player / lock screen /
+                    // Control Center show "paused" instead of a stale play state.
+                    self.state.isPlaying = false
+                    self.progressTimerService.stop()
+                case .resumedBySystem:
+                    // Interruption ended and audio auto-resumed — realign state.
+                    self.state.isPlaying = true
+                    self.progressTimerService.resume()
                 }
             }
             .store(in: &cancellables)
@@ -176,6 +188,7 @@ final class PlayerManager: PlayerManagerProtocol {
     }
 
     func play() async {
+        Logger.debug("[Player] play() called (was isPlaying=\(state.isPlaying))")
         guard let currentSong = state.currentSong else {
             Logger.warning("Cannot play - no current song")
             return
@@ -220,6 +233,7 @@ final class PlayerManager: PlayerManagerProtocol {
     }
     
     func pause() async {
+        Logger.debug("[Player] pause() called (was isPlaying=\(state.isPlaying))")
         engine.pause()
         progressTimerService.pause()
         updateState { state in
@@ -424,6 +438,7 @@ final class PlayerManager: PlayerManagerProtocol {
     }
     
     private func loadSong(song: SongModel) {
+        Logger.debug("[Player] loadSong '\(song.title)' — will set isPlaying=false (was \(state.isPlaying))")
         guard let path = song.resolvedFilePath() else {
             Logger.error("Song file missing: \(song.urlStr ?? "")")
             return

@@ -4,6 +4,13 @@ import Combine
 
 enum AudioEngineEvent {
     case finished(Bool)
+    // The system paused playback outside the user's control (headphones
+    // unplugged, audio interruption). The manager must mark itself paused so
+    // the UI and Now Playing / Control Center state stay in sync.
+    case pausedBySystem
+    // An interruption ended and the system asked us to resume; audio is
+    // playing again, so the manager must mark itself playing to match.
+    case resumedBySystem
 }
 
 protocol AudioEngineProtocol: AnyObject {
@@ -185,6 +192,7 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
     private func pauseForInterruption() {
         pausedByInterruption = true
         playerNode.pause()
+        eventSubject.send(.pausedBySystem)
     }
 
     func stop() {
@@ -279,6 +287,7 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
             if options.contains(.shouldResume), pausedByInterruption {
                 pausedByInterruption = false
                 play()
+                eventSubject.send(.resumedBySystem)
             }
             pausedByInterruption = false
         @unknown default:
@@ -293,7 +302,7 @@ final class AVAudioPlayerEngineService: AudioEngineProtocol {
 
         if reason == .oldDeviceUnavailable {
             pause()
-            eventSubject.send(.finished(false))
+            eventSubject.send(.pausedBySystem)
         }
     }
 

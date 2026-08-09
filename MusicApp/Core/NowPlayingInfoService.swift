@@ -37,6 +37,7 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         playerManager.statePublisher
             .sink { [weak self] state in
                 guard let self else { return }
+                Logger.debug("[NowPlaying] statePublisher → song=\(state.currentSong?.title ?? "nil") isPlaying=\(state.isPlaying) time=\(String(format: "%.1f", state.currentTimePlay))")
                 if let song = state.currentSong {
                     self.updateNowPlaying(song: song,
                                           currentTime: state.currentTimePlay,
@@ -46,6 +47,7 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
                     self.lastSongID = nil
                     self.lastArtwork = nil
                     MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+                    MPNowPlayingInfoCenter.default().playbackState = .stopped
                 }
             }
             .store(in: &cancellables)
@@ -71,6 +73,19 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         // now-playing app and can ignore PlaybackRate for the CC button state.
         info[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+        syncPlaybackState(isPlaying: isPlaying)
+    }
+
+    // The lock screen / Control Center button reads the discrete
+    // `playbackState` enum, which is more reliable than inferring from
+    // `PlaybackRate` for a custom AVAudioEngine player. If it's left at the
+    // default (or a stale value), the button can show "pause" (i.e. thinks
+    // it's playing) while audio is actually stopped — set it explicitly on
+    // every state write so the icon always matches the engine.
+    private func syncPlaybackState(isPlaying: Bool, caller: String = #function) {
+        let newState: MPNowPlayingPlaybackState = isPlaying ? .playing : .paused
+        Logger.debug("[NowPlaying] syncPlaybackState → \(isPlaying ? "playing" : "paused") (rate=\(isPlaying ? 1.0 : 0.0)) from \(caller)")
+        MPNowPlayingInfoCenter.default().playbackState = newState
     }
 
     private func updateNowPlaying(song: SongModel,
@@ -87,6 +102,7 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
             info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
             info[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
             MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+            syncPlaybackState(isPlaying: isPlaying)
             return
         }
 
@@ -102,6 +118,7 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
         nowPlayingInfo[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        syncPlaybackState(isPlaying: isPlaying)
 
         Task { [weak self] in
             guard let self else { return }
@@ -120,13 +137,15 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
     }
     
     func updateProgress(currentTime: TimeInterval, isPlaying: Bool) {
+        Logger.debug("[NowPlaying] updateProgress isPlaying=\(isPlaying) time=\(String(format: "%.1f", currentTime))")
         guard var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo else { return }
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
         nowPlayingInfo[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        syncPlaybackState(isPlaying: isPlaying)
     }
-    
+
     private func setupRemoteTransportControls(playerManager: any PlayerManagerProtocol) {
         let commandCenter = MPRemoteCommandCenter.shared()
 
@@ -152,6 +171,7 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
         commandCenter.togglePlayPauseCommand.addTarget { [weak self, weak playerManager] _ in
             guard let playerManager else { return .commandFailed }
             let willPlay = !playerManager.state.isPlaying
+            Logger.debug("[NowPlaying] CC togglePlayPause → willPlay=\(willPlay) (was isPlaying=\(playerManager.state.isPlaying))")
             self?.pushPlaybackState(isPlaying: willPlay, currentTime: playerManager.state.currentTimePlay)
             Task { @MainActor in
                 if willPlay { await playerManager.play() } else { await playerManager.pause() }
@@ -170,12 +190,14 @@ final class NowPlayingInfoService: NowPlayingInfoServiceProtocol {
 
         commandCenter.playCommand.addTarget { [weak self, weak playerManager] _ in
             guard let playerManager else { return .commandFailed }
+            Logger.debug("[NowPlaying] CC playCommand (was isPlaying=\(playerManager.state.isPlaying))")
             self?.pushPlaybackState(isPlaying: true, currentTime: playerManager.state.currentTimePlay)
             Task { @MainActor in await playerManager.play() }
             return .success
         }
         commandCenter.pauseCommand.addTarget { [weak self, weak playerManager] _ in
             guard let playerManager else { return .commandFailed }
+            Logger.debug("[NowPlaying] CC pauseCommand (was isPlaying=\(playerManager.state.isPlaying))")
             self?.pushPlaybackState(isPlaying: false, currentTime: playerManager.state.currentTimePlay)
             Task { @MainActor in await playerManager.pause() }
             return .success
