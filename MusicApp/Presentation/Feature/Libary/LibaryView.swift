@@ -7,12 +7,25 @@
 
 import SwiftUI
 import CoreData
+import Combine
 
 struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
 
     @StateObject private var handler: ViewModel
     @StateObject private var router: Router<AppRoute>
     @EnvironmentObject private var container: DIContainer
+
+    // The FAB sits above the custom tab bar; when a song is loaded the mini
+    // player also occupies the bottom, so lift the FAB further to clear it.
+    @State private var isMiniPlayerVisible: Bool = false
+
+    // Tab bar height + a small gap; mini player adds its own clearance on top.
+    private let tabBarClearance: CGFloat = 100
+    private let miniPlayerClearance: CGFloat = 76
+
+    private var fabBottomInset: CGFloat {
+        tabBarClearance + (isMiniPlayerVisible ? miniPlayerClearance : 0)
+    }
 
     init(handler: ViewModel) {
         self._handler = StateObject(wrappedValue: handler)
@@ -76,6 +89,10 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
                                         }
                                     }
                                 }
+
+                                // Keep the last row clear of the FAB, tab bar,
+                                // and mini player when scrolled to the bottom.
+                                Color.clear.frame(height: fabBottomInset + 24)
                             }
                         }
                         .scrollIndicators(.hidden)
@@ -118,9 +135,11 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
                             .background(Circle().fill(Color.accentPrimary).shadow(color: Color.accentPrimary.opacity(0.4), radius: 8, x: 0, y: 4))
                     }
                     .buttonStyle(.pressScale)
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.bottom, fabBottomInset)
                 }
             }
+            .animation(MotionToken.springStandard, value: isMiniPlayerVisible)
 
         })
         .withRouting(router: router)
@@ -128,6 +147,9 @@ struct LibaryView<ViewModel: LibaryViewViewModelProtocol>: View {
             router.factory = container
             handler.send(intent: .loadPlaylist)
             handler.send(intent: .loadSmartPlaylists)
+        }
+        .onReceive(PlayerManager.shared.statePublisher.map { $0.currentSong != nil }.removeDuplicates()) { hasSong in
+            isMiniPlayerVisible = hasSong
         }
         .onReceive(NotificationCenter.default.publisher(for: .openPlaylistDetail)) { notif in
             if let playlist = notif.object as? Playlist {
