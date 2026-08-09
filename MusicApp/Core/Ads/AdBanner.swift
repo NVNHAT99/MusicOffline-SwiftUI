@@ -9,21 +9,44 @@
 import SwiftUI
 import GoogleMobileAds
 
-/// A standard 320x50 adaptive banner. Hidden until an ad loads to avoid an
-/// empty grey box. Reserves 50pt of height regardless.
+/// Banner sizes we use in the app.
+enum AdBannerSize {
+    case standard      // 320x50
+    case mediumRect    // 300x250 (MREC — highest eCPM)
+
+    var gadSize: AdSize {
+        switch self {
+        case .standard:   return AdSizeBanner
+        case .mediumRect: return AdSizeMediumRectangle
+        }
+    }
+
+    var height: CGFloat {
+        switch self {
+        case .standard:   return 50
+        case .mediumRect: return 250
+        }
+    }
+}
+
+/// A banner ad. Defaults to MREC (300x250) for higher ad revenue. Hidden for
+/// premium users (and then reserves no height). Reserves its height otherwise
+/// to avoid layout shift before the ad loads.
 struct AdBanner: View {
     @ObservedObject private var appState = AppState.shared
     private let adUnitId: String
+    private let size: AdBannerSize
 
-    init(adUnitId: String = AdMobConfig.bannerId) {
+    init(adUnitId: String = AdMobConfig.bannerId, size: AdBannerSize = .mediumRect) {
         self.adUnitId = adUnitId
+        self.size = size
     }
 
     var body: some View {
         // Premium users see no banner (and it reserves no height).
         if !appState.isPremium {
-            BannerViewRepresentable(adUnitId: adUnitId)
-                .frame(height: 50)
+            BannerViewRepresentable(adUnitId: adUnitId, size: size)
+                .frame(height: size.height)
                 .frame(maxWidth: .infinity)
         }
     }
@@ -33,9 +56,10 @@ struct AdBanner: View {
 
 private struct BannerViewRepresentable: UIViewRepresentable {
     let adUnitId: String
+    let size: AdBannerSize
 
     func makeUIView(context: Context) -> BannerView {
-        let banner = BannerView(adSize: AdSizeBanner)
+        let banner = BannerView(adSize: size.gadSize)
         banner.adUnitID = adUnitId
         banner.rootViewController = Self.rootViewController()
         banner.load(Request())

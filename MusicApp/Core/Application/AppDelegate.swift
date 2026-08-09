@@ -30,9 +30,14 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     ) -> Bool {
         pendingColdStart = true
 
-        // Start the Mobile Ads SDK and warm the first interstitial.
-        MobileAds.shared.start(completionHandler: nil)
-        Task { @MainActor in await GoogleAdMobService.shared.preloadIfNeeded() }
+        // Ask for tracking consent first, THEN start the SDK: with IDFA access
+        // the SDK serves personalized (higher-eCPM) ads. Denial is fine — ads
+        // still serve, just non-personalized. Either way we start and preload.
+        Task { @MainActor in
+            await ATTrackingService.requestAuthorization()
+            await MobileAds.shared.start()
+            await GoogleAdMobService.shared.preloadIfNeeded()
+        }
 
         NotificationCenter.default.addObserver(
             self,
