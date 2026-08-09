@@ -45,13 +45,22 @@ struct TransferView<ViewModel: TransferViewModelProtocol>: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
 
-                if selectedTab == .wifi {
-                    wifiSection
-                } else {
-                    filesSection
-                }
+                // Scrollable so content is reachable when the mini player /
+                // tab bar overlap the bottom — otherwise the lower part of a
+                // long section stays hidden and can't be scrolled into view.
+                ScrollView(.vertical) {
+                    if selectedTab == .wifi {
+                        wifiSection
+                    } else {
+                        filesSection
+                    }
 
-                Spacer()
+                    // Clear the floating mini player (80pt) plus a gap for the
+                    // tab bar so the last content isn't hidden behind them.
+                    Color.clear
+                        .frame(height: DesignToken.Player.miniPlayerHeight + 40)
+                }
+                .scrollIndicators(.hidden)
             }
             .frame(maxWidth: .infinity)
 

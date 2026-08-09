@@ -13,6 +13,7 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
 
     #if DEBUG
     @State private var isShowLogShare = false
+    @State private var isShowClearConfirm = false
     #endif
 
     init(viewModel: ViewModel) {
@@ -34,6 +35,14 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
                 #if DEBUG
                 debugSection()
                 #endif
+
+                // Clear just the floating mini player so the last row isn't
+                // hidden behind it. The List already reserves space for the tab
+                // bar via its own bottom inset, so keep this minimal.
+                Color.clear
+                    .frame(height: DesignToken.Player.miniPlayerHeight)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
             }
             .listStyle(.insetGrouped)
             .foregroundColor(.primaryText)
@@ -64,6 +73,14 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
         // Debug-only log export sheet.
         .sheet(isPresented: $isShowLogShare) {
             ShareSheet(items: [LogFileWriter.shared.fileURL])
+        }
+        .confirmationDialog("Clear Log File?", isPresented: $isShowClearConfirm, titleVisibility: .visible) {
+            Button("Clear", role: .destructive) {
+                LogFileWriter.shared.clear()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This deletes the debug log (\(LogFileWriter.shared.sizeDescription)).")
         }
         #endif
         .overlay(alignment: .bottom) {
@@ -144,11 +161,16 @@ struct SettingView<ViewModel: SettingViewViewModelProtocol>: View {
     @ViewBuilder
     private func debugSection() -> some View {
         Section(header: Text("Debug").font(AppFont.caption()).foregroundColor(.mutedText)) {
-            SettingRowView(title: "Share Log File", titleColor: .accentPrimary) {
+            SettingRowView(
+                title: "Share Log File",
+                subtitle: LogFileWriter.shared.sizeDescription,
+                showChevron: false,
+                titleColor: .accentPrimary
+            ) {
                 isShowLogShare = true
             }
             SettingRowView(title: "Clear Log File", showChevron: false, titleColor: .red) {
-                LogFileWriter.shared.clear()
+                isShowClearConfirm = true
             }
         }
         .listRowBackground(Color.headerBackground)
